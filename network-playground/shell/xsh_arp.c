@@ -138,12 +138,22 @@ int arpTest(uchar *ipAddr)
 {
     struct ethergram ethPkt;
     char buffer[ETH_RX_BUF_SIZE];
+    char *ip;
     int i;
     
     //ethPkt = (struct ethergram *) malloc(sizeof(struct ethergram));
     printf("Before read\n");
-    i = etherRead(&devtab[ETH0], &buffer, ETH_RX_BUF_SIZE);
+    i = read(ETH0, &buffer, ETH_RX_BUF_SIZE);
     printf("After read: %d\n",i);
+    
+    // print this host's ip address
+    ip = nvramGet("lan_ipaddr\0");
+    
+    // Print the IP addr
+    for (j = 0; j < IP_ADDR_LEN-1; j++)
+        printf("%d.",ip[j]);
+    printf("%d",ip[IP_ADDR_LEN-1]);
+    
     return OK;
 }
 
