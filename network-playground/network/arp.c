@@ -67,7 +67,7 @@ syscall arpInit(void)
  */
 void arpDaemon(void)
 {
-    uchar *packet = NULL;
+    uchar packet[PKTSZ];
     struct ethergram *egram = NULL;
     struct arpPkt *arpP = NULL;
     int j;
@@ -83,15 +83,8 @@ void arpDaemon(void)
 
     while(1)
     {
-        printf("Bytes read: %d", read(ETH0, packet, PKTSZ));
-        
-        if (packet == NULL)
-        {
-            sleep(1);
-            
-            continue;
-        }
-        
+        printf("Bytes read: %d", read(ETH0, (void *) &packet, PKTSZ));
+
         egram = (struct ethergram *) packet;
         
         if(ntohs(egram->type) != ETYPE_ARP)
@@ -129,7 +122,6 @@ void arpDaemon(void)
         {
             // Do nothing?
         }
-        packet = NULL;
     }
     
     return;
