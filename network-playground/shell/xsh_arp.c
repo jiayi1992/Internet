@@ -150,10 +150,10 @@ command xsh_arp(int nargs, char *args[])
     return OK;
 }
 
-int arpSend(uchar *ipAddr)
+int arpSend()
 {
 	int i;
-    char buffer[] = "123456";
+    char buf[] = "123456";
 
     i = write(ETH0, (uchar *)buf, sizeof(buf));
     //ethPkt = (struct ethergram *) malloc(sizeof(struct ethergram));
