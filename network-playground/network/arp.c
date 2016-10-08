@@ -84,6 +84,14 @@ void arpDaemon(void)
     while(1)
     {
         read(ETH0, packet, PKTSZ);
+        
+        if (packet == NULL)
+        {
+            sleep(1);
+            
+            continue;
+        }
+        
         egram = (struct ethergram *) packet;
         
         if(ntohs(egram->type) != ETYPE_ARP)
