@@ -8,9 +8,9 @@
 /* Date:   10/7/2016        */
 
 /** STUFF TODO
- *  - Any reading/changes to arp table needs to use a semaphore lock
+ *  - Any reading/changes to arp table needs to use a semaphore lock (DONE)
  *  - Implement arpResolve function and call it to request a
- *    new ip to mac mapping
+ *    new ip to mac mapping 
  */
 
 
