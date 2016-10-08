@@ -129,6 +129,7 @@ void arpDaemon(void)
         {
             // Do nothing?
         }
+        packet = NULL;
     }
     
     return;
