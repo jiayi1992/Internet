@@ -83,7 +83,7 @@ void arpDaemon(void)
 
     while(1)
     {
-        read(ETH0, packet, PKTSZ);
+        printf("Bytes read: %d", read(ETH0, packet, PKTSZ));
         
         if (packet == NULL)
         {
