@@ -20,7 +20,7 @@
 #include <arp.h>
 
 int arpTablePrint(void);
-int arpTest(void);
+int arpTest(uchar *ipAddr);
 
 /**
  * Shell command to print/manpulate the ARP table
@@ -139,7 +139,7 @@ int arpTest(uchar *ipAddr)
     struct ethergram ethPkt;
     char buffer[ETH_RX_BUF_SIZE];
     char *ip;
-    int i;
+    int i, j;
     
     //ethPkt = (struct ethergram *) malloc(sizeof(struct ethergram));
     printf("Before read\n");
