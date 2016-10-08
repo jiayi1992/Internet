@@ -21,7 +21,7 @@
 
 int arpTablePrint(void);
 int arpTest(uchar *ipAddr);
-int arpSend(void);
+int arpSend(uchar *ipAddr);
 
 /**
  * Shell command to print/manpulate the ARP table
@@ -130,7 +130,7 @@ command xsh_arp(int nargs, char *args[])
     {
         if (OK == dot2ip(args[2],tmp_ipAddr))
         {
-            return arpSend();
+            return arpSend(tmp_ipAddr);
         }
         else
         {
@@ -150,13 +150,56 @@ command xsh_arp(int nargs, char *args[])
     return OK;
 }
 
-int arpSend()
+int arpSend(uchar *ipAddr)
 {
 	int i;
-    char buf[] = "123456";
+	struct ethergram *egram = NULL;
+	struct arpPkt *arpP = NULL;
+    char buf[PKTSZ];
+	char *hostIp;
+	int bob;
+	uchar ethaddr[ETH_ADDR_LEN];
+	
+	// Get the host ip addr
+	hostIp = nvramGet("lan_ipaddr\0");	
+	
+	egram = (struct ethergram *) buf;
 
-    i = write(ETH0, (uchar *)buf, sizeof(buf));
-    //ethPkt = (struct ethergram *) malloc(sizeof(struct ethergram));
+	for (i = 0; i < ETH_ADDR_LEN; i++)
+		egram->dst[i] = 0xFF;
+	
+	bob = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &ethaddr, 0);
+	
+	for (i = 0; i < ETH_ADDR_LEN; i++)
+		egram->src[i] = htons(ethaddr[i]);
+	
+	egram->type = htons(ETYPE_ARP);
+	
+	arpP = (struct arpPkt *) &egram->data;
+	
+	arpP->hwType = htons(ARP_HWTYPE_ETHERNET);
+	arpP->prType = htons(ARP_PRTYPE_IPv4);
+	arpP->hwAddrLen = htons(ETH_ADDR_LEN);
+	arpP->prAddrLen = htons(IP_ADDR_LEN);
+	arpP->op = htons(ARP_OP_RQST);
+	
+	// Source hw addr
+	for (i = 0; i < ETH_ADDR_LEN; i++)
+		arpP->addrs[i] = htons(ethaddr[i]);
+	
+	// Source protocol addr
+	for (i = ETH_ADDR_LEN; i < ETH_ADDR_LEN + IP_ADDR_LEN; i++)
+		arpP->addrs[i] = htons(hostIp[i]);
+	
+	// Dest hw addr
+	for (i = ETH_ADDR_LEN + IP_ADDR_LEN; i < ETH_ADDR_LEN*2 + IP_ADDR_LEN; i++)
+		arpP->addrs[i] = 0xFF;
+	
+	// Dest protocol addr
+	for (i = ETH_ADDR_LEN*2 + IP_ADDR_LEN; i < ETH_ADDR_LEN*2 + IP_ADDR_LEN*2; i++)
+		arpP->addrs[i] = htons(ipAddr[i]);
+	
+    i = write(ETH0, (uchar *)buf, PKTSZ);
 
 	if(i != SYSERR){
 		printf("%d",i);
