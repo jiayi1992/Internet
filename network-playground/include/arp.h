@@ -13,6 +13,16 @@
 #include <network.h>
 #include <ether.h>
 
+/* ARP Hardware Types */
+#define ARP_HWTYPE_ETHERNET     1
+/* ARP Protocol Types */
+#define ARP_PRTYPE_IPv4         ETYPE_IPv4  
+/* ARP Operations */
+#define ARP_OP_RQST             1
+#define ARP_OP_REPLY            2
+/* ARP Header */
+#define ARP_CONST_HDR_LEN       8
+
 /* Arp table defines */
 #define ARP_TABLE_LEN 32
 #define ARP_ENT_INVALID 0   /** Entry is empty/invalid */
@@ -27,6 +37,24 @@ struct arpEntry
     ushort  osFlags;
 };
 
+/*
+ * ARP HEADER
+ *
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * | Link-Level Header                                             |
+ * | ...                                                           |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * |        Hardware Type          |         Protocol Type         |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * | Hardware Len | Protocol Len   |          Operation            |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * | Source Hardware Address (SHA)                                 |
+ * | Source Protocol Address (SPA)                                 |
+ * | Destination Hardware Address (DHA)                            |
+ * | Destination Protocol Address (DPA)                            |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ */
+ 
 /** ARP header entry contents */
 struct arpPkt
 {

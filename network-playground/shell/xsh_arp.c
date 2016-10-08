@@ -20,6 +20,7 @@
 #include <arp.h>
 
 int arpTablePrint(void);
+int arpTest(void);
 
 /**
  * Shell command to print/manpulate the ARP table
@@ -106,6 +107,21 @@ command xsh_arp(int nargs, char *args[])
             return SYSERR;
         }
     }
+    /*********************************************************/
+    /** ARP command testing area **/
+    /*********************************************************/
+    else if (strcmp("-t",args[1]) == 0)
+    {
+        if (OK == dot2ip(args[2],tmp_ipAddr))
+        {
+            return arpTest(&tmp_ipAddr);
+        }
+        else
+        {
+            printf("arp: invalid IP address format, example: 129.123.233.123\n");
+            return SYSERR;
+        }
+    }
     /********************************************************/
     /** Resolve an IP to a mac address and add to ARP table**/
     /********************************************************/
@@ -117,6 +133,22 @@ command xsh_arp(int nargs, char *args[])
 
     return OK;
 }
+
+int arpTest(uchar *ipAddr)
+{
+    struct ethergram ethPkt;
+    char buffer[ETH_RX_BUF_SIZE];
+    int i;
+    
+    //ethPkt = (struct ethergram *) malloc(sizeof(struct ethergram));
+    printf("Before read\n");
+    i = etherRead(&devtab[ETH0], &buffer, ETH_RX_BUF_SIZE);
+    printf("After read: %d\n",i);
+    return OK;
+}
+
+
+
 
 /**
  * Helper function to print the ARP table to the console
