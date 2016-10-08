@@ -67,9 +67,62 @@ syscall arpInit(void)
  */
 void arpDaemon(void)
 {
+    uchar *packet = NULL;
+    struct ethergram *egram = NULL;
+    struct arpPkt *arpP = NULL;
+    int j;
+
 // Read packet from the network
 // Typecast so that you can access easily the Ethernet fields
-// If it is an ARP packet, call a function to handle it. Name it whatever you want, e.g. arpReceive
+// If it is an ARP packet, call a function to handle it. 
+// Name it whatever you want, e.g. arpReceive
+// For instance, you can check whether the type is equal to ETYPE_ARP
+// (constant defined in include/network.h). Note, though, that due to the 
+// network and host byte order issue that we have mentioned, you will need to 
+// check the value ntohs(egram->type) instead of just egram->type
+
+    while(1)
+    {
+        read(ETH0, packet, PKTSZ);
+        egram = (struct ethergram *) packet;
+        
+        if(ntohs(egram->type) != ETYPE_ARP)
+        {
+            sleep(1);
+            continue;
+        }
+        arpP = (struct arpPkt *) &egram->data;
+        
+        // If the ARP packet is a request
+        if (ntohs(arpP->op) == ARP_OP_RQST)
+        {
+            
+        }
+        // If the ARP packet is a reply
+        else if (ntohs(arpP->op) == ARP_OP_REPLY)
+        {
+            //wait(arp_tsema);
+            prinf("ARP reply");
+            
+            // Print source mac addr
+            for (j = 0; j < ETH_ADDR_LEN-1; j++)
+                printf("%x:",arpP->addrs[j]);
+            printf("%x\n",arpP->addrs[ETH_ADDR_LEN - 1]);
+            
+            // Print source protocol addr
+            for (j = ETH_ADDR_LEN; j < IP_ADDR_LEN + ETH_ADDR_LEN - 1; j++)
+                printf("%d.",arpP->addrs[j]);
+            printf("%d\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN - 1]);
+            
+            sleep(1);
+            //signal(arp_tsema);
+        }
+        else
+        {
+            // Do nothing?
+        }
+    }
+    
     return;
 }
 
