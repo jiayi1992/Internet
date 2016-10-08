@@ -102,7 +102,7 @@ void arpDaemon(void)
         else if (ntohs(arpP->op) == ARP_OP_REPLY)
         {
             //wait(arp_tsema);
-            prinf("ARP reply");
+            printf("ARP reply\n");
             
             // Print source mac addr
             for (j = 0; j < ETH_ADDR_LEN-1; j++)
