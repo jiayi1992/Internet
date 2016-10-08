@@ -17,7 +17,7 @@ command xsh_kill(int, char *[]);
 command xsh_memstat(int, char *[]);
 command xsh_ps(int, char *[]);
 command xsh_test(int, char *[]);
-
+//hello world!!!
 /* This structure describes commands available to the shell. */
 struct centry commandtab[] = {
     {"arp", TRUE, xsh_arp},
