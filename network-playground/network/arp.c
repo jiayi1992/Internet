@@ -70,7 +70,7 @@ void arpDaemon(void)
     uchar packet[PKTSZ];
     struct ethergram *egram = NULL;
     struct arpPkt *arpP = NULL;
-    int j;
+    int j, bytes;
 
 // Read packet from the network
 // Typecast so that you can access easily the Ethernet fields
@@ -83,14 +83,16 @@ void arpDaemon(void)
 
     while(1)
     {
-        printf("Bytes read: %d\n", read(ETH0, (void *) &packet, PKTSZ));
-
+        //printf("Bytes read: %d\n", );
+        bytes = read(ETH0, (void *) &packet, PKTSZ);
+        
+        
         egram = (struct ethergram *) packet;
         
         if(ntohs(egram->type) != ETYPE_ARP)
         {
             sleep(1);
-            printf("Ethertype: %d\n", ntohs(egram->type));
+            printf("Pkt type: %d; Bytes read: %d\n", ntohs(egram->type),bytes);
             continue;
         }
         arpP = (struct arpPkt *) &egram->data;
@@ -98,7 +100,7 @@ void arpDaemon(void)
         // If the ARP packet is a request
         if (ntohs(arpP->op) == ARP_OP_RQST)
         {
-            
+            printf("Got ARP Request\n");
         }
         // If the ARP packet is a reply
         else if (ntohs(arpP->op) == ARP_OP_REPLY)
@@ -121,7 +123,7 @@ void arpDaemon(void)
         }
         else
         {
-            // Do nothing?
+            printf("Unknown ARP message\n");
         }
     }
     
