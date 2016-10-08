@@ -21,6 +21,7 @@
 
 int arpTablePrint(void);
 int arpTest(uchar *ipAddr);
+int arpSend(void);
 
 /**
  * Shell command to print/manpulate the ARP table
@@ -122,6 +123,21 @@ command xsh_arp(int nargs, char *args[])
             return SYSERR;
         }
     }
+	/*********************************************************/
+    /** ARP command testing area for send a request**/
+    /*********************************************************/
+    else if (strcmp("-rq",args[1]) == 0)
+    {
+        if (OK == dot2ip(args[2],tmp_ipAddr))
+        {
+            return arpSend();
+        }
+        else
+        {
+            printf("arp: invalid IP address format, example: 129.123.233.123\n");
+            return SYSERR;
+        }
+    }
     /********************************************************/
     /** Resolve an IP to a mac address and add to ARP table**/
     /********************************************************/
@@ -131,6 +147,23 @@ command xsh_arp(int nargs, char *args[])
         return SYSERR;
     }
 
+    return OK;
+}
+
+int arpSend(uchar *ipAddr)
+{
+	int i;
+    char buffer[] = "123456";
+
+    i = write(ETH0, (uchar *)buf, sizeof(buf));
+    //ethPkt = (struct ethergram *) malloc(sizeof(struct ethergram));
+
+	if(i != SYSERR){
+		printf("%d",i);
+	}else{
+		printf("error");
+	}
+    
     return OK;
 }
 
