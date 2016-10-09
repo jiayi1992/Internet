@@ -91,8 +91,8 @@ void arpDaemon(void)
         
         if(ntohs(egram->type) != ETYPE_ARP)
         {
-            sleep(1);
-            printf("Pkt type: %d; Bytes read: %d\n", ntohs(egram->type),bytes);
+            //sleep(1);
+            //printf("Pkt type: %d; Bytes read: %d\n", ntohs(egram->type),bytes);
             continue;
         }
         arpP = (struct arpPkt *) &egram->data;
@@ -101,6 +101,17 @@ void arpDaemon(void)
         if (ntohs(arpP->op) == ARP_OP_RQST)
         {
             printf("Got ARP Request\n");
+            
+            // Print source mac addr
+            for (j = 0; j < ETH_ADDR_LEN-1; j++)
+                printf("%x:",arpP->addrs[j]);
+            printf("%x\n",arpP->addrs[ETH_ADDR_LEN - 1]);
+            
+            // Print source protocol addr
+            for (j = ETH_ADDR_LEN; j < IP_ADDR_LEN + ETH_ADDR_LEN - 1; j++)
+                printf("%d.",arpP->addrs[j]);
+            printf("%d\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN - 1]);
+            
         }
         // If the ARP packet is a reply
         else if (ntohs(arpP->op) == ARP_OP_REPLY)
@@ -118,7 +129,7 @@ void arpDaemon(void)
                 printf("%d.",arpP->addrs[j]);
             printf("%d\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN - 1]);
             
-            sleep(1);
+            //sleep(1);
             //signal(arp_tsema);
         }
         else
