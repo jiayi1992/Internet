@@ -155,7 +155,7 @@ int arpSend(uchar *ipAddr)
     int i;
     struct ethergram *egram = NULL;
     struct arpPkt *arpP = NULL;
-    char buf[PKTSZ];
+    char buf[ARP_PKTSIZE];
     char *hostIp;
     int bob;
     uchar ethaddr[ETH_ADDR_LEN];

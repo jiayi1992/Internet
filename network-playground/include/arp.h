@@ -23,18 +23,21 @@
 /* ARP Header */
 #define ARP_CONST_HDR_LEN       8
 
-/* Arp table defines */
+/* ARP table defines */
 #define ARP_TABLE_LEN 32
 #define ARP_ENT_INVALID 0   /** Entry is empty/invalid */
 #define ARP_ENT_VALID   1   /** Entry has an IP addr and mac */
 #define ARP_ENT_IP_ONLY 2   /** Entry has an IP addr but no mac */
 
-/* Arp address offsets */
+/* ARP address offsets */
 #define ARP_SHA_OFFSET 0
 #define ARP_SPA_OFFSET ETH_ADDR_LEN
 #define ARP_DHA_OFFSET ETH_ADDR_LEN + IP_ADDR_LEN
 #define ARP_DPA_OFFSET ETH_ADDR_LEN*2 + IP_ADDR_LEN
 #define ARP_ADDR_END_OFFSET ETH_ADDR_LEN*2 + IP_ADDR_LEN*2
+
+/* ARP packet size */
+#define ARP_PKTSIZE ETHER_MINPAYLOAD + ETH_HEADER_LEN
 
 /** ARP table entry contents */
 struct arpEntry
