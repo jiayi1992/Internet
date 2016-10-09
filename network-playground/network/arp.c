@@ -23,13 +23,17 @@ void arpInitDebug(void);
 syscall arpInit(void)
 {
     int i;
+    uchar *tmp_addr;
     
     // Get this machine's ip addr
-    arp.ipAddr = nvramGet("lan_ipaddr\0");
+    tmp_addr = (uchar *) nvramGet("lan_ipaddr\0");
     
-    for (i = 0; i < IP_ADDR_LEN-1; i++)
-        printf("%d.",arp.ipAddr[i]);
-    printf("%d\n",arp.ipAddr[IP_ADDR_LEN-1]);
+    for (i = 0; i < IP_ADDR_LEN; i++)
+    {
+        arp.ipAddr[i] = tmp_addr[i];
+        printf("%d.", arp.ipAddr[i]);
+    }
+    printf("\n");
     
     // Get this machine's mac addr
     i = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &arp.hwAddr, 0);

@@ -90,6 +90,11 @@ command xsh_arp(int nargs, char *args[])
         {
             for (i = 0; i < IP_ADDR_LEN; i++)
                 arp.ipAddr[i] = tmp_ipAddr[i];
+            
+            printf("ETH0 IP now: ");
+            for (j = 0; j < IP_ADDR_LEN-1; j++)
+                printf("%d.",arp.ipAddr[i]);
+            printf("%d\n",arp.ipAddr[IP_ADDR_LEN-1]);
         }
         else
         {

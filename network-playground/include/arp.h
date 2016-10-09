@@ -83,7 +83,7 @@ struct arpTable
     semaphore           sema;                               /** ARP table semaphore */
     int                 freeEnt;                            /** Index to next free ARP entry */
     int                 dId;                                /** ARP daemon id */
-    char                *ipAddr;                            /** This host's IP address */
+    uchar               ipAddr[IP_ADDR_LEN];                /** This host's IP address */
     uchar               hwAddr[ETH_ADDR_LEN];               /** This host's mac address */
 };
 
