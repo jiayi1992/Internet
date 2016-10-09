@@ -21,8 +21,6 @@ syscall arpRecv(struct arpPkt *pkt)
 {
     if (pkt == NULL)
         return SYSERR;
-
-    printf("DEBUG: before arpRecv screen out\n");
     
     // Screen out packets with bad ARP headers
     if ( pkt->hwAddrLen != ETH_ADDR_LEN ||
@@ -30,8 +28,6 @@ syscall arpRecv(struct arpPkt *pkt)
          ntohs(pkt->hwType) != ARP_HWTYPE_ETHERNET ||
          ntohs(pkt->prType) != ARP_PRTYPE_IPv4 )
         return SYSERR;
-    
-    printf("DEBUG: after arpRecv screen out\n");
     
     switch(ntohs(pkt->op))
     {

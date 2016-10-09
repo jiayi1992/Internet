@@ -94,11 +94,14 @@ void arpDaemon(void)
     {
         read(ETH0, (void *) &packet, PKTSZ);
         
+        printf("DEBUG: ARP daemon 1\n");
         egram = (struct ethergram *) packet;
         
+        printf("DEBUG: ARP daemon 2\n");
         if(ntohs(egram->type) != ETYPE_ARP)
             continue;
         
+        printf("DEBUG: ARP daemon 3\n");
         arpRecv((struct arpPkt *) &egram->data);
     }
     
