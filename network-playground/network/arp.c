@@ -111,7 +111,7 @@ void arpDaemon(void)
             // Print dest hw addr
             for (j = ETH_ADDR_LEN + IP_ADDR_LEN; j < IP_ADDR_LEN + ETH_ADDR_LEN*2 - 1; j++)
                 printf("%x:",arpP->addrs[j]);
-            printf("%x\n",arpP->addrs[IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1]);
+            printf("%x\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN*2 - 1]);
             
             // Print dest protocol addr
             for (j = ETH_ADDR_LEN*2 + IP_ADDR_LEN; j < IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1; j++)
@@ -138,7 +138,7 @@ void arpDaemon(void)
             // Print dest hw addr
             for (j = ETH_ADDR_LEN + IP_ADDR_LEN; j < IP_ADDR_LEN + ETH_ADDR_LEN*2 - 1; j++)
                 printf("%x:",arpP->addrs[j]);
-            printf("%x\n",arpP->addrs[IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1]);
+            printf("%x\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN*2 - 1]);
             
             // Print dest protocol addr
             for (j = ETH_ADDR_LEN*2 + IP_ADDR_LEN; j < IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1; j++)
