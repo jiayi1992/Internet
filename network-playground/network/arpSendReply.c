@@ -47,7 +47,7 @@ syscall arpSendReply(struct arpPkt *recvdPkt)
     arpP->prType = htons(ARP_PRTYPE_IPv4);
     arpP->hwAddrLen = ETH_ADDR_LEN;
     arpP->prAddrLen = IP_ADDR_LEN;
-    arpP->op = htons(ARP_OP_RQST);
+    arpP->op = htons(ARP_OP_REPLY);
     
     /* Set up Arp addresses */
     
