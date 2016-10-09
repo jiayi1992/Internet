@@ -104,7 +104,7 @@ void arpDaemon(void)
             continue;
         
         printf("DEBUG: ARP daemon 3\n");
-        arpRecv((struct arpPkt *) &egram->data);
+        //arpRecv((struct arpPkt *) &egram->data);
     }
     
     return;
