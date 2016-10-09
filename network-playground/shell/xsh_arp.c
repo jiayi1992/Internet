@@ -171,6 +171,9 @@ int arpSend(uchar *ipAddr)
 	bob = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &ethaddr, 0);
 	
 	for (i = 0; i < ETH_ADDR_LEN; i++)
+		print("%x:",ethaddr[i]);
+	
+	for (i = 0; i < ETH_ADDR_LEN; i++)
 		egram->src[i] = htons(ethaddr[i]);
 	
 	egram->type = htons(ETYPE_ARP);
