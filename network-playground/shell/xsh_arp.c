@@ -123,7 +123,7 @@ command xsh_arp(int nargs, char *args[])
             return SYSERR;
         }
     }
-	/*********************************************************/
+    /*********************************************************/
     /** ARP command testing area for send a request**/
     /*********************************************************/
     else if (strcmp("-rq",args[1]) == 0)
@@ -152,94 +152,64 @@ command xsh_arp(int nargs, char *args[])
 
 int arpSend(uchar *ipAddr)
 {
-	int i;
-	struct ethergram *egram = NULL;
-	struct arpPkt *arpP = NULL;
+    int i;
+    struct ethergram *egram = NULL;
+    struct arpPkt *arpP = NULL;
     char buf[PKTSZ];
-	char *hostIp;
-	int bob;
-	uchar ethaddr[ETH_ADDR_LEN];
-	
-	// Get the host ip addr
-	hostIp = nvramGet("lan_ipaddr\0");	
-	
-	egram = (struct ethergram *) buf;
+    char *hostIp;
+    int bob;
+    uchar ethaddr[ETH_ADDR_LEN];
+    
+    // Get the host ip addr
+    hostIp = nvramGet("lan_ipaddr\0");    
+    
+    egram = (struct ethergram *) buf;
 
-	for (i = 0; i < ETH_ADDR_LEN; i++)
-		egram->dst[i] = 0xFF;
-	
-	bob = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &ethaddr, 0);
-	
-	for (i = 0; i < ETH_ADDR_LEN; i++)
-		printf("%x:",ethaddr[i]);
-	printf("\n");
-	
-/*	
-	for (i = 0; i < ETH_ADDR_LEN; i++)
-		egram->src[i] = htons(ethaddr[i]);
-	
-	egram->type = htons(ETYPE_ARP);
-	
-	arpP = (struct arpPkt *) &egram->data;
-	
-	arpP->hwType = htons(ARP_HWTYPE_ETHERNET);
-	arpP->prType = htons(ARP_PRTYPE_IPv4);
-	arpP->hwAddrLen = htons(ETH_ADDR_LEN);
-	arpP->prAddrLen = htons(IP_ADDR_LEN);
-	arpP->op = htons(ARP_OP_RQST);
-	
-	// Source hw addr
-	for (i = 0; i < ETH_ADDR_LEN; i++)
-		arpP->addrs[i] = htons(ethaddr[i]);
-	
-	// Source protocol addr
-	for (i = ETH_ADDR_LEN; i < ETH_ADDR_LEN + IP_ADDR_LEN; i++)
-		arpP->addrs[i] = htons(hostIp[i]);
-	
-	// Dest hw addr
-	for (i = ETH_ADDR_LEN + IP_ADDR_LEN; i < ETH_ADDR_LEN*2 + IP_ADDR_LEN; i++)
-		arpP->addrs[i] = 0xFF;
-	
-	// Dest protocol addr
-	for (i = ETH_ADDR_LEN*2 + IP_ADDR_LEN; i < ETH_ADDR_LEN*2 + IP_ADDR_LEN*2; i++)
-		arpP->addrs[i] = htons(ipAddr[i]);
-	*/
-	for (i = 0; i < ETH_ADDR_LEN; i++)
-		egram->src[i] = ethaddr[i];
-	
-	egram->type = htons(ETYPE_ARP);
-	
-	arpP = (struct arpPkt *) &egram->data;
-	
-	arpP->hwType = htons(ARP_HWTYPE_ETHERNET);
-	arpP->prType = htons(ARP_PRTYPE_IPv4);
-	arpP->hwAddrLen = ETH_ADDR_LEN;
-	arpP->prAddrLen = IP_ADDR_LEN;
-	arpP->op = htons(ARP_OP_RQST);
-	
-	// Source hw addr
-	for (i = 0; i < ETH_ADDR_LEN; i++)
-		arpP->addrs[i] = ethaddr[i];
-	
-	// Source protocol addr
-	for (i = ETH_ADDR_LEN; i < ETH_ADDR_LEN + IP_ADDR_LEN; i++)
-		arpP->addrs[i] = hostIp[i];
-	
-	// Dest hw addr
-	for (i = ETH_ADDR_LEN + IP_ADDR_LEN; i < ETH_ADDR_LEN*2 + IP_ADDR_LEN; i++)
-		arpP->addrs[i] = 0xFF;
-	
-	// Dest protocol addr
-	for (i = ETH_ADDR_LEN*2 + IP_ADDR_LEN; i < ETH_ADDR_LEN*2 + IP_ADDR_LEN*2; i++)
-		arpP->addrs[i] = ipAddr[i];
-	
+    for (i = 0; i < ETH_ADDR_LEN; i++)
+        egram->dst[i] = 0xFF;
+    
+    bob = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &ethaddr, 0);
+    
+    for (i = 0; i < ETH_ADDR_LEN; i++)
+        printf("%x:",ethaddr[i]);
+    printf("\n");
+    
+    for (i = 0; i < ETH_ADDR_LEN; i++)
+        egram->src[i] = ethaddr[i];
+    
+    egram->type = htons(ETYPE_ARP);
+    
+    arpP = (struct arpPkt *) &egram->data;
+    
+    arpP->hwType = htons(ARP_HWTYPE_ETHERNET);
+    arpP->prType = htons(ARP_PRTYPE_IPv4);
+    arpP->hwAddrLen = ETH_ADDR_LEN;
+    arpP->prAddrLen = IP_ADDR_LEN;
+    arpP->op = htons(ARP_OP_RQST);
+    
+    // Source hw addr
+    for (i = 0; i < ETH_ADDR_LEN; i++)
+        arpP->addrs[i + ARP_SHA_OFFSET] = ethaddr[i];
+    
+    // Source protocol addr
+    for (i = 0; i < IP_ADDR_LEN; i++)
+        arpP->addrs[i + ARP_SPA_OFFSET] = hostIp[i];
+    
+    // Dest hw addr
+    for (i = 0; i < ETH_ADDR_LEN; i++)
+        arpP->addrs[i + ARP_DHA_OFFSET] = 0xFF;
+    
+    // Dest protocol addr
+    for (i = 0; i < IP_ADDR_LEN; i++)
+        arpP->addrs[i + ARP_DPA_OFFSET] = ipAddr[i];
+    
     i = write(ETH0, (uchar *)buf, PKTSZ);
 
-	if(i != SYSERR){
-		printf("Bytes sent: %d\n",i);
-	}else{
-		printf("error");
-	}
+    if(i != SYSERR){
+        printf("Bytes sent: %d\n",i);
+    }else{
+        printf("error");
+    }
     
     return OK;
 }

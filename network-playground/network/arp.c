@@ -101,22 +101,22 @@ void arpDaemon(void)
             // Print source mac addr
             for (j = 0; j < ETH_ADDR_LEN-1; j++)
                 printf("%x:",arpP->addrs[j]);
-            printf("%x\n",arpP->addrs[ETH_ADDR_LEN - 1]);
+            printf("%x\n",arpP->addrs[ARP_SPA_OFFSET - 1]);
             
             // Print source protocol addr
-            for (j = ETH_ADDR_LEN; j < IP_ADDR_LEN + ETH_ADDR_LEN - 1; j++)
+            for (j = 0; j < IP_ADDR_LEN - 1; j++)
                 printf("%d.",arpP->addrs[j]);
-            printf("%d\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN - 1]);
+            printf("%d\n",arpP->addrs[ARP_DHA_OFFSET - 1]);
             
             // Print dest hw addr
-            for (j = ETH_ADDR_LEN + IP_ADDR_LEN; j < IP_ADDR_LEN + ETH_ADDR_LEN*2 - 1; j++)
+            for (j = 0; j < ETH_ADDR_LEN - 1; j++)
                 printf("%x:",arpP->addrs[j]);
-            printf("%x\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN*2 - 1]);
+            printf("%x\n",arpP->addrs[ARP_DPA_OFFSET - 1]);
             
             // Print dest protocol addr
-            for (j = ETH_ADDR_LEN*2 + IP_ADDR_LEN; j < IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1; j++)
+            for (j = 0; j < IP_ADDR_LEN - 1; j++)
                 printf("%d.",arpP->addrs[j]);
-            printf("%d\n",arpP->addrs[IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1]);
+            printf("%d\n",arpP->addrs[ARP_ADDR_END_OFFSET - 1]);
             
         }
         // If the ARP packet is a reply
@@ -128,22 +128,22 @@ void arpDaemon(void)
             // Print source mac addr
             for (j = 0; j < ETH_ADDR_LEN-1; j++)
                 printf("%x:",arpP->addrs[j]);
-            printf("%x\n",arpP->addrs[ETH_ADDR_LEN - 1]);
+            printf("%x\n",arpP->addrs[ARP_SPA_OFFSET - 1]);
             
             // Print source protocol addr
-            for (j = ETH_ADDR_LEN; j < IP_ADDR_LEN + ETH_ADDR_LEN - 1; j++)
+            for (j = 0; j < IP_ADDR_LEN - 1; j++)
                 printf("%d.",arpP->addrs[j]);
-            printf("%d\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN - 1]);
+            printf("%d\n",arpP->addrs[ARP_DHA_OFFSET - 1]);
             
             // Print dest hw addr
-            for (j = ETH_ADDR_LEN + IP_ADDR_LEN; j < IP_ADDR_LEN + ETH_ADDR_LEN*2 - 1; j++)
+            for (j = 0; j < ETH_ADDR_LEN - 1; j++)
                 printf("%x:",arpP->addrs[j]);
-            printf("%x\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN*2 - 1]);
+            printf("%x\n",arpP->addrs[ARP_DPA_OFFSET - 1]);
             
             // Print dest protocol addr
-            for (j = ETH_ADDR_LEN*2 + IP_ADDR_LEN; j < IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1; j++)
+            for (j = 0; j < IP_ADDR_LEN - 1; j++)
                 printf("%d.",arpP->addrs[j]);
-            printf("%d\n",arpP->addrs[IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1]);
+            printf("%d\n",arpP->addrs[ARP_ADDR_END_OFFSET - 1]);
             
             //signal(arp_tsema);
         }

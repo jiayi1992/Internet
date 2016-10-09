@@ -29,6 +29,13 @@
 #define ARP_ENT_VALID   1   /** Entry has an IP addr and mac */
 #define ARP_ENT_IP_ONLY 2   /** Entry has an IP addr but no mac */
 
+/* Arp address offsets */
+#define ARP_SHA_OFFSET 0
+#define ARP_SPA_OFFSET ETH_ADDR_LEN
+#define ARP_DHA_OFFSET ETH_ADDR_LEN + IP_ADDR_LEN
+#define ARP_DPA_OFFSET ETH_ADDR_LEN*2 + IP_ADDR_LEN
+#define ARP_ADDR_END_OFFSET ETH_ADDR_LEN*2 + IP_ADDR_LEN*2
+
 /** ARP table entry contents */
 struct arpEntry
 {
