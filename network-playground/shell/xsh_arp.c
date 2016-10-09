@@ -197,7 +197,7 @@ int arpSend(uchar *ipAddr)
     
     // Dest hw addr
     for (i = 0; i < ETH_ADDR_LEN; i++)
-        arpP->addrs[i + ARP_DHA_OFFSET] = 0xFF;
+        arpP->addrs[i + ARP_DHA_OFFSET] = 0x00;
     
     // Dest protocol addr
     for (i = 0; i < IP_ADDR_LEN; i++)
