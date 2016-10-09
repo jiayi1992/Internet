@@ -92,6 +92,7 @@ void arpDaemon(void)
     
     while(1)
     {
+        printf("DEBUG: ARP daemon 0\n");
         read(ETH0, (void *) &packet, PKTSZ);
         
         printf("DEBUG: ARP daemon 1\n");
