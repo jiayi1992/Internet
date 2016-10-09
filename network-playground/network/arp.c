@@ -127,9 +127,9 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
     if (ipAddr == NULL || hwAddr == NULL)
         return SYSERR;
     
-    entID = arpFindEntry(ipAddr);
-    
     wait(arp.sema);
+    
+    entID = arpFindEntry(ipAddr);
     
     if (entID == ARP_ENT_NOT_FOUND)
     {
@@ -159,7 +159,7 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
         // Replace the first element next time
         if (i == ARP_TABLE_LEN)
         {
-            arp.tbl[0].osFlags == ARP_ENT_INVALID;
+            arp.tbl[0].osFlags = ARP_ENT_INVALID;
             arp.freeEnt = 0;
         }
     }
@@ -189,7 +189,6 @@ int arpFindEntry(uchar *ipAddr)
     if (ipAddr == NULL)
         return ARP_ENT_NOT_FOUND;
     
-    wait(arp.sema);
     for (i = 0; i < ARP_TABLE_LEN; i++)
     {
         // Skip invalid entries
@@ -200,7 +199,7 @@ int arpFindEntry(uchar *ipAddr)
         for(j = 0; j < IP_ADDR_LEN; j++)
         {
             // Stop checking if there is a difference
-            if (tmp_ipAddr[j] != arp.tbl[i].ipAddr[j])
+            if (ipAddr[j] != arp.tbl[i].ipAddr[j])
                 break;
         }
         
@@ -211,6 +210,5 @@ int arpFindEntry(uchar *ipAddr)
             return i;
         }
     }
-    signal(arp.sema);
     return ARP_ENT_NOT_FOUND;
 }
