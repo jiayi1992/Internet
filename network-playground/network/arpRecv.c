@@ -42,8 +42,8 @@ syscall arpRecv(struct arpPkt *pkt)
         
         // If the destination protocol address of the packet
         // is equal to our ip address, then send an arp reply
-        //if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET],&arp.ipAddr) )
-        //    arpSendReply(pkt);
+        if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET], &arp.ipAddr) )
+            arpSendReply(pkt);
         break;
         
     /*************************/
