@@ -215,7 +215,7 @@ int arpSend(uchar *ipAddr)
 	arpP->prType = htons(ARP_PRTYPE_IPv4);
 	arpP->hwAddrLen = htons(ETH_ADDR_LEN);
 	arpP->prAddrLen = htons(IP_ADDR_LEN);
-	print("IP addr len: %d\n", htons(IP_ADDR_LEN));
+	printf("IP addr len: %d\n", htons(IP_ADDR_LEN));
 	arpP->op = htons(ARP_OP_RQST);
 	
 	// Source hw addr
