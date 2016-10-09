@@ -43,7 +43,7 @@ syscall arpInit(void)
     arpInitDebug();
     
     /* Start arp daemon process */
-    arp.dId = create((void *)arpDaemon, INITSTK + PKTSZ*2, 3, "ARP_DAEMON", 0);
+    arp.dId = create((void *)arpDaemon, INITSTK, 3, "ARP_DAEMON", 0);
 
     ready(arp.dId, 1);
     
