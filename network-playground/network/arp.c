@@ -73,6 +73,7 @@ void arpInitDebug(void)
             arp.tbl[i].hwAddr[j] = i;
     }    
     
+    printf("sizeof(ulong) = %d; sizeof(uint) = %d\n", sizeof(ulong), sizeof(uint));
     printf("DEBUG: ARP table contents initialized\n");
 }
 
@@ -190,6 +191,35 @@ syscall arpRecv(struct arpPkt *pkt)
         //wait(arp.sema);
         printf("Got ARP Request\n");
         
+        
+        /*
+        Pseudo code:
+        
+        We could also check if the address lengths are correct for sanity too
+        (maybe before switch case?)
+        
+        Put the requester's info into the arp table?
+        
+        If requester is looking for our mac address
+            send the requester a reply with our mac address and ip addr
+            
+        else sender is looking for someone else's mac address
+            if we can find a valid arp entry with that someone's ip, send a packet with its mac
+            else, don't send anything
+            
+        Send reply to requester:
+            Eth Dest mac = requester's
+            Eth Src mac = ours
+            
+            *Arp src mac = Broad cast address (make sure this is a valid broadcast address)
+            *Arp src ip addr = what the requester is requesting (could be us or someone elses?)
+            Arp dest mac = requester's
+            Arp dest ip = requester's
+            
+            * these fields are variable depending on if the requestor is looking 
+              for our mac or someone else's
+        */
+        
         /* Print dest mac addr (from ethergram)
         for (j = 0; j < ETH_ADDR_LEN-1; j++)
             printf("%x:",egram->dst[j]);
@@ -224,6 +254,27 @@ syscall arpRecv(struct arpPkt *pkt)
     case ARP_OP_REPLY:
         //wait(arp.sema);
         printf("ARP reply\n");
+        
+        /*
+        Pseudo code:
+        
+        We could also check if the address lengths are correct for sanity too 
+        (maybe before switch case?)
+        
+        If our mac and ip addr match the arp dest addresses:
+            Add the src mac and ip addr to the arp table
+            
+        Reply sent to us:
+            Eth Dest mac = ours
+            Eth Src mac = replier
+            
+            *Arp src mac = replier's or the requested mac addr
+            *Arp src ip addr = replier's or the requested ip addr
+            Arp dest mac = ours
+            Arp dest ip = our (Do we allow this to be incorrect?)
+            
+            * these fields are the ones that are important
+        */
         
         /* Print dest mac addr (from ethergram)
         for (j = 0; j < ETH_ADDR_LEN-1; j++)
