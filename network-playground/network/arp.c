@@ -27,6 +27,16 @@ syscall arpInit(void)
     // Get this machine's ip addr
     arp.ipAddr = nvramGet("lan_ipaddr\0");
     
+    for (j = 0; j < IP_ADDR_LEN-1; j++)
+        printf("%d.",arp.ipAddr[j]);
+    printf("%d\n",arp.ipAddr[IP_ADDR_LEN-1]);
+    
+    arp.ipAddr = nvramGet("lan_ipaddr");
+    
+    for (j = 0; j < IP_ADDR_LEN-1; j++)
+        printf("%d.",arp.ipAddr[j]);
+    printf("%d\n",arp.ipAddr[IP_ADDR_LEN-1]);
+    
     // Get this machine's mac addr
     i = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &arp.hwAddr, 0);
     printf("DEBUG: etherControl result %d\n", i);

@@ -31,7 +31,7 @@ syscall arpRecv(struct arpPkt *pkt)
          ntohs(pkt->prType) != ARP_PRTYPE_IPv4 )
         return SYSERR;
   
-    arpRecvDebug(pkt);
+    //arpRecvDebug(pkt);
     
     // Screen out packets not addressed to us
     eqFlag = OK;
