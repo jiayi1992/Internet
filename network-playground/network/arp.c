@@ -31,18 +31,15 @@ syscall arpInit(void)
         printf("%d.",arp.ipAddr[i]);
     printf("%d\n",arp.ipAddr[IP_ADDR_LEN-1]);
     
-    arp.ipAddr = nvramGet("ipaddr");
-    
-    for (i = 0; i < IP_ADDR_LEN-1; i++)
-        printf("%d.",arp.ipAddr[i]);
-    printf("%d\n",arp.ipAddr[IP_ADDR_LEN-1]);
-    
     // Get this machine's mac addr
     i = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &arp.hwAddr, 0);
     printf("DEBUG: etherControl result %d\n", i);
     
     /* Initialize arp semaphore*/ 
     arp.sema = semcreate(1);
+    
+    /* Initialize arp table free entry index*/ 
+    arp.freeEnt = 0;
     
     /* Initialize arp table contents to be invalid/empty */
     for (i = 0; i < ARP_TABLE_LEN; i++)
@@ -70,6 +67,7 @@ void arpInitDebug(void)
 {
     int i,j;
     
+    /*
     // This adds 3 fake ip to mac mappings in the ARP table    
     for (i = 0; i < 3; i++)
     {
@@ -82,7 +80,7 @@ void arpInitDebug(void)
         // Make up a mac addr
         for (j = 0; j < ETH_ADDR_LEN; j++)
             arp.tbl[i].hwAddr[j] = i;
-    }    
+    }*/
     
     printf("DEBUG: ARP table contents initialized\n");
 }
@@ -124,24 +122,95 @@ void arpDaemon(void)
  */
 syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
 {
+    int i, entID;
+    
     if (ipAddr == NULL || hwAddr == NULL)
         return SYSERR;
     
+    entID = arpFindEntry(ipAddr);
     
+    wait(arp.sema);
+    
+    if (entID == ARP_ENT_NOT_FOUND)
+    {
+        entID = arp.freeEnt;
+        
+        // Set IP Address of entry
+        for (i = 0; i < IP_ADDR_LEN; i++)
+            arp.tbl[entID].ipAddr[i] = ipAddr[i];
+        
+        // Set mac address of entry
+        for (i = 0; i < ETH_ADDR_LEN; i++)
+            arp.tbl[entID].hwAddr[i] = hwAddr[i];
+        
+        arp.tbl[entID].osFlags = ARP_ENT_VALID;
+        
+        for (i = 0; i < ARP_TABLE_LEN; i++)
+        {
+            // Find an invalid entry to be the next freeEnt
+            if (arp.tbl[i].osFlags == ARP_ENT_INVALID)
+            {
+                arp.freeEnt = i;
+                break;
+            }
+        }
+        
+        // TODO: Implement a timer on each entry in the arp table
+        // Replace the first element next time
+        if (i == ARP_TABLE_LEN)
+        {
+            arp.tbl[0].osFlags == ARP_ENT_INVALID;
+            arp.freeEnt = 0;
+        }
+    }
+    // Entry has an ip address, but no mac address
+    else if (arp.tbl[entID].osFlags & ARP_ENT_IP_ONLY)
+    {
+        // Set mac address of entry
+        for (i = 0; i < ETH_ADDR_LEN; i++)
+            arp.tbl[entID].hwAddr[i] = hwAddr[i];
+        
+        arp.tbl[entID].osFlags = ARP_ENT_VALID;
+    }
+    signal(arp.sema);
     return OK;
 }
 
 
 /**
- * Find the arpEntryID of the entry we are looking for
+ * Find the index of the entry we are looking for
  * @param ipAddr IPv4 address of entry we are looking for
  * @return OK for success, SYSERR for syntax error
  */
-arpEntryID arpFindEntry(uchar *ipAddr)
+int arpFindEntry(uchar *ipAddr)
 {
+    int i, j;
+    
     if (ipAddr == NULL)
         return ARP_ENT_NOT_FOUND;
     
-    
-    return 0;
+    wait(arp.sema);
+    for (i = 0; i < ARP_TABLE_LEN; i++)
+    {
+        // Skip invalid entries
+        if (arp.tbl[i].osFlags == ARP_ENT_INVALID)
+            continue;
+        
+        // Compare addresses
+        for(j = 0; j < IP_ADDR_LEN; j++)
+        {
+            // Stop checking if there is a difference
+            if (tmp_ipAddr[j] != arp.tbl[i].ipAddr[j])
+                break;
+        }
+        
+        // The address is the same, return the index
+        if (j == IP_ADDR_LEN)
+        {
+            signal(arp.sema);
+            return i;
+        }
+    }
+    signal(arp.sema);
+    return ARP_ENT_NOT_FOUND;
 }

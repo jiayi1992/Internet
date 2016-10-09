@@ -38,7 +38,8 @@ command xsh_arp(int nargs, char *args[])
         // Print helper info about this shell command
         printf("arp [-a|-d] [IP address]\n");
         printf("    -d <IP ADDR>  delete entry from arp table with this IP addr\n");
-        printf("    -a <IP ADDR>  resolve and add entry to arp table with this IP addr\n");
+        printf("    -s <IP ADDR>  change this host's IP addr to <IP ADDR>\n");
+        //printf("    -a <IP ADDR>  resolve and add entry to arp table with this IP addr\n");
         printf("           NOTE: arp table is displayed if no arguments are given\n");
         return OK;
     }
@@ -65,10 +66,10 @@ command xsh_arp(int nargs, char *args[])
                         break;
                 }
                 
-                // The address is the same, then invalidate the entry
+                // The address is the same, then invalidate its mac
                 if (j == IP_ADDR_LEN)
                 {
-                    arp.tbl[i].osFlags = ARP_ENT_INVALID;
+                    arp.tbl[i].osFlags = ARP_ENT_IP_ONLY;
                     break;
                 }
             }
@@ -81,14 +82,14 @@ command xsh_arp(int nargs, char *args[])
         }
     }
     /*********************************************************/
-    /** Resolve an IP to a mac address and add to ARP table **/
+    /** Set this host's ip address                          **/
     /*********************************************************/
-    else if (strcmp("-a",args[1]) == 0)
+    else if (strcmp("-s",args[1]) == 0)
     {
         if (OK == dot2ip(args[2],tmp_ipAddr))
         {
-            // TODO resolve ip and add to arp table
-            // return arpResolve(...);
+            for (i = 0; i < IP_ADDR_LEN; i++)
+                arp.ipAddr[i] = tmp_ipAddr[i];
         }
         else
         {
@@ -97,7 +98,7 @@ command xsh_arp(int nargs, char *args[])
         }
     }
     /*********************************************************/
-    /** ARP command testing area for send a request**/
+    /** ARP command testing area for sending a request      **/
     /*********************************************************/
     else if (strcmp("-rq",args[1]) == 0)
     {

@@ -81,12 +81,11 @@ struct arpTable
 {
     struct arpEntry     tbl[ARP_TABLE_LEN];                 /** ARP table */
     semaphore           sema;                               /** ARP table semaphore */
+    int                 freeEnt;                            /** Index to next free ARP entry */
     int                 dId;                                /** ARP daemon id */
     char                *ipAddr;                            /** This host's IP address */
     uchar               hwAddr[ETH_ADDR_LEN];               /** This host's mac address */
 };
-
-typedef ushort arpEntryID;
 
 extern struct arpTable arp;
 
@@ -106,6 +105,6 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr);
 
 /** ARP Table manipulation **/
 syscall arpAddEntry(uchar *ipAddr, uchar *hwAddr);
-arpEntryID arpFindEntry(uchar *ipAddr);
+int arpFindEntry(uchar *ipAddr);
 
 #endif                          /* _ARP_H_ *//**< procedure*/
