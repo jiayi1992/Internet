@@ -100,22 +100,22 @@ void arpDaemon(void)
             
             // Print source mac addr
             for (j = 0; j < ETH_ADDR_LEN-1; j++)
-                printf("%x:",arpP->addrs[j]);
+                printf("%x:",arpP->addrs[j + ARP_SHA_OFFSET]);
             printf("%x\n",arpP->addrs[ARP_SPA_OFFSET - 1]);
             
             // Print source protocol addr
             for (j = 0; j < IP_ADDR_LEN - 1; j++)
-                printf("%d.",arpP->addrs[j]);
+                printf("%d.",arpP->addrs[j + ARP_SPA_OFFSET]);
             printf("%d\n",arpP->addrs[ARP_DHA_OFFSET - 1]);
             
             // Print dest hw addr
             for (j = 0; j < ETH_ADDR_LEN - 1; j++)
-                printf("%x:",arpP->addrs[j]);
+                printf("%x:",arpP->addrs[j + ARP_DHA_OFFSET]);
             printf("%x\n",arpP->addrs[ARP_DPA_OFFSET - 1]);
             
             // Print dest protocol addr
             for (j = 0; j < IP_ADDR_LEN - 1; j++)
-                printf("%d.",arpP->addrs[j]);
+                printf("%d.",arpP->addrs[j + ARP_DPA_OFFSET]);
             printf("%d\n",arpP->addrs[ARP_ADDR_END_OFFSET - 1]);
             
         }
@@ -127,22 +127,22 @@ void arpDaemon(void)
             
             // Print source mac addr
             for (j = 0; j < ETH_ADDR_LEN-1; j++)
-                printf("%x:",arpP->addrs[j]);
+                printf("%x:",arpP->addrs[j + ARP_SHA_OFFSET]);
             printf("%x\n",arpP->addrs[ARP_SPA_OFFSET - 1]);
             
             // Print source protocol addr
             for (j = 0; j < IP_ADDR_LEN - 1; j++)
-                printf("%d.",arpP->addrs[j]);
+                printf("%d.",arpP->addrs[j + ARP_SPA_OFFSET]);
             printf("%d\n",arpP->addrs[ARP_DHA_OFFSET - 1]);
             
             // Print dest hw addr
             for (j = 0; j < ETH_ADDR_LEN - 1; j++)
-                printf("%x:",arpP->addrs[j]);
+                printf("%x:",arpP->addrs[j + ARP_DHA_OFFSET]);
             printf("%x\n",arpP->addrs[ARP_DPA_OFFSET - 1]);
             
             // Print dest protocol addr
             for (j = 0; j < IP_ADDR_LEN - 1; j++)
-                printf("%d.",arpP->addrs[j]);
+                printf("%d.",arpP->addrs[j + ARP_DPA_OFFSET]);
             printf("%d\n",arpP->addrs[ARP_ADDR_END_OFFSET - 1]);
             
             //signal(arp_tsema);
