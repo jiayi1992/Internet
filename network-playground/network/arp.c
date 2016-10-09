@@ -88,6 +88,8 @@ void arpDaemon(void)
     // Zero out the packet buffer.
     bzero(packet, PKTSZ);
     
+    printf("DEBUG: ARP daemon initalized\n");
+    
     while(1)
     {
         read(ETH0, (void *) &packet, PKTSZ);
