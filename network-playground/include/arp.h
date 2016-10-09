@@ -76,9 +76,16 @@ struct arpPkt
     uchar addrs[1]; 
 };
 
-extern struct arpEntry arp_t[ARP_TABLE_LEN];    /** ARP table */
-extern semaphore arp_tsema;                     /** ARP table semaphore */
-extern int       arpDaemonId;                   /** ARP daemon id */
+struct arpTable
+{
+    struct arpEntry     tbl[ARP_TABLE_LEN];                 /** ARP table */
+    semaphore           sema;                               /** ARP table semaphore */
+    int                 dId;                                /** ARP daemon id */
+    char                *ipAddr;                            /** This host's IP address */
+    uchar               hwAddr[ETH_ADDR_LEN];               /** This host's mac address */
+};
+
+extern struct arpTable arp;
 
 /** ARP initialization */
 syscall arpInit(void);
@@ -86,8 +93,9 @@ syscall arpInit(void);
 /** ARP daemon process */
 void arpDaemon(void);
 
+syscall arpSendRequest(uchar *ipAddr);
+
 //syscall arpRecv(struct packet *);
-//syscall arpSendRqst(struct arpEntry *);
 //syscall arpResolve(uchar *);
 
 //syscall arpSendReply(struct packet *);
