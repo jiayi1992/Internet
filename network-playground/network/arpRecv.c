@@ -38,12 +38,12 @@ syscall arpRecvLOL(struct arpPkt *pkt)
         printf("Got ARP request\n");
         /* TODO: Put the requester's info into the arp table? */
         
-        arpRecvDebug(pkt);
+        //arpRecvDebug(pkt);
         
         // If the destination protocol address of the packet
         // is equal to our ip address, then send an arp reply
-        if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET],&arp.ipAddr) )
-            arpSendReply(pkt);
+        //if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET],&arp.ipAddr) )
+        //    arpSendReply(pkt);
         break;
         
     /*************************/
@@ -52,11 +52,11 @@ syscall arpRecvLOL(struct arpPkt *pkt)
     case ARP_OP_REPLY:
         printf("Got ARP reply\n");
         
-        arpRecvDebug(pkt);
+        //arpRecvDebug(pkt);
         
         // If they are replying to our request, then add their info to our ARP table
-        if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET],&arp.ipAddr) )
-            arpAddEntry(&pkt->addrs[ARP_SPA_OFFSET], &pkt->addrs[ARP_SHA_OFFSET]);
+        //if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET],&arp.ipAddr) )
+        //    arpAddEntry(&pkt->addrs[ARP_SPA_OFFSET], &pkt->addrs[ARP_SHA_OFFSET]);
         break;
         
     default:
