@@ -83,16 +83,12 @@ void arpDaemon(void)
 
     while(1)
     {
-        //printf("Bytes read: %d\n", );
         bytes = read(ETH0, (void *) &packet, PKTSZ);
-        
         
         egram = (struct ethergram *) packet;
         
         if(ntohs(egram->type) != ETYPE_ARP)
         {
-            //sleep(1);
-            //printf("Pkt type: %d; Bytes read: %d\n", ntohs(egram->type),bytes);
             continue;
         }
         arpP = (struct arpPkt *) &egram->data;
@@ -112,6 +108,16 @@ void arpDaemon(void)
                 printf("%d.",arpP->addrs[j]);
             printf("%d\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN - 1]);
             
+            // Print dest hw addr
+            for (j = ETH_ADDR_LEN + IP_ADDR_LEN; j < IP_ADDR_LEN + ETH_ADDR_LEN*2 - 1; j++)
+                printf("%x:",arpP->addrs[j]);
+            printf("%x\n",arpP->addrs[IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1]);
+            
+            // Print dest protocol addr
+            for (j = ETH_ADDR_LEN*2 + IP_ADDR_LEN; j < IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1; j++)
+                printf("%d.",arpP->addrs[j]);
+            printf("%d\n",arpP->addrs[IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1]);
+            
         }
         // If the ARP packet is a reply
         else if (ntohs(arpP->op) == ARP_OP_REPLY)
@@ -129,7 +135,16 @@ void arpDaemon(void)
                 printf("%d.",arpP->addrs[j]);
             printf("%d\n",arpP->addrs[IP_ADDR_LEN + ETH_ADDR_LEN - 1]);
             
-            //sleep(1);
+            // Print dest hw addr
+            for (j = ETH_ADDR_LEN + IP_ADDR_LEN; j < IP_ADDR_LEN + ETH_ADDR_LEN*2 - 1; j++)
+                printf("%x:",arpP->addrs[j]);
+            printf("%x\n",arpP->addrs[IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1]);
+            
+            // Print dest protocol addr
+            for (j = ETH_ADDR_LEN*2 + IP_ADDR_LEN; j < IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1; j++)
+                printf("%d.",arpP->addrs[j]);
+            printf("%d\n",arpP->addrs[IP_ADDR_LEN*2 + ETH_ADDR_LEN*2 - 1]);
+            
             //signal(arp_tsema);
         }
         else
