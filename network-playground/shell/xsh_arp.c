@@ -166,7 +166,7 @@ int arpSend(uchar *ipAddr)
     egram = (struct ethergram *) buf;
 
     for (i = 0; i < ETH_ADDR_LEN; i++)
-        egram->dst[i] = 0xFF;
+        egram->dst[i] = 0x00;
     
     bob = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &ethaddr, 0);
     
