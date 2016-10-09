@@ -73,7 +73,7 @@ void arpInitDebug(void)
             arp.tbl[i].hwAddr[j] = i;
     }    
     
-    printf("sizeof(ulong) = %d; sizeof(uint) = %d\n", sizeof(ulong), sizeof(uint));
+    printf("sizeof(ulong) = %d; sizeof(long long) = %d\n", sizeof(ulong), sizeof(long long));
     printf("DEBUG: ARP table contents initialized\n");
 }
 
