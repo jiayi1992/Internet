@@ -31,7 +31,7 @@ syscall arpInit(void)
         printf("%d.",arp.ipAddr[i]);
     printf("%d\n",arp.ipAddr[IP_ADDR_LEN-1]);
     
-    arp.ipAddr = nvramGet("lan_ipaddr");
+    arp.ipAddr = nvramGet("ipaddr");
     
     for (i = 0; i < IP_ADDR_LEN-1; i++)
         printf("%d.",arp.ipAddr[i]);
