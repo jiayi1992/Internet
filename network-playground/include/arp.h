@@ -89,7 +89,7 @@ struct arpTable
     uchar               hwAddr[ETH_ADDR_LEN];               /** This host's mac address */
 };
 
-typedef arpEntryID ushort;
+typedef ushort arpEntryID;
 
 extern struct arpTable arp;
 
