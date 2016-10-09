@@ -30,6 +30,8 @@ syscall arpRecv(struct arpPkt *pkt)
          ntohs(pkt->hwType) != ARP_HWTYPE_ETHERNET ||
          ntohs(pkt->prType) != ARP_PRTYPE_IPv4 )
         return SYSERR;
+  
+    arpRecvDebug(pkt);
     
     // Screen out packets not addressed to us
     eqFlag = OK;
@@ -54,7 +56,6 @@ syscall arpRecv(struct arpPkt *pkt)
         printf("Got ARP request\n");
         /* TODO: Put the requester's info into the arp table? */
         
-        arpRecvDebug(pkt);
         arpSendReply(pkt);
         break;
         
@@ -64,7 +65,6 @@ syscall arpRecv(struct arpPkt *pkt)
     case ARP_OP_REPLY:
         printf("Got ARP reply\n");
         
-        arpRecvDebug(pkt);
         arpAddEntry(&pkt->addrs[ARP_SPA_OFFSET], &pkt->addrs[ARP_SHA_OFFSET]);
         break;
         
