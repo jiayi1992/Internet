@@ -207,15 +207,16 @@ int arpSend(uchar *ipAddr)
 	for (i = 0; i < ETH_ADDR_LEN; i++)
 		egram->src[i] = ethaddr[i];
 	
-	egram->type = ETYPE_ARP;
+	egram->type = htons(ETYPE_ARP);
 	
 	arpP = (struct arpPkt *) &egram->data;
 	
-	arpP->hwType = ARP_HWTYPE_ETHERNET;
-	arpP->prType = ARP_PRTYPE_IPv4;
-	arpP->hwAddrLen = ETH_ADDR_LEN;
-	arpP->prAddrLen = IP_ADDR_LEN;
-	arpP->op = ARP_OP_RQST;
+	arpP->hwType = htons(ARP_HWTYPE_ETHERNET);
+	arpP->prType = htons(ARP_PRTYPE_IPv4);
+	arpP->hwAddrLen = htons(ETH_ADDR_LEN);
+	arpP->prAddrLen = htons(IP_ADDR_LEN);
+	print("IP addr len: %d\n", htons(IP_ADDR_LEN));
+	arpP->op = htons(ARP_OP_RQST);
 	
 	// Source hw addr
 	for (i = 0; i < ETH_ADDR_LEN; i++)
