@@ -205,7 +205,7 @@ int arpSend(uchar *ipAddr)
 		arpP->addrs[i] = htons(ipAddr[i]);
 	*/
 	for (i = 0; i < ETH_ADDR_LEN; i++)
-		egram->src[i] = ethaddr[i]
+		egram->src[i] = ethaddr[i];
 	
 	egram->type = ETYPE_ARP;
 	
