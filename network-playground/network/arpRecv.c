@@ -17,7 +17,7 @@ void arpRecvDebug(struct arpPkt *pkt);
  * @param pkt received ARP packet
  * @return OK for success, SYSERR for syntax error
  */
-syscall arpRecv(struct arpPkt *pkt)
+syscall arpRecvLOL(struct arpPkt *pkt)
 {
     if (pkt == NULL)
         return SYSERR;
