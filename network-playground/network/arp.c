@@ -28,7 +28,8 @@ syscall arpInit(void)
     arp.ipAddr = nvramGet("lan_ipaddr\0");
     
     // Get this machine's mac addr
-    etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &arp.hwAddr, 0);
+    i = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &arp.hwAddr, 0);
+    printf("DEBUG: etherControl result %d\n", i);
     
     /* Initialize arp semaphore*/ 
     arp.sema = semcreate(1);
@@ -43,7 +44,7 @@ syscall arpInit(void)
     arpInitDebug();
     
     /* Start arp daemon process */
-    arp.dId = create((void *)arpDaemon, INITSTK + PKTSZ, 3, "ARP_DAEMON", 0);
+    arp.dId = create((void *)arpDaemon, INITSTK, 3, "ARP_DAEMON", 0);
 
     ready(arp.dId, 1);
     
