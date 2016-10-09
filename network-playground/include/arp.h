@@ -40,6 +40,9 @@
 /* ARP packet size */
 #define ARP_PKTSIZE ETHER_MINPAYLOAD + ETH_HEADER_LEN
 
+/* IP Address equivalence */
+#define ipEq(addr1,addr2) (*((ulong*)addr1) == *((ulong*)addr2))
+
 /** ARP table entry contents */
 struct arpEntry
 {
@@ -98,9 +101,7 @@ void arpDaemon(void);
 
 /** ARP request, reply, and receive **/
 syscall arpSendRequest(uchar *);
-syscall arpSendReply(uchar *destIpAddr, 
-                     uchar *destHwAddr, 
-                     uchar *lookUpIpAddr);
+syscall arpSendReply(struct arpPkt *);
 syscall arpRecv(struct arpPkt *);
 
 /** Resolving mac address from an IP **/

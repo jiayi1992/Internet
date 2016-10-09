@@ -10,6 +10,7 @@
 #include <xinu.h>
 #include <arp.h>
 
+void arpRecvDebug(struct arpPkt *pkt);
 
 /**
  * Handle arp requests and replies
@@ -18,9 +19,14 @@
  */
 syscall arpRecv(struct arpPkt *pkt)
 {
-    int j;
-    
     if (pkt == NULL)
+        return SYSERR;
+
+    // Screen out packets with bad ARP headers
+    if ( pkt->hwAddrLen != ETH_ADDR_LEN ||
+         pkt->prAddrLen != IP_ADDR_LEN ||
+         ntohs(pkt->hwType) != ARP_HWTYPE_ETHERNET ||
+         ntohs(pkt->prType) != ARP_PRTYPE_IPv4 )
         return SYSERR;
  
     switch(ntohs(pkt->op))
@@ -29,121 +35,28 @@ syscall arpRecv(struct arpPkt *pkt)
     /** Handle ARP Request **/
     /*************************/
     case ARP_OP_RQST:
-        //wait(arp.sema);
-        printf("Got ARP Request\n");
+        printf("Got ARP request\n");
+        /* TODO: Put the requester's info into the arp table? */
         
+        arpRecvDebug(pkt);
         
-        /*
-        Pseudo code:
-        
-        We could also check if the address lengths are correct for sanity too
-        (maybe before switch case?)
-        
-        Put the requester's info into the arp table?
-        
-        If requester is looking for our mac address
-            send the requester a reply with our mac address and ip addr
-            
-        else sender is looking for someone else's mac address
-            if we can find a valid arp entry with that someone's ip, send a packet with its mac
-            else, don't send anything
-            
-        Send reply to requester:
-            Eth Dest mac = requester's
-            Eth Src mac = ours
-            
-            *Arp src mac = what the requester is requesting (could be us or someone elses?)
-            *Arp src ip addr = what the requester is requesting (could be us or someone elses?)
-            Arp dest mac = requester's
-            Arp dest ip = requester's
-            
-            * these fields are variable depending on if the requestor is looking 
-              for our mac or someone else's
-        */
-        
-        /* Print dest mac addr (from ethergram)
-        for (j = 0; j < ETH_ADDR_LEN-1; j++)
-            printf("%x:",egram->dst[j]);
-        printf("%x\n",egram->dst[ETH_ADDR_LEN - 1]);
-        */
-        
-        // Print source mac addr
-        for (j = 0; j < ETH_ADDR_LEN-1; j++)
-            printf("%x:",pkt->addrs[j + ARP_SHA_OFFSET]);
-        printf("%x\n",pkt->addrs[ARP_SPA_OFFSET - 1]);
-        
-        // Print source protocol addr
-        for (j = 0; j < IP_ADDR_LEN - 1; j++)
-            printf("%d.",pkt->addrs[j + ARP_SPA_OFFSET]);
-        printf("%d\n",pkt->addrs[ARP_DHA_OFFSET - 1]);
-        
-        // Print dest hw addr
-        for (j = 0; j < ETH_ADDR_LEN - 1; j++)
-            printf("%x:",pkt->addrs[j + ARP_DHA_OFFSET]);
-        printf("%x\n",pkt->addrs[ARP_DPA_OFFSET - 1]);
-        
-        // Print dest protocol addr
-        for (j = 0; j < IP_ADDR_LEN - 1; j++)
-            printf("%d.",pkt->addrs[j + ARP_DPA_OFFSET]);
-        printf("%d\n",pkt->addrs[ARP_ADDR_END_OFFSET - 1]);
-        //signal(arp.sema);
+        // If the destination protocol address of the packet
+        // is equal to our ip address, then send an arp reply
+        if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET],&arp.ipAddr) )
+            arpSendReply(pkt);
         break;
         
     /*************************/
     /** Handle ARP Reply **/
     /*************************/
     case ARP_OP_REPLY:
-        //wait(arp.sema);
-        printf("ARP reply\n");
+        printf("Got ARP reply\n");
         
-        /*
-        Pseudo code:
+        arpRecvDebug(pkt);
         
-        We could also check if the address lengths are correct for sanity too 
-        (maybe before switch case?)
-        
-        If our mac and ip addr match the arp dest addresses:
-            Add the src mac and ip addr to the arp table
-            
-        Reply sent to us:
-            Eth Dest mac = ours
-            Eth Src mac = replier
-            
-            *Arp src mac = replier's or the requested mac addr
-            *Arp src ip addr = replier's or the requested ip addr
-            Arp dest mac = ours
-            Arp dest ip = our (Do we allow this to be incorrect?)
-            
-            * these fields are the ones that are important
-        */
-        
-        /* Print dest mac addr (from ethergram)
-        for (j = 0; j < ETH_ADDR_LEN-1; j++)
-            printf("%x:",egram->dst[j]);
-        printf("%x\n",egram->dst[ETH_ADDR_LEN - 1]);
-        */
-        
-        // Print source mac addr
-        for (j = 0; j < ETH_ADDR_LEN-1; j++)
-            printf("%x:",pkt->addrs[j + ARP_SHA_OFFSET]);
-        printf("%x\n",pkt->addrs[ARP_SPA_OFFSET - 1]);
-        
-        // Print source protocol addr
-        for (j = 0; j < IP_ADDR_LEN - 1; j++)
-            printf("%d.",pkt->addrs[j + ARP_SPA_OFFSET]);
-        printf("%d\n",pkt->addrs[ARP_DHA_OFFSET - 1]);
-        
-        // Print dest hw addr
-        for (j = 0; j < ETH_ADDR_LEN - 1; j++)
-            printf("%x:",pkt->addrs[j + ARP_DHA_OFFSET]);
-        printf("%x\n",pkt->addrs[ARP_DPA_OFFSET - 1]);
-        
-        // Print dest protocol addr
-        for (j = 0; j < IP_ADDR_LEN - 1; j++)
-            printf("%d.",pkt->addrs[j + ARP_DPA_OFFSET]);
-        printf("%d\n",pkt->addrs[ARP_ADDR_END_OFFSET - 1]);
-        
-        //signal(arp.sema);
+        // If they are replying to our request, then add their info to our ARP table
+        if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET],&arp.ipAddr) )
+            arpAddEntry(&pkt->addrs[ARP_SPA_OFFSET], &pkt->addrs[ARP_SHA_OFFSET]);
         break;
         
     default:
@@ -151,4 +64,32 @@ syscall arpRecv(struct arpPkt *pkt)
     }
     
     return OK;
+}
+
+
+void arpRecvDebug(struct arpPkt *pkt)
+{
+    int j;
+    
+    // Print source mac addr
+    for (j = 0; j < ETH_ADDR_LEN-1; j++)
+        printf("%x:",pkt->addrs[j + ARP_SHA_OFFSET]);
+    printf("%x\n",pkt->addrs[ARP_SPA_OFFSET - 1]);
+
+    // Print source protocol addr
+    for (j = 0; j < IP_ADDR_LEN - 1; j++)
+        printf("%d.",pkt->addrs[j + ARP_SPA_OFFSET]);
+    printf("%d\n",pkt->addrs[ARP_DHA_OFFSET - 1]);
+
+    // Print dest hw addr
+    for (j = 0; j < ETH_ADDR_LEN - 1; j++)
+        printf("%x:",pkt->addrs[j + ARP_DHA_OFFSET]);
+    printf("%x\n",pkt->addrs[ARP_DPA_OFFSET - 1]);
+
+    // Print dest protocol addr
+    for (j = 0; j < IP_ADDR_LEN - 1; j++)
+        printf("%d.",pkt->addrs[j + ARP_DPA_OFFSET]);
+    printf("%d\n",pkt->addrs[ARP_ADDR_END_OFFSET - 1]);
+    
+    return;
 }
