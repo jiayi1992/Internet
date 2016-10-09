@@ -171,7 +171,9 @@ int arpSend(uchar *ipAddr)
 	bob = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &ethaddr, 0);
 	
 	for (i = 0; i < ETH_ADDR_LEN; i++)
-		print("%x:",ethaddr[i]);
+		printf("%x:",ethaddr[i]);
+	printf("\n");
+	
 	
 	for (i = 0; i < ETH_ADDR_LEN; i++)
 		egram->src[i] = htons(ethaddr[i]);
@@ -205,7 +207,7 @@ int arpSend(uchar *ipAddr)
     i = write(ETH0, (uchar *)buf, PKTSZ);
 
 	if(i != SYSERR){
-		printf("%d",i);
+		printf("Bytes sent: %d\n",i);
 	}else{
 		printf("error");
 	}
