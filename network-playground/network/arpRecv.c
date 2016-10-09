@@ -17,7 +17,7 @@ void arpRecvDebug(struct arpPkt *pkt);
  * @param pkt received ARP packet
  * @return OK for success, SYSERR for syntax error
  */
-syscall arpRecvLOL(struct arpPkt *pkt)
+syscall arpRecv(struct arpPkt *pkt)
 {
     if (pkt == NULL)
         return SYSERR;
@@ -38,7 +38,7 @@ syscall arpRecvLOL(struct arpPkt *pkt)
         printf("Got ARP request\n");
         /* TODO: Put the requester's info into the arp table? */
         
-        //arpRecvDebug(pkt);
+        arpRecvDebug(pkt);
         
         // If the destination protocol address of the packet
         // is equal to our ip address, then send an arp reply
@@ -52,7 +52,7 @@ syscall arpRecvLOL(struct arpPkt *pkt)
     case ARP_OP_REPLY:
         printf("Got ARP reply\n");
         
-        //arpRecvDebug(pkt);
+        arpRecvDebug(pkt);
         
         // If they are replying to our request, then add their info to our ARP table
         //if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET],&arp.ipAddr) )

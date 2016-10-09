@@ -102,7 +102,7 @@ void arpDaemon(void);
 /** ARP request, reply, and receive **/
 syscall arpSendRequest(uchar *);
 syscall arpSendReply(struct arpPkt *);
-syscall arpRecvLOL(struct arpPkt *);
+syscall arpRecv(struct arpPkt *);
 
 /** Resolving mac address from an IP **/
 syscall arpResolve(uchar *ipAddr, uchar *hwAddr);
