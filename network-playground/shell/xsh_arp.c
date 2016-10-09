@@ -174,7 +174,7 @@ int arpSend(uchar *ipAddr)
 		printf("%x:",ethaddr[i]);
 	printf("\n");
 	
-	
+/*	
 	for (i = 0; i < ETH_ADDR_LEN; i++)
 		egram->src[i] = htons(ethaddr[i]);
 	
@@ -203,6 +203,35 @@ int arpSend(uchar *ipAddr)
 	// Dest protocol addr
 	for (i = ETH_ADDR_LEN*2 + IP_ADDR_LEN; i < ETH_ADDR_LEN*2 + IP_ADDR_LEN*2; i++)
 		arpP->addrs[i] = htons(ipAddr[i]);
+	*/
+	for (i = 0; i < ETH_ADDR_LEN; i++)
+		egram->src[i] = ethaddr[i]
+	
+	egram->type = ETYPE_ARP;
+	
+	arpP = (struct arpPkt *) &egram->data;
+	
+	arpP->hwType = ARP_HWTYPE_ETHERNET;
+	arpP->prType = ARP_PRTYPE_IPv4;
+	arpP->hwAddrLen = ETH_ADDR_LEN;
+	arpP->prAddrLen = IP_ADDR_LEN;
+	arpP->op = ARP_OP_RQST;
+	
+	// Source hw addr
+	for (i = 0; i < ETH_ADDR_LEN; i++)
+		arpP->addrs[i] = ethaddr[i];
+	
+	// Source protocol addr
+	for (i = ETH_ADDR_LEN; i < ETH_ADDR_LEN + IP_ADDR_LEN; i++)
+		arpP->addrs[i] = hostIp[i];
+	
+	// Dest hw addr
+	for (i = ETH_ADDR_LEN + IP_ADDR_LEN; i < ETH_ADDR_LEN*2 + IP_ADDR_LEN; i++)
+		arpP->addrs[i] = 0xFF;
+	
+	// Dest protocol addr
+	for (i = ETH_ADDR_LEN*2 + IP_ADDR_LEN; i < ETH_ADDR_LEN*2 + IP_ADDR_LEN*2; i++)
+		arpP->addrs[i] = ipAddr[i];
 	
     i = write(ETH0, (uchar *)buf, PKTSZ);
 
