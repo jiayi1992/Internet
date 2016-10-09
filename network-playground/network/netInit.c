@@ -3,7 +3,7 @@
  * @provides netInit.
  *
  */
-/* Author: Drew Vanderwiel  */
+/* Author: Drew Vanderwiel, Jiayi Xin  */
 /* Class:  COSC4300         */
 /* Date:   10/7/2016        */
 

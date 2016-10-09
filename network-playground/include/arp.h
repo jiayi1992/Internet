@@ -3,7 +3,7 @@
  *
  * $Id:$
  */
-/* Author: Drew Vanderwiel  */
+/* Author: Drew Vanderwiel, Jiayi Xin  */
 /* Class:  COSC4300         */
 /* Date:   10/7/2016        */
 
@@ -25,9 +25,10 @@
 
 /* ARP table defines */
 #define ARP_TABLE_LEN 32
-#define ARP_ENT_INVALID 0   /** Entry is empty/invalid */
-#define ARP_ENT_VALID   1   /** Entry has an IP addr and mac */
-#define ARP_ENT_IP_ONLY 2   /** Entry has an IP addr but no mac */
+#define ARP_ENT_NOT_FOUND -1    /** Entry could not be found */
+#define ARP_ENT_INVALID 0       /** Entry is empty/invalid */
+#define ARP_ENT_VALID   1       /** Entry has an IP addr and mac */
+#define ARP_ENT_IP_ONLY 2       /** Entry has an IP addr but no mac */
 
 /* ARP address offsets */
 #define ARP_SHA_OFFSET 0
@@ -85,6 +86,8 @@ struct arpTable
     uchar               hwAddr[ETH_ADDR_LEN];               /** This host's mac address */
 };
 
+typedef arpEntryID ushort;
+
 extern struct arpTable arp;
 
 /** ARP initialization */
@@ -93,15 +96,18 @@ syscall arpInit(void);
 /** ARP daemon process */
 void arpDaemon(void);
 
-syscall arpSendRequest(uchar *ipAddr);
+/** ARP request, reply, and receive **/
+syscall arpSendRequest(uchar *);
+syscall arpSendReply(uchar *destIpAddr, 
+                     uchar *destHwAddr, 
+                     uchar *lookUpIpAddr);
 syscall arpRecv(struct arpPkt *);
 
-//syscall arpResolve(uchar *);
-//syscall arpSendReply(struct packet *);
-//syscall arpLookup(struct netif *, struct netaddr *, struct netaddr *);
-//syscall arpNotify(struct arpEntry *, message);
-//struct arpEntry *arpAlloc(void);
-//syscall arpFree(struct arpEntry *);
-//struct arpEntry *arpGetEntry(struct ipaddr *);
+/** Resolving mac address from an IP **/
+syscall arpResolve(uchar *ipAddr, uchar *hwAddr);
+
+/** ARP Table manipulation **/
+syscall arpAddEntry(uchar *ipAddr, uchar *hwAddr);
+arpEntryID arpFindEntry(uchar *ipAddr);
 
 #endif                          /* _ARP_H_ *//**< procedure*/

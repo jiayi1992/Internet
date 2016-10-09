@@ -3,7 +3,7 @@
  * @provides xsh_arp
  *
  */
-/* Author: Drew Vanderwiel  */
+/* Author: Drew Vanderwiel, Jiayi Xin  */
 /* Class:  COSC4300         */
 /* Date:   10/7/2016        */
 
@@ -12,7 +12,7 @@
  *    new ip to mac mapping 
  */
  
- #include <xinu.h>
+#include <xinu.h>
 #include <string.h>
 #include <arp.h>
 
