@@ -40,9 +40,6 @@
 /* ARP packet size */
 #define ARP_PKTSIZE ETHER_MINPAYLOAD + ETH_HEADER_LEN
 
-/* IP Address equivalence */
-#define ipEq(addr1, addr2) (*((ulong*)addr1) == *((ulong*)addr2))
-
 /** ARP table entry contents */
 struct arpEntry
 {

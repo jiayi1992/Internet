@@ -19,6 +19,8 @@ void arpRecvDebug(struct arpPkt *pkt);
  */
 syscall arpRecv(struct arpPkt *pkt)
 {
+    int i, eqFlag;
+     
     if (pkt == NULL)
         return SYSERR;
     
@@ -28,6 +30,20 @@ syscall arpRecv(struct arpPkt *pkt)
          ntohs(pkt->hwType) != ARP_HWTYPE_ETHERNET ||
          ntohs(pkt->prType) != ARP_PRTYPE_IPv4 )
         return SYSERR;
+    
+    // Screen out packets not addressed to us
+    eqFlag = OK;
+    for (i = 0; i < IP_ADDR_LEN; i++)
+    {
+        if (pkt->addrs[i + ARP_DPA_OFFSET] != arp.ipAddr[i])
+        {
+            eqFlag = SYSERR;
+            break;
+        }
+    }
+        
+    if (eqFlag == SYSERR)
+        return OK;
     
     switch(ntohs(pkt->op))
     {
@@ -39,11 +55,7 @@ syscall arpRecv(struct arpPkt *pkt)
         /* TODO: Put the requester's info into the arp table? */
         
         arpRecvDebug(pkt);
-        
-        // If the destination protocol address of the packet
-        // is equal to our ip address, then send an arp reply
-        if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET], &arp.ipAddr) )
-            arpSendReply(pkt);
+        arpSendReply(pkt);
         break;
         
     /*************************/
@@ -53,10 +65,7 @@ syscall arpRecv(struct arpPkt *pkt)
         printf("Got ARP reply\n");
         
         arpRecvDebug(pkt);
-        
-        // If they are replying to our request, then add their info to our ARP table
-        //if ( ipEq(&pkt->addrs[ARP_DPA_OFFSET],&arp.ipAddr) )
-        //    arpAddEntry(&pkt->addrs[ARP_SPA_OFFSET], &pkt->addrs[ARP_SHA_OFFSET]);
+        arpAddEntry(&pkt->addrs[ARP_SPA_OFFSET], &pkt->addrs[ARP_SHA_OFFSET]);
         break;
         
     default:
