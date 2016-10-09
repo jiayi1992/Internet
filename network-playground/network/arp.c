@@ -98,6 +98,11 @@ void arpDaemon(void)
         {
             printf("Got ARP Request\n");
             
+            // Print dest mac addr (from ethergram)
+            for (j = 0; j < ETH_ADDR_LEN-1; j++)
+                printf("%x:",egram->dst[j]);
+            printf("%x\n",egram->dst[ETH_ADDR_LEN - 1]);
+            
             // Print source mac addr
             for (j = 0; j < ETH_ADDR_LEN-1; j++)
                 printf("%x:",arpP->addrs[j + ARP_SHA_OFFSET]);
@@ -124,6 +129,11 @@ void arpDaemon(void)
         {
             //wait(arp_tsema);
             printf("ARP reply\n");
+            
+            // Print dest mac addr (from ethergram)
+            for (j = 0; j < ETH_ADDR_LEN-1; j++)
+                printf("%x:",egram->dst[j]);
+            printf("%x\n",egram->dst[ETH_ADDR_LEN - 1]);
             
             // Print source mac addr
             for (j = 0; j < ETH_ADDR_LEN-1; j++)
