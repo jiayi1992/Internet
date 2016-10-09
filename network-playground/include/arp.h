@@ -94,10 +94,9 @@ syscall arpInit(void);
 void arpDaemon(void);
 
 syscall arpSendRequest(uchar *ipAddr);
+syscall arpRecv(struct packet *);
 
-//syscall arpRecv(struct packet *);
 //syscall arpResolve(uchar *);
-
 //syscall arpSendReply(struct packet *);
 //syscall arpLookup(struct netif *, struct netaddr *, struct netaddr *);
 //syscall arpNotify(struct arpEntry *, message);

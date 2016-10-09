@@ -172,10 +172,14 @@ syscall arpSendRequest(uchar *ipAddr)
 /**
  * Handle arp requests and replies
  * @param pkt received ARP packet
+ * @return OK for success, SYSERR for syntax error
  */
-void arpRecv(struct arpPkt *pkt)
+syscall arpRecv(struct arpPkt *pkt)
 {
     int j;
+    
+    if (pkt == NULL)
+        return SYSERR;
  
     switch(ntohs(pkt->op))
     {
@@ -253,7 +257,8 @@ void arpRecv(struct arpPkt *pkt)
     default:
         break;
     }
-    return;
+    
+    return OK;
 }
 
 
