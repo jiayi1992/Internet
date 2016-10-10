@@ -164,6 +164,7 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
         // Replace the first element next time
         if (i == ARP_TABLE_LEN)
         {
+            printf("DEBUG: First element is now invalid\n");
             arp.tbl[0].osFlags = ARP_ENT_INVALID;
             arp.freeEnt = 0;
         }
