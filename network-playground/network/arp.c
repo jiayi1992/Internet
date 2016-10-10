@@ -111,7 +111,7 @@ void arpWatcher(void)
             // Invalidate entries that have timed out
             if (arp.tbl[i].timeout == 0)
             {
-                arp.tbl[i].osFlags = ARP_ENT_INVALID
+                arp.tbl[i].osFlags = ARP_ENT_INVALID;
                 continue;
             }
             
