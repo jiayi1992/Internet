@@ -38,6 +38,7 @@ command xsh_arp(int nargs, char *args[])
         // Print helper info about this shell command
         printf("arp [-a|-d] [IP address]\n");
         printf("    -d <IP ADDR>  delete entry from arp table with this IP addr\n");
+        printf("    -r <IP ADDR>  send an arp request to this IP addr\n");
         printf("    -a <IP ADDR>  resolve and add entry to arp table with this IP addr\n");
         printf("           NOTE: arp table is displayed if no arguments are given\n");
         return OK;
@@ -98,7 +99,7 @@ command xsh_arp(int nargs, char *args[])
     /*********************************************************/
     /** ARP command testing area for sending a request      **/
     /*********************************************************/
-    else if (strcmp("-rq",args[1]) == 0)
+    else if (strcmp("-r",args[1]) == 0)
     {
         if (OK == dot2ip(args[2],tmp_ipAddr))
         {
@@ -147,7 +148,7 @@ int arpTablePrint(void)
         printf("%d",arp.tbl[i].ipAddr[IP_ADDR_LEN-1]);
         
         // Print tab spacing
-        printf("\t\t\t");
+        printf("\t\t");
         
         // Print if the mac is invalid, print asteristics
         if (arp.tbl[i].osFlags & ARP_ENT_IP_ONLY)
@@ -158,8 +159,8 @@ int arpTablePrint(void)
         else
         {
             for (j = 0; j < ETH_ADDR_LEN-1; j++)
-                printf("%2x:",arp.tbl[i].hwAddr[j]);
-            printf("%2x",arp.tbl[i].hwAddr[ETH_ADDR_LEN-1]);
+                printf("%02x:",arp.tbl[i].hwAddr[j]);
+            printf("%02x",arp.tbl[i].hwAddr[ETH_ADDR_LEN-1]);
         }
         
         // Print new line
