@@ -21,7 +21,7 @@ syscall getpid(void);
  */
 syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
 {
-    int i, j, entID
+    int i, j, entID;
 	long currpid;
     message msg;
     
@@ -56,7 +56,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
             return SYSERR;
         }
     }
-    return OK;
+    return OK;	
 }
 
 void helper(uchar *ipAddr, long sourpid)
