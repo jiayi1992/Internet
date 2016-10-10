@@ -29,6 +29,7 @@
 #define ARP_ENT_INVALID 0       /** Entry is empty/invalid */
 #define ARP_ENT_VALID   1       /** Entry has an IP addr and mac */
 #define ARP_ENT_IP_ONLY 2       /** Entry has an IP addr but no mac */
+#define ARP_ENT_DEFAULT_TIMEOUT 60 /** Timeout in seconds **/
 
 /* ARP address offsets */
 #define ARP_SHA_OFFSET 0
@@ -46,6 +47,7 @@ struct arpEntry
     uchar   ipAddr[IP_ADDR_LEN];
     uchar   hwAddr[ETH_ADDR_LEN];
     ushort  osFlags;
+    ushort  timeout;
 };
 
 /*
@@ -83,6 +85,7 @@ struct arpTable
     semaphore           sema;                               /** ARP table semaphore */
     int                 freeEnt;                            /** Index to next free ARP entry */
     int                 dId;                                /** ARP daemon id */
+    int                 wId;                                /** ARP table watcher id */
     uchar               ipAddr[IP_ADDR_LEN];                /** This host's IP address */
     uchar               hwAddr[ETH_ADDR_LEN];               /** This host's mac address */
 };
@@ -94,6 +97,9 @@ syscall arpInit(void);
 
 /** ARP daemon process */
 void arpDaemon(void);
+
+/** ARP table watcher */
+void arpWatcher(void);
 
 /** ARP request, reply, and receive **/
 syscall arpSendRequest(uchar *);

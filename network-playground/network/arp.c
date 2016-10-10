@@ -14,8 +14,6 @@
 /* Global ARP table definition */
 struct arpTable arp;
 
-void arpInitDebug(void);
-
 /**
  * Initializes the arp table and starts an ARP Daemon process
  * @return OK for success, SYSERR for syntax error
@@ -50,42 +48,16 @@ syscall arpInit(void)
         arp.tbl[i].osFlags = ARP_ENT_INVALID;
     }
     
-    /* ARP Init debug: for testing purposes */
-    arpInitDebug();
-    
-    /* Start arp daemon process */
+    /* Create arp daemon process */
     arp.dId = create((void *)arpDaemon, INITSTK, 3, "ARP_DAEMON", 0);
-
+    
+    /* Create arp table watcher */
+    arp.wId = create((void *)arpWatcher, INITSTK, 3, "ARP_WATCHER", 0);
+    
     ready(arp.dId, 1);
+    ready(arp.wId, 1);
     
     return OK;
-}
-
-
-/**
- * ARP debug initialization
- * For debugging the arp table
- */
-void arpInitDebug(void)
-{
-    int i,j;
-    
-    /*
-    // This adds 3 fake ip to mac mappings in the ARP table    
-    for (i = 0; i < 3; i++)
-    {
-        arp.tbl[i].osFlags = ARP_ENT_VALID;
-        
-        // Make up an ip
-        for (j = 0; j < IP_ADDR_LEN; j++)
-            arp.tbl[i].ipAddr[j] = i;
-        
-        // Make up a mac addr
-        for (j = 0; j < ETH_ADDR_LEN; j++)
-            arp.tbl[i].hwAddr[j] = i;
-    }*/
-    
-    printf("DEBUG: ARP table contents initialized\n");
 }
 
 
@@ -118,6 +90,41 @@ void arpDaemon(void)
 }
 
 /**
+ * ARP Table Watcher process: updates arp entry timeouts
+ */
+void arpWatcher(void)
+{
+    int i;
+    
+    printf("DEBUG: ARP table watcher initalized\n");
+    
+    while(1)
+    {
+        sleep(1);
+        wait(arp.sema);
+        for (i = 0; i < ARP_TABLE_LEN; i++)
+        {
+            // Skip invalid entries
+            if (arp.tbl[i].osFlags == ARP_ENT_INVALID)
+                continue;
+            
+            // Invalidate entries that have timed out
+            if (arp.tbl[i].timeout == 0)
+            {
+                arp.tbl[i].osFlags = ARP_ENT_INVALID
+                continue;
+            }
+            
+            arp.tbl[i].timeout--;
+        }
+        signal(arp.sema);
+    }
+    
+    return;
+}
+
+
+/**
  * Add an entry to the ARP table
  * @param ipAddr IPv4 address of entry we want to add
  * @param hwAddr mac address of entry we want to add
@@ -147,6 +154,7 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
             arp.tbl[entID].hwAddr[i] = hwAddr[i];
         
         arp.tbl[entID].osFlags = ARP_ENT_VALID;
+        arp.tbl[entID].timeout = ARP_ENT_DEFAULT_TIMEOUT;
         
         for (i = 0; i < ARP_TABLE_LEN; i++)
         {
@@ -158,7 +166,6 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
             }
         }
         
-        // TODO: Implement a timer on each entry in the arp table
         // Replace the first element next time
         if (i == ARP_TABLE_LEN)
         {
