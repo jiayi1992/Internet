@@ -36,10 +36,10 @@ command xsh_arp(int nargs, char *args[])
     if (nargs == 2)
     {
         // Print helper info about this shell command
-        printf("arp [-a|-d] [IP address]\n");
+        printf("arp [-a|-d|-r] [IP address]\n");
+        printf("    -a <IP ADDR>  resolve and add entry to arp table with this IP addr\n");
         printf("    -d <IP ADDR>  delete entry from arp table with this IP addr\n");
         printf("    -r <IP ADDR>  send an arp request to this IP addr\n");
-        printf("    -a <IP ADDR>  resolve and add entry to arp table with this IP addr\n");
         printf("           NOTE: arp table is displayed if no arguments are given\n");
         return OK;
     }
