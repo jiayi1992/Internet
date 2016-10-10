@@ -50,7 +50,7 @@ syscall arpRecv(struct arpPkt *pkt)
     if (eqFlag == SYSERR)
         return OK;
     
-    /* printf("Got ARP msg type %d\n", ntohs(pkt->op)); */
+    printf("\nGot ARP msg type %d\n", ntohs(pkt->op));
     arpAddEntry(&pkt->addrs[ARP_SPA_OFFSET], &pkt->addrs[ARP_SHA_OFFSET]);  
     
     if (ntohs(pkt->op) == ARP_OP_RQST)
