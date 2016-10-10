@@ -148,9 +148,11 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
         for (i = 0; i < ETH_ADDR_LEN; i++)
             arp.tbl[entID].hwAddr[i] = hwAddr[i];
         
+        printf("Here 1\n");
         arp.tbl[entID].osFlags = ARP_ENT_VALID;
         arp.tbl[entID].timeout = ARP_ENT_DEFAULT_TIMEOUT;
         
+        printf("Here 2\n");
         for (i = 0; i < ARP_TABLE_LEN; i++)
         {
             // Find an invalid entry to be the next freeEnt
@@ -160,7 +162,7 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
                 break;
             }
         }
-        
+        printf("Here 3\n");
         // Replace the first element next time
         if (i == ARP_TABLE_LEN)
         {
@@ -178,6 +180,7 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
         
         arp.tbl[entID].osFlags = ARP_ENT_VALID;
     }
+    printf("Here 4\n");
     signal(arp.sema);
     return OK;
 }
