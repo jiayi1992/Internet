@@ -40,7 +40,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
     {
         for(i = 0; i < ETH_ADDR_LEN; i++)
-            printf("%x:",arp.tbl[entID].hwAddr[i]);
+            printf("%02x:",arp.tbl[entID].hwAddr[i]);
     }
     // // Entry dosen't have the ip address, or no mac address for the ipAddr
     else
@@ -71,6 +71,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
 
 void helper(uchar *ipAddr, long sourpid)
 {
+	printf("Enter the process\n");
     int i, entID;
     message msg;
 	
