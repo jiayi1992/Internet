@@ -26,12 +26,10 @@ syscall arpInit(void)
     uchar *tmp_addr;
     
     // Get this machine's ip addr
-    tmp_addr = (uchar *) nvramGet("lan_ipaddr\0");
-    printf("NVRAM result: %s\n",nvramGet("lan_ipaddr\0"));
+    dot2ip(nvramGet("lan_ipaddr\0"),arp.ipAddr);
     
     for (i = 0; i < IP_ADDR_LEN; i++)
     {
-        arp.ipAddr[i] = tmp_addr[i];
         printf("%d.", arp.ipAddr[i]);
     }
     printf("\n");

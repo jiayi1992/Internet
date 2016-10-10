@@ -38,8 +38,7 @@ command xsh_arp(int nargs, char *args[])
         // Print helper info about this shell command
         printf("arp [-a|-d] [IP address]\n");
         printf("    -d <IP ADDR>  delete entry from arp table with this IP addr\n");
-        printf("    -s <IP ADDR>  change this host's IP addr to <IP ADDR>\n");
-        //printf("    -a <IP ADDR>  resolve and add entry to arp table with this IP addr\n");
+        printf("    -a <IP ADDR>  resolve and add entry to arp table with this IP addr\n");
         printf("           NOTE: arp table is displayed if no arguments are given\n");
         return OK;
     }
@@ -81,20 +80,14 @@ command xsh_arp(int nargs, char *args[])
             return SYSERR;
         }
     }
-    /*********************************************************/
-    /** Set this host's ip address                          **/
-    /*********************************************************/
-    else if (strcmp("-s",args[1]) == 0)
+    /**********************************************************/
+    /** Resolve and add entry to arp table with this IP addr **/
+    /**********************************************************/
+    else if (strcmp("-a",args[1]) == 0)
     {
         if (OK == dot2ip(args[2],tmp_ipAddr))
         {
-            for (i = 0; i < IP_ADDR_LEN; i++)
-                arp.ipAddr[i] = tmp_ipAddr[i];
-            
-            printf("ETH0 IP now: ");
-            for (i = 0; i < IP_ADDR_LEN-1; i++)
-                printf("%d.",arp.ipAddr[i]);
-            printf("%d\n",arp.ipAddr[IP_ADDR_LEN-1]);
+            // TODO arpResolve
         }
         else
         {
