@@ -22,7 +22,7 @@ syscall getpid(void);
 syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
 {
     int i, j, entID;
-	long currpid;
+    long currpid;
     message msg;
     
     if (ipAddr == NULL)
@@ -39,7 +39,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     {
         for(i = 0; i < ETH_ADDR_LEN-1; i++)
             printf("%02x:",arp.tbl[entID].hwAddr[i]);
-		printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
+        printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
     }
     // // Entry dosen't have the ip address, or no mac address for the ipAddr
     else
@@ -47,61 +47,61 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
         // block and create a helper process
         j = create((void *)helper, INITSTK, 3, "ARP_HELPER", 2, ipAddr, currpid);
         if( ready(j, 1) == OK)
-		{
-			printf("Successful\n");
-		}
-		else
-		{
-			printf("fail\n");
-		}
+        {
+            printf("Successful\n");
+        }
+        else
+        {
+            printf("fail\n");
+        }
         msg = recvtime(10000);
         
         //Not find or timeout
         if(msg == TIMEOUT || (int)msg == 0)
         {
-			printf("Not find");
+            printf("Not find");
             return SYSERR;
         }
-		
-		printf("find");
+        
+        printf("find");
     }
-    return OK;	
+    return OK;    
 }
 
 void helper(uchar *ipAddr, long sourpid)
 {
-	printf("Enter the process\n");
+    printf("Enter the process\n");
     int i, entID;
     message msg;
-	
+    
     for(i = 0; i < 3; i++){
-		printf("before send\n");
+        printf("before send\n");
         arpSendRequest(ipAddr);
         printf("after send\n");
-		entID = arpFindEntry(ipAddr);
-		
+        entID = arpFindEntry(ipAddr);
+        
         if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
         {
-			printf("%d\n",i);
-			for(i = 0; i < ETH_ADDR_LEN-1; i++)
-				printf("%02x:",arp.tbl[entID].hwAddr[i]);
-			printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
-			
-			
+            printf("%d\n",i);
+            for(i = 0; i < ETH_ADDR_LEN-1; i++)
+                printf("%02x:",arp.tbl[entID].hwAddr[i]);
+            printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
+            
+            
             msg = (message)1;
             break;
         }
         else{
             sleep(1000);
         }
-		printf("Not find for %d times\n",i);
+        printf("Not find for %d times\n",i);
     }
     
     //Not find the Mac Address
     if(i == 3) {
         msg = (message)0;
-		printf("Not find for 3 times\n");
-	}
+        printf("Not find for 3 times\n");
+    }
     
     send(sourpid, msg);
     return;
@@ -109,5 +109,5 @@ void helper(uchar *ipAddr, long sourpid)
 
 syscall getpid(void)
 {
-	return (currpid);
+    return (currpid);
 }

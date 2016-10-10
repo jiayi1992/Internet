@@ -27,7 +27,7 @@ int arpTablePrint(void);
 command xsh_arp(int nargs, char *args[])
 {
     uchar tmp_ipAddr[IP_ADDR_LEN];
-	uchar *hwAddr = NULL;
+    uchar *hwAddr = NULL;
     int i, j;
     
     // If the user gave no arguments display arp table contents
@@ -90,8 +90,8 @@ command xsh_arp(int nargs, char *args[])
         if (OK == dot2ip(args[2],tmp_ipAddr))
         {
             // TODO arpResolve
-			printf("Before resolve\n");
-			return arpResolve(tmp_ipAddr, hwAddr);
+            printf("Before resolve\n");
+            return arpResolve(tmp_ipAddr, hwAddr);
         }
         else
         {
@@ -106,7 +106,7 @@ command xsh_arp(int nargs, char *args[])
     {
         if (OK == dot2ip(args[2],tmp_ipAddr))
         {
-			printf("Before sendRequest\n");
+            printf("Before sendRequest\n");
             return arpSendRequest(tmp_ipAddr);
         }
         else
