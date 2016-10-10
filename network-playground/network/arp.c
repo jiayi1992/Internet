@@ -45,10 +45,10 @@ syscall arpInit(void)
     arp.dId = create((void *)arpDaemon, INITSTK, 3, "ARP_DAEMON", 0);
     
     /* Create arp table watcher */
-    arp.wId = create((void *)arpWatcher, INITSTK, 3, "ARP_WATCHER", 0);
+    //arp.wId = create((void *)arpWatcher, INITSTK, 3, "ARP_WATCHER", 0);
     
     ready(arp.dId, 1);
-    ready(arp.wId, 1);
+    //ready(arp.wId, 1);
     
     return OK;
 }
@@ -130,9 +130,7 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
     if (ipAddr == NULL || hwAddr == NULL)
         return SYSERR;
     
-    printf("Adding arp entry\n");
     wait(arp.sema);
-    printf("Adding arp entry (after wait)\n");
     
     entID = arpFindEntry(ipAddr);
     
@@ -148,11 +146,9 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
         for (i = 0; i < ETH_ADDR_LEN; i++)
             arp.tbl[entID].hwAddr[i] = hwAddr[i];
         
-        printf("Here 1\n");
         arp.tbl[entID].osFlags = ARP_ENT_VALID;
         arp.tbl[entID].timeout = ARP_ENT_DEFAULT_TIMEOUT;
         
-        printf("Here 2\n");
         for (i = 0; i < ARP_TABLE_LEN; i++)
         {
             // Find an invalid entry to be the next freeEnt
@@ -162,7 +158,7 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
                 break;
             }
         }
-        printf("Here 3\n");
+        
         // Replace the first element next time
         if (i == ARP_TABLE_LEN)
         {
@@ -180,7 +176,6 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
         
         arp.tbl[entID].osFlags = ARP_ENT_VALID;
     }
-    printf("Here 4\n");
     signal(arp.sema);
     return OK;
 }
