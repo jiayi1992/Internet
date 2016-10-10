@@ -39,8 +39,9 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     // if find ipAddr in table and it is valid, print it
     if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
     {
-        for(i = 0; i < ETH_ADDR_LEN; i++)
+        for(i = 0; i < ETH_ADDR_LEN-1; i++)
             printf("%02x:",arp.tbl[entID].hwAddr[i]);
+		printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
     }
     // // Entry dosen't have the ip address, or no mac address for the ipAddr
     else
@@ -80,12 +81,17 @@ void helper(uchar *ipAddr, long sourpid)
     entID = arpFindEntry(ipAddr);
 	
     for(i = 0; i < 3; i++){
+		printf("before send\n");
         arpSendRequest(ipAddr);
-        
+        printf("after send\n");
         if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
         {
-            for(i = 0; i < ETH_ADDR_LEN; i++)
-                printf("%x:",arp.tbl[entID].hwAddr[i]);
+			printf("%d\n",i);
+			for(i = 0; i < ETH_ADDR_LEN-1; i++)
+				printf("%02x:",arp.tbl[entID].hwAddr[i]);
+			printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
+			
+			
             msg = (message)1;
             break;
         }
