@@ -27,6 +27,7 @@ syscall arpInit(void)
     
     // Get this machine's ip addr
     tmp_addr = (uchar *) nvramGet("lan_ipaddr\0");
+    printf("NVRAM result: %s\n",nvramGet("lan_ipaddr\0"));
     
     for (i = 0; i < IP_ADDR_LEN; i++)
     {
