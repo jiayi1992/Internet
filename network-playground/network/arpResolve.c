@@ -35,7 +35,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     entID = arpFindEntry(ipAddr);
     
     currpid = getpid();
-    
+    printf("Before finding\n");
     // if find ipAddr in table and it is valid, print it
     if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
     {
