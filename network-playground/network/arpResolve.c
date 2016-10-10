@@ -75,8 +75,6 @@ void helper(uchar *ipAddr, long sourpid)
 	printf("Enter the process\n");
     int i, entID;
     message msg;
-	
-	wait(arp.sema);
 
     entID = arpFindEntry(ipAddr);
 	
