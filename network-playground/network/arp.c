@@ -130,7 +130,9 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
     if (ipAddr == NULL || hwAddr == NULL)
         return SYSERR;
     
+    printf("Adding arp entry\n");
     wait(arp.sema);
+    printf("Adding arp entry (after wait)\n");
     
     entID = arpFindEntry(ipAddr);
     
