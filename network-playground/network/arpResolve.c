@@ -10,6 +10,8 @@
 #include <xinu.h>
 #include <arp.h>
 
+void helper(uchar *, int);
+
 /**
  * Resolve an mac address from a given ip address
  * @param ipAddr IPv4 address to resolve
@@ -57,8 +59,13 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
 
 void helper(uchar *ipAddr, int sourpid)
 {
-    int i;
+    int i, entID;
     message msg;
+	
+	wait(arp.sema);
+
+    entID = arpFindEntry(ipAddr);
+	
     for(i = 0; i < 3; i++){
         arpSendRequest(ipAddr);
         
