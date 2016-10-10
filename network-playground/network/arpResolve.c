@@ -30,8 +30,6 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
         return SYSERR;
     }
 
-    wait(arp.sema);
-
     entID = arpFindEntry(ipAddr);
     
     currpid = getpid();
@@ -75,13 +73,13 @@ void helper(uchar *ipAddr, long sourpid)
 	printf("Enter the process\n");
     int i, entID;
     message msg;
-
-    entID = arpFindEntry(ipAddr);
 	
     for(i = 0; i < 3; i++){
 		printf("before send\n");
         arpSendRequest(ipAddr);
         printf("after send\n");
+		entID = arpFindEntry(ipAddr);
+		
         if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
         {
 			printf("%d\n",i);
@@ -96,7 +94,7 @@ void helper(uchar *ipAddr, long sourpid)
         else{
             sleep(1000);
         }
-		printf("Not find for % times\n",i);
+		printf("Not find for %d times\n",i);
     }
     
     //Not find the Mac Address
