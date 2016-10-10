@@ -53,8 +53,11 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
         //Not find or timeout
         if(msg == TIMEOUT || (int)msg == 0)
         {
+			printf("Not find");
             return SYSERR;
         }
+		
+		printf("find");
     }
     return OK;	
 }
@@ -84,8 +87,10 @@ void helper(uchar *ipAddr, long sourpid)
     }
     
     //Not find the Mac Address
-    if(i == 3) 
+    if(i == 3) {
         msg = (message)0;
+		printf("Not find");
+	}
     
     send(sourpid, msg);
     return;
