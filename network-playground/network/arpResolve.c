@@ -46,7 +46,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
         // block and create a helper process
         j = create((void *)helper, INITSTK, 3, "ARP_HELPER", 2, ipAddr, currpid);
         ready(j, 1);
-        msg = recvtive(10000);
+        msg = recvtime(10000);
         
         //Not find or timeout
         if(msg == TIMEOUT || (int)msg == 0)
