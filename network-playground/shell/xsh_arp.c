@@ -27,6 +27,7 @@ int arpTablePrint(void);
 command xsh_arp(int nargs, char *args[])
 {
     uchar tmp_ipAddr[IP_ADDR_LEN];
+	uchar *hwAddr = NULL;
     int i, j;
     
     // If the user gave no arguments display arp table contents
@@ -89,6 +90,7 @@ command xsh_arp(int nargs, char *args[])
         if (OK == dot2ip(args[2],tmp_ipAddr))
         {
             // TODO arpResolve
+			return arpResolve(tmp_ipAddr, hwAddr);
         }
         else
         {
