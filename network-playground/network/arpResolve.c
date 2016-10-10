@@ -10,8 +10,8 @@
 #include <xinu.h>
 #include <arp.h>
 
-void helper(uchar *, pid32);
-pid32 getpid(void);
+void helper(uchar *, long);
+syscall getpid(void);
 
 /**
  * Resolve an mac address from a given ip address
@@ -22,7 +22,7 @@ pid32 getpid(void);
 syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
 {
     int i, j, entID
-	pid32 currpid;
+	long currpid;
     message msg;
     
     if (ipAddr == NULL || hwAddr == NULL)
@@ -59,7 +59,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     return OK;
 }
 
-void helper(uchar *ipAddr, pid32 sourpid)
+void helper(uchar *ipAddr, long sourpid)
 {
     int i, entID;
     message msg;
@@ -91,7 +91,7 @@ void helper(uchar *ipAddr, pid32 sourpid)
     return;
 }
 
-pid32 getpid(void)
+syscall getpid(void)
 {
 	return (currpid);
 }
