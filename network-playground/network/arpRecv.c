@@ -28,7 +28,10 @@ syscall arpRecv(struct arpPkt *pkt)
     if ( pkt->hwAddrLen != ETH_ADDR_LEN ||
          pkt->prAddrLen != IP_ADDR_LEN ||
          ntohs(pkt->hwType) != ARP_HWTYPE_ETHERNET ||
-         ntohs(pkt->prType) != ARP_PRTYPE_IPv4 )
+         ntohs(pkt->prType) != ARP_PRTYPE_IPv4 ||
+         ((ntohs(pkt->op) != ARP_OP_REPLY) && 
+         (ntohs(pkt->op) != ARP_OP_RQST))
+         )
         return SYSERR;
   
     //arpRecvDebug(pkt);
@@ -47,31 +50,13 @@ syscall arpRecv(struct arpPkt *pkt)
     if (eqFlag == SYSERR)
         return OK;
     
-    switch(ntohs(pkt->op))
-    {
-    /*************************/
-    /** Handle ARP Request **/
-    /*************************/
-    case ARP_OP_RQST:
-        printf("Got ARP request\n");
-        /* TODO: Put the requester's info into the arp table? */
-        
-        arpSendReply(pkt);
-        break;
-        
-    /*************************/
-    /** Handle ARP Reply **/
-    /*************************/
-    case ARP_OP_REPLY:
-        printf("Got ARP reply\n");
-        
-        arpAddEntry(&pkt->addrs[ARP_SPA_OFFSET], &pkt->addrs[ARP_SHA_OFFSET]);
-        break;
-        
-    default:
-        break;
-    }
+    printf("Got ARP msg type %d\n", ntohs(pkt->op));
+    arpAddEntry(&pkt->addrs[ARP_SPA_OFFSET], &pkt->addrs[ARP_SHA_OFFSET]);  
     
+    if (ntohs(pkt->op) == ARP_OP_RQST)
+    {
+        arpSendReply(pkt);
+    }
     return OK;
 }
 
