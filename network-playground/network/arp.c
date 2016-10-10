@@ -111,6 +111,7 @@ void arpWatcher(void)
             
             arp.tbl[i].timeout--;
         }
+        printf("Watcher refresh\n");
         signal(arp.sema);
     }
     
