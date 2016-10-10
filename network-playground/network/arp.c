@@ -26,15 +26,8 @@ syscall arpInit(void)
     // Get this machine's ip addr
     dot2ip(nvramGet("lan_ipaddr\0"),arp.ipAddr);
     
-    for (i = 0; i < IP_ADDR_LEN; i++)
-    {
-        printf("%d.", arp.ipAddr[i]);
-    }
-    printf("\n");
-    
     // Get this machine's mac addr
-    i = etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &arp.hwAddr, 0);
-    printf("DEBUG: etherControl result %d\n", i);
+    etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &arp.hwAddr, 0);
     
     /* Initialize arp semaphore*/ 
     arp.sema = semcreate(1);
@@ -72,7 +65,7 @@ void arpDaemon(void)
     // Zero out the packet buffer.
     bzero(packet, PKTSZ);
     
-    printf("DEBUG: ARP daemon initalized\n");
+    /* printf("DEBUG: ARP daemon initalized\n"); */
     
     while(1)
     {
@@ -96,7 +89,7 @@ void arpWatcher(void)
 {
     int i;
     
-    printf("DEBUG: ARP table watcher initalized\n");
+    /* printf("DEBUG: ARP table watcher initalized\n"); */
     
     while(1)
     {
