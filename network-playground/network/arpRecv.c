@@ -67,8 +67,8 @@ void arpRecvDebug(struct arpPkt *pkt)
     
     // Print source mac addr
     for (j = 0; j < ETH_ADDR_LEN-1; j++)
-        printf("%x:",pkt->addrs[j + ARP_SHA_OFFSET]);
-    printf("%x\n",pkt->addrs[ARP_SPA_OFFSET - 1]);
+        printf("%02x:",pkt->addrs[j + ARP_SHA_OFFSET]);
+    printf("%02x\n",pkt->addrs[ARP_SPA_OFFSET - 1]);
 
     // Print source protocol addr
     for (j = 0; j < IP_ADDR_LEN - 1; j++)
@@ -77,8 +77,8 @@ void arpRecvDebug(struct arpPkt *pkt)
 
     // Print dest hw addr
     for (j = 0; j < ETH_ADDR_LEN - 1; j++)
-        printf("%x:",pkt->addrs[j + ARP_DHA_OFFSET]);
-    printf("%x\n",pkt->addrs[ARP_DPA_OFFSET - 1]);
+        printf("%02x:",pkt->addrs[j + ARP_DHA_OFFSET]);
+    printf("%02x\n",pkt->addrs[ARP_DPA_OFFSET - 1]);
 
     // Print dest protocol addr
     for (j = 0; j < IP_ADDR_LEN - 1; j++)

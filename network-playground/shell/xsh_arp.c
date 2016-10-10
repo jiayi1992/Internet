@@ -135,7 +135,7 @@ int arpTablePrint(void)
     /******************************/
     /** Print ARP table contents **/
     /******************************/
-    printf("Address\t\t\tHWaddress\n");
+    printf("Address\t\tHWaddress\t\tTimeout(s)\n");
     for (i =0; i < ARP_TABLE_LEN; i++)
     {
         // Skip invalid entries
@@ -148,7 +148,7 @@ int arpTablePrint(void)
         printf("%d",arp.tbl[i].ipAddr[IP_ADDR_LEN-1]);
         
         // Print tab spacing
-        printf("\t\t");
+        printf("\t");
         
         // Print if the mac is invalid, print asteristics
         if (arp.tbl[i].osFlags & ARP_ENT_IP_ONLY)
@@ -162,6 +162,12 @@ int arpTablePrint(void)
                 printf("%02x:",arp.tbl[i].hwAddr[j]);
             printf("%02x",arp.tbl[i].hwAddr[ETH_ADDR_LEN-1]);
         }
+        
+        // Print tab spacing
+        printf("\t");
+        
+        // Print the entry's timeout
+        printf("%d", arp.tbl[i].timeout);
         
         // Print new line
         printf("\n");
