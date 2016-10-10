@@ -77,19 +77,20 @@ void helper(uchar *ipAddr, long sourpid)
         if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
         {
             for(i = 0; i < ETH_ADDR_LEN; i++)
-                printf("%d:",arp.tbl[entID].hwAddr[i]);
+                printf("%x:",arp.tbl[entID].hwAddr[i]);
             msg = (message)1;
             break;
         }
         else{
             sleep(1000);
         }
+		printf("Not find for % times\n",i);
     }
     
     //Not find the Mac Address
     if(i == 3) {
         msg = (message)0;
-		printf("Not find");
+		printf("Not find for 3 times\n");
 	}
     
     send(sourpid, msg);
