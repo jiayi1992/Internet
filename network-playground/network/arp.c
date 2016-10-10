@@ -177,6 +177,11 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
         
         arp.tbl[entID].osFlags = ARP_ENT_VALID;
     }
+    // Reset entry's timeout to the default
+    else
+    {
+        arp.tbl[entID].timeout = ARP_ENT_DEFAULT_TIMEOUT;
+    }
     signal(arp.sema);
     return OK;
 }
