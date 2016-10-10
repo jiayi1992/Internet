@@ -90,6 +90,7 @@ command xsh_arp(int nargs, char *args[])
         if (OK == dot2ip(args[2],tmp_ipAddr))
         {
             // TODO arpResolve
+			printf("Before resolve\n");
 			return arpResolve(tmp_ipAddr, hwAddr);
         }
         else
@@ -105,6 +106,7 @@ command xsh_arp(int nargs, char *args[])
     {
         if (OK == dot2ip(args[2],tmp_ipAddr))
         {
+			printf("Before sendRequest\n");
             return arpSendRequest(tmp_ipAddr);
         }
         else
