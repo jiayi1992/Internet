@@ -40,14 +40,21 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
     {
         for(i = 0; i < ETH_ADDR_LEN; i++)
-            printf("%d:",arp.tbl[entID].hwAddr[i]);
+            printf("%x:",arp.tbl[entID].hwAddr[i]);
     }
     // // Entry dosen't have the ip address, or no mac address for the ipAddr
     else
     {
         // block and create a helper process
         j = create((void *)helper, INITSTK, 3, "ARP_HELPER", 2, ipAddr, currpid);
-        ready(j, 1);
+        if( ready(j, 1) == OK)
+		{
+			printf("Successful\n");
+		}
+		else
+		{
+			printf("fail\n");
+		}
         msg = recvtime(10000);
         
         //Not find or timeout
