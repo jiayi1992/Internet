@@ -93,7 +93,8 @@ void arpWatcher(void)
     
     while(1)
     {
-        sleep(1);
+        // Sleep 1 second
+        sleep(1000);
         wait(arp.sema);
         for (i = 0; i < ARP_TABLE_LEN; i++)
         {
@@ -104,14 +105,12 @@ void arpWatcher(void)
             // Invalidate entries that have timed out
             if (arp.tbl[i].timeout == 0)
             {
-                printf("Watcher invalidating %d\n", i);
                 arp.tbl[i].osFlags = ARP_ENT_INVALID;
                 continue;
             }
             
             arp.tbl[i].timeout--;
         }
-        printf("Watcher refresh\n");
         signal(arp.sema);
     }
     
