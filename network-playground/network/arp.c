@@ -45,10 +45,10 @@ syscall arpInit(void)
     arp.dId = create((void *)arpDaemon, INITSTK, 3, "ARP_DAEMON", 0);
     
     /* Create arp table watcher */
-    //arp.wId = create((void *)arpWatcher, INITSTK, 3, "ARP_WATCHER", 0);
+    arp.wId = create((void *)arpWatcher, INITSTK, 3, "ARP_WATCHER", 0);
     
     ready(arp.dId, 1);
-    //ready(arp.wId, 1);
+    ready(arp.wId, 1);
     
     return OK;
 }
@@ -104,6 +104,7 @@ void arpWatcher(void)
             // Invalidate entries that have timed out
             if (arp.tbl[i].timeout == 0)
             {
+                printf("Watcher invalidating %d\n", i);
                 arp.tbl[i].osFlags = ARP_ENT_INVALID;
                 continue;
             }
