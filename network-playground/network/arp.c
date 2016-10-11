@@ -200,6 +200,8 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
 
 /**
  * Find the index of the entry we are looking for
+ * Caution: This function doesn't access the arp table using
+ *          the arp semaphore.
  * @param ipAddr IPv4 address of entry we are looking for
  * @return OK for success, SYSERR for syntax error
  */
@@ -226,10 +228,7 @@ int arpFindEntry(uchar *ipAddr)
         
         // The address is the same, return the index
         if (j == IP_ADDR_LEN)
-        {
-            signal(arp.sema);
             return i;
-        }
     }
     return ARP_ENT_NOT_FOUND;
 }

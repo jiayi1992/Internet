@@ -32,6 +32,9 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
         return SYSERR;
     }
 
+    // Grab semaphore
+    wait(arp.sema);
+    
     // Search the arp table, checking if it has already been mapped
     entID = arpFindEntry(ipAddr);
     
@@ -43,10 +46,16 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     {
         for(i = 0; i < ETH_ADDR_LEN; i++)
             hwAddr[i] = arp.tbl[entID].hwAddr[i];
+        
+        // Give back the arp semaphore
+        signal(arp.sema);
     }
     // The entry doesn't have a mac address mapped, or doesn't exist
     else
     {
+        // Give back the arp semaphore
+        signal(arp.sema);
+        
         // Block and create a helper process
         helperID = create((void *)arpResolveHelper, INITSTK, 3, "ARP_HELPER", 3, ipAddr, currpid, hwAddr);
         ready(helperID, 1);
@@ -81,6 +90,9 @@ void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
     {
         arpSendRequest(ipAddr);
 
+        // Grab semaphore
+        wait(arp.sema);
+
         entID = arpFindEntry(ipAddr);
 
         // The IP address was successfully resolved to a mac address
@@ -89,12 +101,17 @@ void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
             for(i = 0; i < ETH_ADDR_LEN; i++)
                 hwAddr[i] = arp.tbl[entID].hwAddr[i];
 
+            // Give back the arp semaphore
+            signal(arp.sema);
+            
             msg = (message)1;
             break;
         }
         // Not resolved, wait 1 second before retrying
         else
         {
+            // Give back the arp semaphore
+            signal(arp.sema);
             sleep(1000);
         }
     }
