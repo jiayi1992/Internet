@@ -27,7 +27,7 @@ int arpTablePrint(void);
 command xsh_arp(int nargs, char *args[])
 {
     uchar tmp_ipAddr[IP_ADDR_LEN];
-    uchar *hwAddr;
+    uchar hwAddr[ETH_ADDR_LEN];
     int i, j;
     
     // If the user gave no arguments display arp table contents
