@@ -7,11 +7,7 @@
 /* Class:  COSC4300         */
 /* Date:   10/7/2016        */
 
-/** STUFF TODO
- *  - Implement arpResolve function and call it to request a
- *    new ip to mac mapping 
- */
- 
+
 #include <xinu.h>
 #include <string.h>
 #include <arp.h>
@@ -38,10 +34,9 @@ command xsh_arp(int nargs, char *args[])
     if (nargs == 2)
     {
         // Print helper info about this shell command
-        printf("arp [-a|-d|-r] [IP address]\n");
+        printf("arp [-a|-d] [IP address]\n");
         printf("    -a <IP ADDR>  resolve and add entry to arp table with this IP addr\n");
         printf("    -d <IP ADDR>  delete entry from arp table with this IP addr\n");
-        printf("    -r <IP ADDR>  send an arp request to this IP addr\n");
         printf("           NOTE: arp table is displayed if no arguments are given\n");
         return OK;
     }
@@ -79,7 +74,7 @@ command xsh_arp(int nargs, char *args[])
         }
         else
         {
-            printf("arp: invalid IP address format, example: 129.123.233.123\n");
+            printf("arp: invalid IP address format, example: 192.168.1.1\n");
             return SYSERR;
         }
     }
@@ -107,22 +102,7 @@ command xsh_arp(int nargs, char *args[])
         }
         else
         {
-            printf("arp: invalid IP address format, example: 129.123.233.123\n");
-            return SYSERR;
-        }
-    }
-    /*********************************************************/
-    /** ARP command testing area for sending a request      **/
-    /*********************************************************/
-    else if (strcmp("-r",args[1]) == 0)
-    {
-        if (OK == dot2ip(args[2],tmp_ipAddr))
-        {
-            return arpSendRequest(tmp_ipAddr);
-        }
-        else
-        {
-            printf("arp: invalid IP address format, example: 129.123.233.123\n");
+            printf("arp: invalid IP address format, example: 192.168.1.1\n");
             return SYSERR;
         }
     }

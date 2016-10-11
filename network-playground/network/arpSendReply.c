@@ -21,7 +21,6 @@ syscall arpSendReply(struct arpPkt *recvdPkt)
     struct ethergram    *egram = NULL;
     struct arpPkt       *arpP = NULL;
     char                buf[ARP_PKTSIZE];
-    /* int                 bytes; */
     
     if (recvdPkt == NULL)
     {
@@ -68,7 +67,7 @@ syscall arpSendReply(struct arpPkt *recvdPkt)
         arpP->addrs[i + ARP_DPA_OFFSET] = recvdPkt->addrs[i + ARP_SPA_OFFSET];
     
     /* Send packet */
-    /* bytes = */ write(ETH0, (uchar *)buf, PKTSZ);
+    write(ETH0, (uchar *)buf, PKTSZ);
 
 return OK;
 }

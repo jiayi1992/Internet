@@ -22,7 +22,6 @@ syscall arpSendRequest(uchar *ipAddr)
     struct ethergram    *egram = NULL;
     struct arpPkt       *arpP = NULL;
     char                buf[ARP_PKTSIZE];
-    /* int                 bytes; */
     
     if (ipAddr == NULL)
     {
@@ -69,7 +68,7 @@ syscall arpSendRequest(uchar *ipAddr)
         arpP->addrs[i + ARP_DPA_OFFSET] = ipAddr[i];
     
     /* Send packet */
-    /* bytes = */ write(ETH0, (uchar *)buf, PKTSZ);
+    write(ETH0, (uchar *)buf, PKTSZ);
 
     return OK;
 }

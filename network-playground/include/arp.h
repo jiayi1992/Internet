@@ -87,6 +87,7 @@ struct arpTable
     struct arpEntry     tbl[ARP_TABLE_LEN];                 /** ARP table */
     semaphore           sema;                               /** ARP table semaphore */
     int                 freeEnt;                            /** Index to next free ARP entry */
+    int                 victimEnt;                          /** Next victim if ARP table full */
     int                 dId;                                /** ARP daemon id */
     int                 wId;                                /** ARP table watcher id */
     uchar               ipAddr[IP_ADDR_LEN];                /** This host's IP address */
@@ -116,4 +117,4 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr);
 syscall arpAddEntry(uchar *ipAddr, uchar *hwAddr);
 int arpFindEntry(uchar *ipAddr);
 
-#endif                          /* _ARP_H_ *//**< procedure*/
+#endif                          /* _ARP_H_ */

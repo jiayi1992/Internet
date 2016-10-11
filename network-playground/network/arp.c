@@ -14,6 +14,7 @@
 /* Global ARP table definition */
 struct arpTable arp;
 
+
 /**
  * Initializes the arp table and starts an ARP Daemon process
  * @return OK for success, SYSERR for syntax error
@@ -29,11 +30,14 @@ syscall arpInit(void)
     // Get this machine's mac addr
     etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &arp.hwAddr, 0);
     
-    /* Initialize arp semaphore*/ 
+    /* Initialize arp semaphore */ 
     arp.sema = semcreate(1);
     
-    /* Initialize arp table free entry index*/ 
+    /* Initialize arp table free entry index */ 
     arp.freeEnt = 0;
+    
+    /* Initialize arp table victim entry (to be replaced if arp table full) */ 
+    arp.victimEnt = 0;
     
     /* Initialize arp table contents to be invalid/empty */
     for (i = 0; i < ARP_TABLE_LEN; i++)
@@ -65,8 +69,6 @@ void arpDaemon(void)
     // Zero out the packet buffer.
     bzero(packet, PKTSZ);
     
-    /* printf("DEBUG: ARP daemon initalized\n"); */
-    
     while(1)
     {
         read(ETH0, (void *) &packet, PKTSZ);
@@ -82,15 +84,14 @@ void arpDaemon(void)
     return;
 }
 
+
 /**
  * ARP Table Watcher process: updates arp entry timeouts
  */
 void arpWatcher(void)
 {
     int i;
-    
-    /* printf("DEBUG: ARP table watcher initalized\n"); */
-    
+     
     while(1)
     {
         // Sleep 1 second
@@ -161,11 +162,16 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
         }
         
         // Replace the first element next time
-        if (i == ARP_TABLE_LEN)
+        if (i >= ARP_TABLE_LEN)
         {
-            printf("DEBUG: First element is now invalid\n");
-            arp.tbl[0].osFlags = ARP_ENT_INVALID;
-            arp.freeEnt = 0;
+            // Invalidate an entry
+            arp.tbl[arp.victimEnt].osFlags = ARP_ENT_INVALID;
+            arp.freeEnt = arp.victimEnt;
+            
+            // Move the victimEnt index up and wrap around if end of arp table is reached
+            arp.victimEnt++;
+            if (arp.victimEnt >= ARP_TABLE_LEN)
+                arp.victimEnt = 0;
         }
     }
     // Entry has an ip address, but no mac address
@@ -177,9 +183,14 @@ syscall arpAddEntry(uchar * ipAddr, uchar *hwAddr)
         
         arp.tbl[entID].osFlags = ARP_ENT_VALID;
     }
-    // Reset entry's timeout to the default
+    // Entry exists, is valid (has mac and IP addr), so refresh it
     else
     {
+        // Set mac address of entry
+        for (i = 0; i < ETH_ADDR_LEN; i++)
+            arp.tbl[entID].hwAddr[i] = hwAddr[i];
+        
+        // Reset it's timeout
         arp.tbl[entID].timeout = ARP_ENT_DEFAULT_TIMEOUT;
     }
     signal(arp.sema);
