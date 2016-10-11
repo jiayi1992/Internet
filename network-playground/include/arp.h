@@ -29,7 +29,7 @@
 #define ARP_ENT_INVALID 0       /** Entry is empty/invalid */
 #define ARP_ENT_VALID   1       /** Entry has an IP addr and mac */
 #define ARP_ENT_IP_ONLY 2       /** Entry has an IP addr but no mac */
-#define ARP_ENT_DEFAULT_TIMEOUT 60 /** Timeout in seconds **/
+#define ARP_ENT_DEFAULT_TIMEOUT 300 /** Timeout in seconds **/
 
 /* ARP address offsets */
 #define ARP_SHA_OFFSET 0
