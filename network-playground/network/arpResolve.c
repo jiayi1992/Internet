@@ -43,7 +43,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
             hwAddr[i] = arp.tbl[entID].hwAddr[i];
             printf("%02x:",arp.tbl[entID].hwAddr[i]);
         }
-        hwAddr[ETH_ADDR_LEN-1]] = arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]];
+        hwAddr[ETH_ADDR_LEN-1] = arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1];
         printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
     }
     // Entry dosen't have the ip address, or no mac address for the ipAddr
@@ -86,7 +86,7 @@ void helper(uchar *ipAddr, long sourpid, uchar *hwAddr)
                 hwAddr[i] = arp.tbl[entID].hwAddr[i];
                 printf("%02x:",arp.tbl[entID].hwAddr[i]);
             }
-            hwAddr[ETH_ADDR_LEN-1]] = arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]];
+            hwAddr[ETH_ADDR_LEN-1] = arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1];
             printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
 
             msg = (message)1;
