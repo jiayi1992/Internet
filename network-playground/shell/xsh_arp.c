@@ -90,14 +90,7 @@ command xsh_arp(int nargs, char *args[])
     {
         if (OK == dot2ip(args[2],tmp_ipAddr))
         {
-            //return arpResolve(tmp_ipAddr, hwAddr);
-            arpResolve(tmp_ipAddr, hwAddr);
-            for(i = 0; i < ETH_ADDR_LEN-1; i++)
-            {
-                printf("%02x:", hwAddr[i]);
-            }
-            printf("%02x\n", hwAddr[ETH_ADDR_LEN-1]);
-            return OK;
+            return arpResolve(tmp_ipAddr, hwAddr);
         }
         else
         {

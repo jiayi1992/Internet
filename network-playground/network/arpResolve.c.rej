@@ -1,0 +1,10 @@
+diff a/network-playground/network/arpResolve.c b/network-playground/network/arpResolve.c	(rejected hunks)
+@@ -25,7 +25,7 @@
+     long currpid;
+     message msg;
+     
+-    if (ipAddr == NULL || hwAddr == NULL)
++    if (ipAddr == NULL)
+     {
+         return SYSERR;
+     }
