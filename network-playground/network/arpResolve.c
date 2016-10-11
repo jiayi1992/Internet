@@ -53,7 +53,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     else
     {
         // Block and create a helper process
-        j = create((void *)helper, INITSTK, 3, "ARP_HELPER", 3, ipAddr, currpid, hwAddr);
+        j = create((void *)arpResolveHelper, INITSTK, 3, "ARP_HELPER", 3, ipAddr, currpid, hwAddr);
         ready(j, 1);
 
         // Wait for the message from the helper process
