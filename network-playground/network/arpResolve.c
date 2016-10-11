@@ -55,7 +55,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
 
         //wait for the message from the helper process
         msg = recvtime(10000);
-        
+
         //Not find or timeout
         if(msg == TIMEOUT || (int)msg == 0)
         {
