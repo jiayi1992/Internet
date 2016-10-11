@@ -10,7 +10,7 @@
 #include <xinu.h>
 #include <arp.h>
 
-void helper(uchar *, long);
+void helper(uchar *, long, uchar *);
 syscall getpid(void);
 
 /**
@@ -33,76 +33,76 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     entID = arpFindEntry(ipAddr);
     
     currpid = getpid();
-    printf("Before finding\n");
-    // if find ipAddr in table and it is valid, print it
+
+    // If find ipAddr in table and it is valid, print it
     if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
     {
+        printf("HWaddress\n");
         for(i = 0; i < ETH_ADDR_LEN-1; i++)
+        {
+            hwAddr[i] = arp.tbl[entID].hwAddr[i];
             printf("%02x:",arp.tbl[entID].hwAddr[i]);
+        }
+        hwAddr[ETH_ADDR_LEN-1]] = arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]];
         printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
     }
-    // // Entry dosen't have the ip address, or no mac address for the ipAddr
+    // Entry dosen't have the ip address, or no mac address for the ipAddr
     else
     {
         // block and create a helper process
-        j = create((void *)helper, INITSTK, 3, "ARP_HELPER", 2, ipAddr, currpid);
-        if( ready(j, 1) == OK)
-        {
-            printf("Successful\n");
-        }
-        else
-        {
-            printf("fail\n");
-        }
+        j = create((void *)helper, INITSTK, 3, "ARP_HELPER", 3, ipAddr, currpid, hwAddr);
+        ready(j, 1);
+
+        //wait for the message from the helper process
         msg = recvtime(10000);
         
         //Not find or timeout
         if(msg == TIMEOUT || (int)msg == 0)
         {
-            printf("Not find");
+            printf("Not find\n");
             return SYSERR;
         }
-        
-        printf("find");
     }
     return OK;    
 }
 
-void helper(uchar *ipAddr, long sourpid)
+void helper(uchar *ipAddr, long sourpid, uchar *hwAddr)
 {
-    printf("Enter the process\n");
     int i, entID;
     message msg;
-    
-    for(i = 0; i < 3; i++){
-        printf("before send\n");
+
+    //Three attempts to ARP resolve
+    for(i = 0; i < 3; i++)
+    {
         arpSendRequest(ipAddr);
-        printf("after send\n");
+
         entID = arpFindEntry(ipAddr);
-        
+
         if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
         {
-            printf("%d\n",i);
+            printf("HWaddress\n");
             for(i = 0; i < ETH_ADDR_LEN-1; i++)
+            {
+                hwAddr[i] = arp.tbl[entID].hwAddr[i];
                 printf("%02x:",arp.tbl[entID].hwAddr[i]);
+            }
+            hwAddr[ETH_ADDR_LEN-1]] = arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]];
             printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
-            
-            
+
             msg = (message)1;
             break;
         }
         else{
             sleep(1000);
         }
-        printf("Not find for %d times\n",i);
     }
-    
+
     //Not find the Mac Address
-    if(i == 3) {
+    if(i == 3) 
+    {
         msg = (message)0;
-        printf("Not find for 3 times\n");
     }
-    
+
     send(sourpid, msg);
     return;
 }
