@@ -77,7 +77,7 @@ void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
     message msg;
 
     // Attempt to resolve the mac address
-    for(attempts = 0; i < ARP_RESOLVE_ATTEMPTS; attempts++)
+    for(attempts = 0; attempts < ARP_RESOLVE_ATTEMPTS; attempts++)
     {
         arpSendRequest(ipAddr);
 
