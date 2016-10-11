@@ -10,7 +10,6 @@
 #include <xinu.h>
 #include <arp.h>
 
-void arpRecvDebug(struct arpPkt *pkt);
 
 /**
  * Handle arp requests and replies
@@ -33,8 +32,6 @@ syscall arpRecv(struct arpPkt *pkt)
          (ntohs(pkt->op) != ARP_OP_RQST))
          )
         return SYSERR;
-  
-    //arpRecvDebug(pkt);
     
     // Screen out packets not addressed to us
     eqFlag = OK;
@@ -50,7 +47,7 @@ syscall arpRecv(struct arpPkt *pkt)
     if (eqFlag == SYSERR)
         return OK;
     
-    //printf("\nGot ARP msg type %d\n", ntohs(pkt->op));
+    // Add the sender to our arp table
     arpAddEntry(&pkt->addrs[ARP_SPA_OFFSET], &pkt->addrs[ARP_SHA_OFFSET]);  
     
     if (ntohs(pkt->op) == ARP_OP_RQST)
@@ -58,32 +55,4 @@ syscall arpRecv(struct arpPkt *pkt)
         arpSendReply(pkt);
     }
     return OK;
-}
-
-
-void arpRecvDebug(struct arpPkt *pkt)
-{
-    int j;
-    
-    // Print source mac addr
-    for (j = 0; j < ETH_ADDR_LEN-1; j++)
-        printf("%02x:",pkt->addrs[j + ARP_SHA_OFFSET]);
-    printf("%02x\n",pkt->addrs[ARP_SPA_OFFSET - 1]);
-
-    // Print source protocol addr
-    for (j = 0; j < IP_ADDR_LEN - 1; j++)
-        printf("%d.",pkt->addrs[j + ARP_SPA_OFFSET]);
-    printf("%d\n",pkt->addrs[ARP_DHA_OFFSET - 1]);
-
-    // Print dest hw addr
-    for (j = 0; j < ETH_ADDR_LEN - 1; j++)
-        printf("%02x:",pkt->addrs[j + ARP_DHA_OFFSET]);
-    printf("%02x\n",pkt->addrs[ARP_DPA_OFFSET - 1]);
-
-    // Print dest protocol addr
-    for (j = 0; j < IP_ADDR_LEN - 1; j++)
-        printf("%d.",pkt->addrs[j + ARP_DPA_OFFSET]);
-    printf("%d\n",pkt->addrs[ARP_ADDR_END_OFFSET - 1]);
-    
-    return;
 }

@@ -10,7 +10,8 @@
 #include <xinu.h>
 #include <arp.h>
 
-void helper(uchar *, long, uchar *);
+/* Private/helper functions */
+void arpResolveHelper(uchar *, long, uchar *);
 syscall getpid(void);
 
 /**
@@ -30,11 +31,13 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
         return SYSERR;
     }
 
+    // Search the arp table, checking if it has already been mapped
     entID = arpFindEntry(ipAddr);
     
+    // Get this process's ID
     currpid = getpid();
 
-    // If find ipAddr in table and it is valid, print it
+    // If we find the ipAddr in arp table and it is valid, return it
     if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
     {
         printf("HWaddress\n");
@@ -46,38 +49,46 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
         hwAddr[ETH_ADDR_LEN-1] = arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1];
         printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
     }
-    // Entry dosen't have the ip address, or no mac address for the ipAddr
+    // The entry doesn't have a mac address mapped, or doesn't exist
     else
     {
-        // block and create a helper process
+        // Block and create a helper process
         j = create((void *)helper, INITSTK, 3, "ARP_HELPER", 3, ipAddr, currpid, hwAddr);
         ready(j, 1);
 
-        //wait for the message from the helper process
+        // Wait for the message from the helper process
         msg = recvtime(10000);
         
-        //Not find or timeout
+        // mac addresss was not found or timeout
         if(msg == TIMEOUT || (int)msg == 0)
         {
-            printf("Not find\n");
+            printf("arpResolve: mac addr not found\n");
             return SYSERR;
         }
     }
-    return OK;    
+    return OK;
 }
 
-void helper(uchar *ipAddr, long sourpid, uchar *hwAddr)
+/**
+ * Helper process to arp request multiple times
+ * @param ipAddr IPv4 address to resolve
+ * @param sourpid the PID of the process who created this helper process
+ * @param hwAddr mac address return value
+ * @return OK for success, SYSERR for syntax error
+ */
+void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
 {
     int i, entID;
     message msg;
 
-    //Three attempts to ARP resolve
-    for(i = 0; i < 3; i++)
+    // Attempt to resolve the mac address
+    for(i = 0; i < ARP_RESOLVE_ATTEMPTS; i++)
     {
         arpSendRequest(ipAddr);
 
         entID = arpFindEntry(ipAddr);
 
+        // The IP address was successfully resolved to a mac address
         if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
         {
             printf("HWaddress\n");
@@ -92,13 +103,15 @@ void helper(uchar *ipAddr, long sourpid, uchar *hwAddr)
             msg = (message)1;
             break;
         }
-        else{
+        // Not resolved, wait 1 second before retrying
+        else
+        {
             sleep(1000);
         }
     }
 
-    //Not find the Mac Address
-    if(i == 3) 
+    // The mac address was not found
+    if(i >= ARP_RESOLVE_ATTEMPTS) 
     {
         msg = (message)0;
     }
@@ -107,6 +120,10 @@ void helper(uchar *ipAddr, long sourpid, uchar *hwAddr)
     return;
 }
 
+
+/**
+ * @return the process id of this process
+ */
 syscall getpid(void)
 {
     return (currpid);

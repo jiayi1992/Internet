@@ -16,6 +16,7 @@
 #include <string.h>
 #include <arp.h>
 
+/* Private/helper functions */
 int arpTablePrint(void);
 
 /**

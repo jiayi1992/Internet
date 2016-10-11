@@ -41,6 +41,9 @@
 /* ARP packet size */
 #define ARP_PKTSIZE ETHER_MINPAYLOAD + ETH_HEADER_LEN
 
+/* maximum ARP resolve attempts */
+#define ARP_RESOLVE_ATTEMPTS 3
+
 /** ARP table entry contents */
 struct arpEntry
 {
