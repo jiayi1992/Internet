@@ -25,7 +25,7 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     long currpid;
     message msg;
     
-    if (ipAddr == NULL)
+    if (ipAddr == NULL || hwAddr == NULL)
     {
         return SYSERR;
     }
