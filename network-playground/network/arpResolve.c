@@ -22,7 +22,7 @@ syscall getpid(void);
  */
 syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
 {
-    int i, j, entID;
+    int i, helperID, entID;
     long currpid;
     message msg;
     
@@ -37,37 +37,31 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
     // Get this process's ID
     currpid = getpid();
 
-    // If we find the ipAddr in arp table and it is valid, return it
+    // If we found the ipAddr in the arp table and it is valid, then return it
     if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
     {
-        printf("HWaddress\n");
-        for(i = 0; i < ETH_ADDR_LEN-1; i++)
-        {
+        for(i = 0; i < ETH_ADDR_LEN; i++)
             hwAddr[i] = arp.tbl[entID].hwAddr[i];
-            printf("%02x:",arp.tbl[entID].hwAddr[i]);
-        }
-        hwAddr[ETH_ADDR_LEN-1] = arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1];
-        printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
     }
     // The entry doesn't have a mac address mapped, or doesn't exist
     else
     {
         // Block and create a helper process
-        j = create((void *)arpResolveHelper, INITSTK, 3, "ARP_HELPER", 3, ipAddr, currpid, hwAddr);
-        ready(j, 1);
+        helperID = create((void *)arpResolveHelper, INITSTK, 3, "ARP_HELPER", 3, ipAddr, currpid, hwAddr);
+        ready(helperID, 1);
 
         // Wait for the message from the helper process
         msg = recvtime(10000);
         
         // mac addresss was not found or timeout
-        if(msg == TIMEOUT || (int)msg == 0)
+        if(msg == TIMEOUT || (int) msg == 0)
         {
-            printf("arpResolve: mac addr not found\n");
             return SYSERR;
         }
     }
     return OK;
 }
+
 
 /**
  * Helper process to arp request multiple times
@@ -78,11 +72,11 @@ syscall arpResolve(uchar *ipAddr, uchar *hwAddr)
  */
 void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
 {
-    int i, entID;
+    int attempts, i, entID;
     message msg;
 
     // Attempt to resolve the mac address
-    for(i = 0; i < ARP_RESOLVE_ATTEMPTS; i++)
+    for(attempts = 0; i < ARP_RESOLVE_ATTEMPTS; attempts++)
     {
         arpSendRequest(ipAddr);
 
@@ -91,14 +85,8 @@ void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
         // The IP address was successfully resolved to a mac address
         if (entID != ARP_ENT_NOT_FOUND && arp.tbl[entID].osFlags == ARP_ENT_VALID)
         {
-            printf("HWaddress\n");
-            for(i = 0; i < ETH_ADDR_LEN-1; i++)
-            {
+            for(i = 0; i < ETH_ADDR_LEN; i++)
                 hwAddr[i] = arp.tbl[entID].hwAddr[i];
-                printf("%02x:",arp.tbl[entID].hwAddr[i]);
-            }
-            hwAddr[ETH_ADDR_LEN-1] = arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1];
-            printf("%02x\n",arp.tbl[entID].hwAddr[ETH_ADDR_LEN-1]);
 
             msg = (message)1;
             break;
@@ -111,7 +99,7 @@ void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
     }
 
     // The mac address was not found
-    if(i >= ARP_RESOLVE_ATTEMPTS) 
+    if(attempts >= ARP_RESOLVE_ATTEMPTS) 
     {
         msg = (message)0;
     }
