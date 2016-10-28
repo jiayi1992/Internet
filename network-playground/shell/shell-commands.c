@@ -15,6 +15,7 @@ command xsh_exit(int, char *[]);
 command xsh_help(int, char *[]);
 command xsh_kill(int, char *[]);
 command xsh_memstat(int, char *[]);
+command xsh_ping(int, char *[]);
 command xsh_ps(int, char *[]);
 command xsh_test(int, char *[]);
 //hello world!!!
@@ -27,6 +28,7 @@ struct centry commandtab[] = {
     {"help", FALSE, xsh_help},
     {"kill", TRUE, xsh_kill},
     {"memstat", FALSE, xsh_memstat},
+    {"ping", TRUE, xsh_ping},
     {"ps", FALSE, xsh_ps},
     {"test", FALSE, xsh_test},
     {"?", FALSE, xsh_help}
