@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <xinu.h>
+#include <network.h>
 #include <arp.h>
 
 

@@ -17,8 +17,10 @@ $(VERBOSE).SILENT:
 #-----------------------------------------------------------------------
 
 # SHELL
-SHLL = xsh_test.c xsh_arp.c shell-commands.c
-NET  = netInit.c arp.c arpResolve.c arpSendReply.c arpSendRequest.c arpRecv.c
+#xsh_test.c xsh_arp.c shell-commands.c
+SHLL = $(wildcard ../shell/*.c)
+#netInit.c arp.c arpResolve.c arpSendReply.c arpSendRequest.c arpRecv.c
+NET  = $(wildcard ../network/*.c)
 
 SRC =	${SHLL:%.c=../shell/%.c} \
 		${NET:%.c=../network/%.c}
@@ -56,6 +58,10 @@ realclean: clean depclean
 	rm -f vn version
 	rm -f Makefile.bak
 	rm -f xinu-disk
+
+test:
+	@echo -e $(SHLL)
+	@echo -e $(NET)
 
 depend:
 	@echo -e "\tBuilding dependencies"
