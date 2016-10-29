@@ -3,6 +3,9 @@
  *
  */
 /* Embedded Xinu, Copyright (C) 2008.  All rights reserved. */
+/* Modified by: Drew Vanderwiel, Jiayi Xin  */
+/* Class:  COSC4300         */
+/* Date:   10/29/2016       */
 
 #ifndef _NETWORK_H_
 #define _NETWORK_H_
@@ -13,7 +16,7 @@
 # define htons(x) ((((x)>>8) &0xff) | (((x) & 0xff)<<8))
 # define ntohs(x) htons(x)
 # define htonl(x) ((((x)& 0xff)<<24) | (((x)>>24) & 0xff) | \
-		                   (((x) & 0xff0000)>>8) | (((x) & 0xff00)<<8))
+                           (((x) & 0xff0000)>>8) | (((x) & 0xff00)<<8))
 # define ntohl(x) htonl(x)
 
 
@@ -61,41 +64,41 @@ struct ethergram             /**< Ethernet Packet Variables             */
 #define IPv4_DOTDEC_MAXLEN    15
 
 /* Masks to point to section of packet */
-#define IPv4_IHL			0x0F
-#define IPv4_VER			0xF0
-#define IPv4_FLAGS		0xE000
-#define IPv4_FROFF		0x1FFF
+#define IPv4_IHL            0x0F
+#define IPv4_VER            0xF0
+#define IPv4_FLAGS        0xE000
+#define IPv4_FROFF        0x1FFF
 #define IPv4_ADDR_LEN       4
-#define IPv4_TTL 			64
+#define IPv4_TTL             64
 
 /* IP packet definitions */
-#define IPv4_HDR_LEN     	20      /* (Assumes no options or padding) */
-#define IPv4_MAX_OPTLEN		40
-#define IPv4_MAX_HDRLEN 	IPv4_HDR_LEN + IPv4_MAX_OPTLEN
-#define IPv4_MIN_IHL		5
-#define IPv4_MAX_IHL		15
-#define IPv4_VERSION		4
+#define IPv4_HDR_LEN         20      /* (Assumes no options or padding) */
+#define IPv4_MAX_OPTLEN        40
+#define IPv4_MAX_HDRLEN     IPv4_HDR_LEN + IPv4_MAX_OPTLEN
+#define IPv4_MIN_IHL        5
+#define IPv4_MAX_IHL        15
+#define IPv4_VERSION        4
 
 /* IP Protocols */
 #define IPv4_PROTO_ICMP  1
 #define IPv4_PROTO_IGMP  2
-#define IPv4_PROTO_TCP	  6
+#define IPv4_PROTO_TCP      6
 #define IPv4_PROTO_UDP   17
 
 /* Flags */
-#define IPv4_FLAG_LF		0x0000
-#define IPv4_FLAG_MF 		0x2000
-#define IPv4_FLAG_DF 		0x4000
+#define IPv4_FLAG_LF        0x0000
+#define IPv4_FLAG_MF         0x2000
+#define IPv4_FLAG_DF         0x4000
 
 /* Types of service */
-#define IPv4_TOS_NETCNTRL	0x7
-#define IPv4_TOS_INTCNTRL	0x6
-#define IPv4_TOS_CRITIC	0x5
-#define IPv4_TOS_FLASHOV	0x4
-#define IPv4_TOS_FLASH	0x3
-#define IPv4_TOS_IM		0x2
-#define IPv4_TOS_PRIO		0x1
-#define IPv4_TOS_ROUTINE	0x0
+#define IPv4_TOS_NETCNTRL    0x7
+#define IPv4_TOS_INTCNTRL    0x6
+#define IPv4_TOS_CRITIC    0x5
+#define IPv4_TOS_FLASHOV    0x4
+#define IPv4_TOS_FLASH    0x3
+#define IPv4_TOS_IM        0x2
+#define IPv4_TOS_PRIO        0x1
+#define IPv4_TOS_ROUTINE    0x0
 
 /*
  * IPv4 HEADER
@@ -117,7 +120,7 @@ struct ethergram             /**< Ethernet Packet Variables             */
  * |              Options  & Padding (Variable octets)             |
  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  * | Data (Variable octets)                                        |
- * | ...                                                           | 
+ * | ...                                                           |
  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  */
 
@@ -201,19 +204,19 @@ struct udpgram                  /**< UDP Packet Variables           */
 struct dhcpgram                 /**< DHCP Packet Variables          */
 {
     uchar  opcode;              /**< DHCP Operation                 */
-	uchar  htype;               /**< DHCP hardware type             */
-	uchar  hlen;                /**< DHCP hardware address length   */
-	uchar  hops;                /**< DHCP hop count allowed         */
-	ulong  id;                  /**< DHCP transaction ID            */
-	ushort elapsed;             /**< DHCP time elapsed              */
-	ushort flags;               /**< DHCP flags                     */
-	uchar  client[IPv4_ADDR_LEN];  /**< DHCP client IP address      */
-	uchar  yourIP[IPv4_ADDR_LEN];  /**< DHCP your IP address        */
-	uchar  server[IPv4_ADDR_LEN];  /**< DHCP server IP address      */
-	uchar  router[IPv4_ADDR_LEN];  /**< DHCP gateway IP address     */
-	uchar  hwaddr[DHCP_HWFIELD_LEN];  /**< Client hardware address  */
-	uchar  servname[DHCP_SERVNAME_LEN];  /**< Server name           */
-	uchar  bootfile[DHCP_BOOTFILE_LEN];  /**< Bootfile name         */
+    uchar  htype;               /**< DHCP hardware type             */
+    uchar  hlen;                /**< DHCP hardware address length   */
+    uchar  hops;                /**< DHCP hop count allowed         */
+    ulong  id;                  /**< DHCP transaction ID            */
+    ushort elapsed;             /**< DHCP time elapsed              */
+    ushort flags;               /**< DHCP flags                     */
+    uchar  client[IPv4_ADDR_LEN];  /**< DHCP client IP address      */
+    uchar  yourIP[IPv4_ADDR_LEN];  /**< DHCP your IP address        */
+    uchar  server[IPv4_ADDR_LEN];  /**< DHCP server IP address      */
+    uchar  router[IPv4_ADDR_LEN];  /**< DHCP gateway IP address     */
+    uchar  hwaddr[DHCP_HWFIELD_LEN];  /**< Client hardware address  */
+    uchar  servname[DHCP_SERVNAME_LEN];  /**< Server name           */
+    uchar  bootfile[DHCP_BOOTFILE_LEN];  /**< Bootfile name         */
     uchar  opts[1];            /**< DHCP Options field              */
 };
 
@@ -244,5 +247,11 @@ struct dhcpgram                 /**< DHCP Packet Variables          */
 #define DHCP_MESSAGE_NACK     0x06
 #define DHCP_MESSAGE_RELEASE  0x07
 #define DHCP_MESSAGE_INFORM   0x08
+
+/** Network daemon ID */
+extern int netdID;
+
+/** Network daemon process */
+void netDaemon(void)
 
 #endif                          /* _NETWORK_H_ */

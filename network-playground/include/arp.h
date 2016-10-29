@@ -5,7 +5,7 @@
  */
 /* Author: Drew Vanderwiel, Jiayi Xin  */
 /* Class:  COSC4300         */
-/* Date:   10/7/2016        */
+/* Date:   10/29/2016       */
 
 #ifndef _ARP_H_
 #define _ARP_H_
@@ -98,9 +98,6 @@ extern struct arpTable arp;
 
 /** ARP initialization */
 syscall arpInit(void);
-
-/** ARP daemon process */
-void arpDaemon(void);
 
 /** ARP table watcher */
 void arpWatcher(void);

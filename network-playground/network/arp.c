@@ -1,11 +1,11 @@
 /**
  * @file arp.c
- * @provides arp initialization, arp table manipulation, and arp daemon
+ * @provides arp initialization, arp table manipulation, and the arp table watcher
  *
  */
 /* Authors: Drew Vanderwiel, Jiayi Xin */
 /* Class:   COSC4300         */
-/* Date:    10/7/2016        */
+/* Date:    10/29/2016       */
 
 #include <xinu.h>
 #include <arp.h>
@@ -45,43 +45,12 @@ syscall arpInit(void)
         arp.tbl[i].osFlags = ARP_ENT_INVALID;
     }
     
-    /* Create arp daemon process */
-    arp.dId = create((void *)arpDaemon, INITSTK, 3, "ARP_DAEMON", 0);
-    
     /* Create arp table watcher */
     arp.wId = create((void *)arpWatcher, INITSTK, 3, "ARP_WATCHER", 0);
     
-    ready(arp.dId, 1);
     ready(arp.wId, 1);
     
     return OK;
-}
-
-
-/**
- * ARP Daemon process: manages arp requests and replies
- */
-void arpDaemon(void)
-{
-    uchar               packet[PKTSZ];
-    struct ethergram    *egram = NULL;
-
-    // Zero out the packet buffer.
-    bzero(packet, PKTSZ);
-    
-    while(1)
-    {
-        read(ETH0, (void *) &packet, PKTSZ);
-        
-        egram = (struct ethergram *) packet;
-        
-        if(ntohs(egram->type) != ETYPE_ARP)
-            continue;
-        
-        arpRecv((struct arpPkt *) &egram->data);
-    }
-    
-    return;
 }
 
 

@@ -12,6 +12,9 @@
 #include <ether.h>
 #include <arp.h>
 
+/* Network daemon ID */
+int netdId;
+
 /**
  * Initialize network interface.
  */
@@ -20,8 +23,17 @@ void netInit(void)
     // Open the Ethernet device
     open(ETH0);
 
-    // Initialize ARP daemon and ARP table
+    // Initialize ARP table watcher and ARP table
     arpInit();
+
+    // Create net daemon process
+    netdId = create((void *)netDaemon, INITSTK, 3, "NET_DAEMON", 0);
+
+    // Point the arp daemon id to the network daemon id
+    arp.dId = netdId;
+
+    // Start the network daemon
+    ready(netdId, 1);
 
     return;
 }
