@@ -90,6 +90,9 @@ void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
     {
         arpSendRequest(ipAddr);
 
+        // Wait a bit for the message to arrive
+        sleep(100);
+
         // Grab semaphore
         wait(arp.sema);
 
@@ -112,7 +115,7 @@ void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
         {
             // Give back the arp semaphore
             signal(arp.sema);
-            sleep(1000);
+            sleep(900);
         }
     }
 
