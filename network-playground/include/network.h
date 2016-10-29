@@ -252,6 +252,6 @@ struct dhcpgram                 /**< DHCP Packet Variables          */
 extern int netdID;
 
 /** Network daemon process */
-void netDaemon(void)
+void netDaemon(void);
 
 #endif                          /* _NETWORK_H_ */
