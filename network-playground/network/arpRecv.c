@@ -1,6 +1,6 @@
 /**
- * @file arp.c
- * @provides arp table 
+ * @file arpRecv.c
+ * @provides arpRecv
  *
  */
 /* Author: Drew Vanderwiel, Jiayi Xin  */

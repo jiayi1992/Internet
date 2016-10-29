@@ -47,10 +47,10 @@ struct icmpPkt
     uchar data[1]; 
 };
 
-/** IPv4 ping with ICMP Echo request **/
-syscall ping(uchar *ipAddr);
+/** ICMP Send Echo request **/
+syscall icmpEchoRequest(uchar *ipAddr);
 
-/** ICMP Echo reply **/
-syscall icmpEchoReply(uchar *ipAddr);
+/** ICMP Send Echo reply **/
+syscall icmpEchoReply(struct icmpPkt *);
 
 #endif                          /* _ICMP_H_ */

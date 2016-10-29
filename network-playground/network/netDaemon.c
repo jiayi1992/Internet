@@ -19,6 +19,7 @@
 void netDaemon(void)
 {
     uchar               packet[PKTSZ];
+    ushort              type = 0x0;
     struct ethergram    *egram = NULL;
 
     // Zero out the packet buffer.
@@ -30,8 +31,12 @@ void netDaemon(void)
         
         egram = (struct ethergram *) packet;
         
-        if(ntohs(egram->type) == ETYPE_ARP)
-            arpRecv((struct arpPkt *) &egram->data);;
+        type = ntohs(egram->type);
+        
+        if (ETYPE_IPv4 == type)
+            ipRecv((struct ipgram *) &egram->data);
+        else if(ETYPE_ARP == type)
+            arpRecv((struct arpPkt *) &egram->data);
     }
     
     return;
