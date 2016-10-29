@@ -9,6 +9,7 @@
 
 
 #include <xinu.h>
+#include <string.h>
 #include <icmp.h>
 
 /**
@@ -20,6 +21,40 @@
 command xsh_ping(int nargs, char *args[])
 {
     /* TODO */
+	uchar tmp_ipAddr[IP_ADDR_LEN];
+	
+	if (nargs < 2)
+    {
+        // Print helper info about this shell command
+        printf("arp [IP address]\n");
+        return OK;
+    }
 
+    if (OK == dot2ip(args[2],tmp_ipAddr))
+    {
+		/*
+        if(OK == icmpResolve(tmp_ipAddr, hwAddr))
+        {
+            printf("arp: Resolved MAC address: ");
+            for(i = 0; i < ETH_ADDR_LEN-1; i++)
+            {
+                printf("%02x:", hwAddr[i]);
+            }
+            printf("%02x\n", hwAddr[ETH_ADDR_LEN-1]);
+        }
+        else
+        {
+            printf("arp: Error, unable to resolve IP address after trying %d times\n", ARP_RESOLVE_ATTEMPTS);
+            return SYSERR;
+        }
+		*/
+    }
+    else
+    {
+        printf("arp: invalid IP address format, example: 192.168.1.1\n");
+        return SYSERR;
+    }
+
+	
     return OK;
 }
