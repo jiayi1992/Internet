@@ -22,8 +22,8 @@ SHLL = $(wildcard ../shell/*.c)
 #netInit.c arp.c arpResolve.c arpSendReply.c arpSendRequest.c arpRecv.c
 NET  = $(wildcard ../network/*.c)
 
-SRC =	${SHLL:%.c=../shell/%.c} \
-		${NET:%.c=../network/%.c}
+SRC =	${SHLL} \
+		${NET}
 
 KRNOBJ = ${SRC:%.c=%.o}
 
@@ -60,8 +60,7 @@ realclean: clean depclean
 	rm -f xinu-disk
 
 test:
-	@echo -e $(SHLL)
-	@echo -e $(NET)
+	@echo -e $(SRC)
 
 depend:
 	@echo -e "\tBuilding dependencies"
