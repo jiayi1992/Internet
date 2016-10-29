@@ -255,6 +255,6 @@ extern int netdID;
 void netDaemon(void);
 
 /** IPv4 Functions */
-syscall ipRecv(struct ipgram *);
+syscall ipRecv(struct ipgram *, uchar *);
 
 #endif                          /* _NETWORK_H_ */

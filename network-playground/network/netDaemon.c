@@ -34,7 +34,7 @@ void netDaemon(void)
         type = ntohs(egram->type);
         
         if (ETYPE_IPv4 == type)
-            ipRecv((struct ipgram *) &egram->data);
+            ipRecv((struct ipgram *) &egram->data, &egram->src);
         else if(ETYPE_ARP == type)
             arpRecv((struct arpPkt *) &egram->data);
     }

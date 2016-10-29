@@ -21,6 +21,9 @@
 #define ICMP_ECHO_RQST_C  0
 #define ICMP_ECHO_RPLY_C  0
 
+/* ICMP header length */
+#define ICMP_HEADER_LEN 8
+
 /* ICMP packet size */
 #define ICMP_PKTSIZE ETHER_MINPAYLOAD + ETH_HEADER_LEN
 
@@ -47,10 +50,19 @@ struct icmpPkt
     uchar data[1]; 
 };
 
-/** ICMP Send Echo request **/
-syscall icmpEchoRequest(uchar *ipAddr);
+/** Receive ICMP echo requests and replies (used by netDaemon) **/
+syscall icmpRecv(struct ipgram *, uchar *);
 
-/** ICMP Send Echo reply **/
-syscall icmpEchoReply(struct icmpPkt *);
+/** Handle an ICMP echo request (used by netDaemon) **/
+syscall icmpHandleRequest(struct ipgram *, uchar *);
+
+/** Handle an ICMP echo reply (used by netDaemon) **/
+syscall icmpHandleReply(struct ipgram *, uchar *);
+
+/** Send an ICMP echo request (used by ping) */
+syscall icmpSendRequest(uchar *ipAddr, 
+                        uchar *hwAddr, 
+                        ushort id,
+                        ushort seqNum);
 
 #endif                          /* _ICMP_H_ */
