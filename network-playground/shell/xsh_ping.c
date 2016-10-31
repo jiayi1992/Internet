@@ -103,7 +103,7 @@ command xsh_ping(int nargs, char *args[])
         
         // Free the ICMP table entry
         wait(icmpTbl[foundid].sema);
-        icmpTbl[foundid].flag = ICMP_ENTRY_INVALID
+        icmpTbl[foundid].flag = ICMP_ENTRY_INVALID;
         signal(icmpTbl[foundid].sema);
         
         // Print some statistics
