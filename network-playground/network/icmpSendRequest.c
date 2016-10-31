@@ -113,11 +113,3 @@ syscall icmpSendRequest(uchar *ipAddr,
     
     return (syscall) msg;
 }
-
-
-
-syscall getpid(void)
-{
-    return (currpid);
-}
-

@@ -41,3 +41,12 @@ void netInit(void)
 
     return;
 }
+
+
+/**
+ * @return the process id of this process
+ */
+syscall getpid(void)
+{
+    return (currpid);
+}

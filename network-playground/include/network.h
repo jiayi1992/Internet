@@ -257,4 +257,6 @@ void netDaemon(void);
 /** IPv4 Functions */
 syscall ipRecv(struct ipgram *, uchar *);
 
+syscall getpid(void);
+
 #endif                          /* _NETWORK_H_ */

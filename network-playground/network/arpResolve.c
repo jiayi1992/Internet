@@ -12,7 +12,6 @@
 
 /* Private/helper functions */
 void arpResolveHelper(uchar *, long, uchar *);
-syscall getpid(void);
 
 
 /**
@@ -127,13 +126,4 @@ void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
 
     send(sourpid, msg);
     return;
-}
-
-
-/**
- * @return the process id of this process
- */
-syscall getpid(void)
-{
-    return (currpid);
 }
