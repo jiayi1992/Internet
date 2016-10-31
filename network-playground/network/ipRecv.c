@@ -26,10 +26,10 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     if (pkt == NULL || srcAddr == NULL)
         return SYSERR;
     
-    printf("IPv4 recvd 1\n");
+    //printf("IPv4 recvd 1\n");
     
     // Screen out packets with bad IPv4 headers
-    if ( pkt->ver_ihl != IPv4_VERSION ||
+    if ( pkt->ver_ihl != 0x45 ||
          ntohs(pkt->len) < IPv4_HDR_LEN )
         return SYSERR;
         
