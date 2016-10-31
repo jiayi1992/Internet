@@ -181,6 +181,7 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
     ushort id;
     ushort seqNum;
     struct icmpPkt      *icmpPRecvd = NULL;
+    message msg;
     
     icmpPRecvd = (struct icmpPkt *) &ipPkt->opts;
     id = ntohs(icmpPRecvd->id);
@@ -222,7 +223,7 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
     if (ipEqual)
     {
         // Send a message to the waiting process
-        msg = (message)1;
+        msg = (message) ntohs(ipPkt->len);
         send(icmpTbl[id].pid, msg);
     }
     return OK;
