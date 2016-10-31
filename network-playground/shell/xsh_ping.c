@@ -30,7 +30,7 @@ command xsh_ping(int nargs, char *args[])
         return OK;
     }
 
-    if (OK == dot2ip(args[2],tmp_ipAddr))
+    if (OK == dot2ip(args[1],tmp_ipAddr))
     {
 		/*
         if(OK == icmpResolve(tmp_ipAddr, hwAddr))
@@ -51,7 +51,7 @@ command xsh_ping(int nargs, char *args[])
     }
     else
     {
-        printf("arp: invalid IP address format, example: 192.168.1.1\n");
+        printf("ping: invalid IP address format, example: 192.168.1.1\n");
         return SYSERR;
     }
 
