@@ -54,7 +54,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     printf("IPv4 recvd 4\n");
     
     // Screen out packets with a bad checksum
-    origChksum = pkt->chksum;
+    origChksum = ntohs(pkt->chksum);
     pkt->len = ntohs(pkt->len);
     pkt->id = ntohs(pkt->id);
     pkt->flags_froff = ntohs(pkt->flags_froff);
