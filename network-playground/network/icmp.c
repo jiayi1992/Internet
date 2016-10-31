@@ -59,7 +59,6 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
     // TODO start after the ip packets options, at its data
     pkt = (struct icmpPkt *) ipPkt->opts;
     
-    printf("ICMP recvd 1\n");
     
     // Screen out packets with bad ICMP headers
     if ( (pkt->type != ICMP_ECHO_RQST_T &&
@@ -67,7 +66,6 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
          pkt->code != ICMP_ECHO_RQST_C )
         return SYSERR;
     
-    printf("ICMP recvd 2\n");
     
     // Screen out packets with a bad ICMP checksums
     origChksum = ntohs(pkt->chksum);
@@ -80,7 +78,7 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
     pkt->id = htons(pkt->id);
     pkt->seqNum =  htons(pkt->seqNum);
     
-    printf("ICMP Recv Orig checksum: %04x calc'd: %04x\n", origChksum, calChksum);
+    //printf("ICMP Recv Orig checksum: %04x calc'd: %04x\n", origChksum, calChksum);
     
     if (calChksum != origChksum)
         return SYSERR;
@@ -196,7 +194,6 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
     id = ntohs(icmpPRecvd->id);
     seqNum = ntohs(icmpPRecvd->seqNum);
     
-    printf("ICMP Handle reply id %d, seqNum %d\n", id, seqNum);
     
     // Make sure the id is within the table's range
     if (id < ICMP_TBL_LEN)
@@ -229,12 +226,10 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
         signal(icmpTbl[id].sema);
     }
     
-    printf("ICMP Handle reply 1\n");
     
     // If this is true, we have received a good ICMP reply
     if (ipEqual)
     {
-        printf("ICMP Handle reply 2\n");
         // Send a message to the waiting process
         msg = (message) ntohs(ipPkt->len);
         send(icmpTbl[id].pid, msg);

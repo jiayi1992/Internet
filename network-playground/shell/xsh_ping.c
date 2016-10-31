@@ -92,11 +92,19 @@ command xsh_ping(int nargs, char *args[])
                 for (j = 0; j < IP_ADDR_LEN-1; j++)
                     printf("%d.", tmp_ipAddr[j]);
                 printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
-                printf(":  %d\n", bytesRecvd); //time=1ms TTL=61
+                printf(":  bytes=%d\n", bytesRecvd); //time=1ms TTL=61
                 counter++;
+                
+                // Sleep 2 seconds
+                sleep(2000);
             }
             // get time after
         }
+        
+        // Free the ICMP table entry
+        wait(icmpTbl[foundid].sema);
+        icmpTbl[foundid].flag = ICMP_ENTRY_INVALID
+        signal(icmpTbl[foundid].sema);
         
         // Print some statistics
         /*

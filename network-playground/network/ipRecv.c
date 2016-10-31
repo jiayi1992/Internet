@@ -31,8 +31,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     if ( pkt->ver_ihl != 0x45 ||
          ntohs(pkt->len) < IPv4_HDR_LEN )
         return SYSERR;
-        
-    
+     
     
     // Screen out packets not addressed to us
     eqFlag = OK;
@@ -45,12 +44,9 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
         }
     }
     
-    //printf("IPv4 recvd 3\n");
-    
     if (eqFlag == SYSERR)
         return OK;
     
-    printf("IPv4 recvd 4\n");
     
     // Screen out packets with a bad checksum
     origChksum = ntohs(pkt->chksum);
@@ -65,20 +61,17 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     pkt->id = htons(pkt->id);
     pkt->flags_froff = htons(pkt->flags_froff);
     
-    printf("IP Recv Orig checksum: %04x calc'd: %04x\n", origChksum, calChksum);
+    //printf("IP Recv Orig checksum: %04x calc'd: %04x\n", origChksum, calChksum);
     
     if (calChksum != origChksum)
         return SYSERR;
     
-    printf("IPv4 recvd 1\n");
     
     // Handle the received packet based on its protocol
     if (pkt->proto == IPv4_PROTO_ICMP)
     {
         return icmpRecv(pkt, srcAddr);
     }
-    
-    printf("IPv4 recvd 2\n");
     
     return OK;
 }

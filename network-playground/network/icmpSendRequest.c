@@ -105,7 +105,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     // Give back the arp semaphore
     signal(icmpTbl[id].sema);
     
-    msg = recvtime(5000);
+    msg = recvtime(2000);
     
     if (msg == TIMEOUT || (int) msg == 0)
     {
