@@ -74,6 +74,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     ipP->chksum = htons(checksum((void *) ipP, IPv4_HDR_LEN));
     ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
     ipP->id = htons(id);
+    ipP->flags_froff = htons(IPv4_FLAG_LF);
     
     /* Set up ICMP header */
     icmpP = (struct icmpPkt *) &ipP->opts;
