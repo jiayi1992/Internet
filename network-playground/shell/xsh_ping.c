@@ -95,8 +95,8 @@ command xsh_ping(int nargs, char *args[])
                 printf(":  bytes=%d\n", bytesRecvd); //time=1ms TTL=61
                 counter++;
                 
-                // Sleep 2 seconds
-                sleep(2000);
+                // Sleep 1 second
+                sleep(1000);
             }
             // get time after
         }

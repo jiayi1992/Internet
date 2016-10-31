@@ -114,7 +114,7 @@ void arpResolveHelper(uchar *ipAddr, long sourpid, uchar *hwAddr)
         {
             // Give back the arp semaphore
             signal(arp.sema);
-            sleep(900);
+            sleep(400);
         }
     }
 
