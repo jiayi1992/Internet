@@ -27,6 +27,24 @@
 /* ICMP packet size */
 #define ICMP_PKTSIZE ETHER_MINPAYLOAD + ETH_HEADER_LEN
 
+/* ICMP Table defines */
+#define ICMP_TBL_LEN          1  // May be lengthed later
+#define ICMP_TBL_INIT_PID    -1
+#define ICMP_ENTRY_INVALID 0x00
+#define ICMP_RQST_SENT     0x01
+#define ICMP_GOT_RPLY      0x02
+
+struct icmpTblEntry
+{
+    int pid;
+    int sema;
+    uchar flag;
+    ushort seqNum;
+    uchar ipAddr[IPv4_ADDR_LEN];
+}
+
+extern struct icmpTblEntry icmpTbl[ICMP_TBL_LEN];
+
 /*
  * ICMP HEADER
  *
@@ -50,6 +68,9 @@ struct icmpPkt
     uchar data[1]; 
 };
 
+/** ICMP table initializations */
+syscall icmpInit(void);
+
 /** Receive ICMP echo requests and replies (used by netDaemon) **/
 syscall icmpRecv(struct ipgram *, uchar *);
 
@@ -57,7 +78,7 @@ syscall icmpRecv(struct ipgram *, uchar *);
 syscall icmpHandleRequest(struct ipgram *, uchar *);
 
 /** Handle an ICMP echo reply (used by netDaemon) **/
-syscall icmpHandleReply(struct ipgram *, uchar *);
+syscall icmpHandleReply(struct ipgram *);
 
 /** Send an ICMP echo request (used by ping) */
 syscall icmpSendRequest(uchar *ipAddr, 

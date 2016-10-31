@@ -13,6 +13,34 @@
 #include <icmp.h>
 #include <arp.h>
 
+/* Global ICMP table definition */
+struct icmpTblEntry icmpTbl[ICMP_TBL_LEN];
+
+
+/**
+ * Initialize the ICMP table
+ * @return OK for success, SYSERR for syntax error
+ */
+syscall icmpInit(void)
+{
+    int i, j;
+    
+    /* Initialize the ICMP table entries */
+    for (i = 0; i < ICMP_TBL_LEN; i++)
+    {
+        icmpTbl[i].pid = ICMP_TBL_INIT_PID;
+        icmpTbl[i].sema = semcreate(1);
+        icmpTbl[i].flag = ICMP_ENTRY_INVALID;
+        icmpTbl[i].id = 0;
+        icmpTbl[i].seqNum = 0;
+        
+        for (j = 0; j < IPv4_ADDR_LEN; j++)
+            icmpTbl[i].ipAddr[j] = 0;
+    }
+    
+    return OK;
+}
+
 
 /**
  * Receive and filter ICMP Packets
@@ -55,7 +83,7 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
     }
     else if ( pkt->type == ICMP_ECHO_RPLY_T )
     {
-        return icmpHandleReply(ipPkt, srcAddr);
+        return icmpHandleReply(ipPkt);
     }
     
     return OK;
@@ -145,12 +173,58 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
 /**
  * Handle ICMP Echo reply Packets
  * @param ipPkt   received IPv4 packet
- * @param srcAddr Sender MAC address
  * @return OK for success, SYSERR for syntax error
  */
-syscall icmpHandleReply(struct ipgram *ipPkt, uchar *srcAddr)
+syscall icmpHandleReply(struct ipgram *ipPkt)
 {
-    // TODO
+    int i, ipEqual = 0;
+    ushort id;
+    ushort seqNum;
+    struct icmpPkt      *icmpPRecvd = NULL;
+    
+    icmpPRecvd = (struct icmpPkt *) &ipPkt->opts;
+    id = ntohs(icmpPRecvd->id);
+    seqNum = ntohs(icmpPRecvd->seqNum);
+    
+    // Make sure the id is within the table's range
+    if (id < ICMP_TBL_LEN)
+    {
+        // Grab semaphore
+        wait(icmpTbl[id].sema);
+        
+        // Is the ICMP table entry valid and does
+        // it match the reply we got?
+        if ( ICMP_RQST_SENT     == icmpTbl[id].flag &&
+             ICMP_TBL_INIT_PID  != icmpTbl[id].pid &&
+             seqNum             == icmpTbl[id].seqNum )
+        {
+            // Check if the IP address matches
+            ipEqual = 1;
+            for (i = 0; i < IPv4_ADDR_LEN; i++)
+            {
+                if (icmpTbl[id].ipAddr[i] != ipPkt->src[i])
+                {
+                    ipEqual = 0;
+                    break;
+                }
+            }
+            
+            // Set the flag, since we got an ICMP reply
+            if (ipEqual)
+                icmpTbl[id].flag = ICMP_GOT_RPLY;
+        }
+        // Give back the semaphore
+        signal(icmpTbl[id].sema);
+    }
+    
+    
+    // If this is true, we have received a good ICMP reply
+    if (ipEqual)
+    {
+        // Send a message to the waiting process
+        msg = (message)1;
+        send(icmpTbl[id].pid, msg);
+    }
     return OK;
 }
 

@@ -25,6 +25,9 @@ void netInit(void)
 
     // Initialize ARP table watcher and ARP table
     arpInit();
+    
+    // Initialize the ICMP table
+    icmpInit();
 
     // Create net daemon process
     netdId = create((void *)netDaemon, INITSTK, 3, "NET_DAEMON", 0);
