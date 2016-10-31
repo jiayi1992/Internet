@@ -12,6 +12,8 @@
 #include <string.h>
 #include <icmp.h>
 
+#define ICMP_PINGS 4
+
 /**
  * Shell command for pinging IPv4 addresses
  * @param nargs count of arguments in args
@@ -22,32 +24,89 @@ command xsh_ping(int nargs, char *args[])
 {
     /* TODO */
 	uchar tmp_ipAddr[IP_ADDR_LEN];
+    uchar hwAddr[ETH_ADDR_LEN];
+    ushort foundid, i, j;
+    int bytesRecvd = 0;
+    int counter = 0;
 	
 	if (nargs < 2)
     {
         // Print helper info about this shell command
-        printf("arp [IP address]\n");
+        printf("ping [IP address]\n");
         return OK;
     }
 
     if (OK == dot2ip(args[1],tmp_ipAddr))
     {
-		/*
-        if(OK == icmpResolve(tmp_ipAddr, hwAddr))
+        // Resolve the IP
+        arpResolve(tmp_ipAddr, hwAddr);
+        /*
+        if (OK != arpResolve(tmp_ipAddr, hwAddr))
         {
-            printf("arp: Resolved MAC address: ");
-            for(i = 0; i < ETH_ADDR_LEN-1; i++)
-            {
-                printf("%02x:", hwAddr[i]);
-            }
-            printf("%02x\n", hwAddr[ETH_ADDR_LEN-1]);
-        }
-        else
-        {
-            printf("arp: Error, unable to resolve IP address after trying %d times\n", ARP_RESOLVE_ATTEMPTS);
+            printf("ping: Error, unable to resolve IP address after trying %d times\n", ARP_RESOLVE_ATTEMPTS);
             return SYSERR;
         }
-		*/
+        */
+		
+        foundid = ICMP_TBL_LEN;
+        
+        // Find an invalid (free) ICMP table entry
+        for (i = 0; i < ICMP_TBL_LEN; i++)
+        {
+            wait(icmpTal[i].sema);
+            if(icmpTal[i].flag == ICMP_ENTRY_INVALID)
+            {
+                foundid = i;
+                signal(icmpTal[i].sema);
+                break;
+            }
+            signal(icmpTal[i].sema);
+        }
+        
+        if (foundid == ICMP_TBL_LEN) 
+        {
+            printf("ping: internal error\n");
+            return SYSERR;
+        }
+        
+        // Print some starter text
+        printf("\nPinging ");
+        for (j = 0; j < IP_ADDR_LEN-1; j++)
+            printf("%d.", tmp_ipAddr[j]);
+        printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
+        printf(" with 28 bytes of data:\n"); // 32 bytes with a time stamp
+        
+        for (i = 0; i < ICMP_PINGS; i++)
+        {
+            // Get time before
+            bytesRecvd = icmpSendRequest(tmp_ipAddr, hwAddr, foundid, i+1);
+            
+            if( SYSERR == bytesRecvd)
+            {
+                printf("PING: transmit failed. General failure.\n");
+            }
+            else
+            {
+                printf("Reply from ");
+                for (j = 0; j < IP_ADDR_LEN-1; j++)
+                    printf("%d.", tmp_ipAddr[j]);
+                printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
+                printf(":  %d\n", bytesRecvd); //time=1ms TTL=61
+                counter++;
+            }
+            // get time after
+        }
+        
+        // Print some statistics
+        /*
+        printf("\nPing statistics for ");
+        for (j = 0; j < IP_ADDR_LEN-1; j++)
+            printf("%d.", tmp_ipAddr[j]);
+        printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
+        printf(":\n");
+        */
+        
+        // TODO...
     }
     else
     {
