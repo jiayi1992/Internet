@@ -67,7 +67,7 @@ syscall arpSendReply(struct arpPkt *recvdPkt)
         arpP->addrs[i + ARP_DPA_OFFSET] = recvdPkt->addrs[i + ARP_SPA_OFFSET];
     
     /* Send packet */
-    write(ETH0, (uchar *)buf, PKTSZ);
+    write(ETH0, (uchar *)buf, ARP_PKTSIZE);
 
-return OK;
+    return OK;
 }
