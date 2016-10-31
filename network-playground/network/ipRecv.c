@@ -26,14 +26,13 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     if (pkt == NULL || srcAddr == NULL)
         return SYSERR;
     
-    //printf("IPv4 recvd 1\n");
     
     // Screen out packets with bad IPv4 headers
     if ( pkt->ver_ihl != 0x45 ||
          ntohs(pkt->len) < IPv4_HDR_LEN )
         return SYSERR;
         
-    //printf("IPv4 recvd 2\n");
+    
     
     // Screen out packets not addressed to us
     eqFlag = OK;
@@ -71,11 +70,15 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     if (calChksum != origChksum)
         return SYSERR;
     
+    printf("IPv4 recvd 1\n");
+    
     // Handle the received packet based on its protocol
     if (pkt->proto == IPv4_PROTO_ICMP)
     {
         return icmpRecv(pkt, srcAddr);
     }
+    
+    printf("IPv4 recvd 2\n");
     
     return OK;
 }

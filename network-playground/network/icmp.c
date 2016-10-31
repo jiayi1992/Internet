@@ -59,11 +59,15 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
     // TODO start after the ip packets options, at its data
     pkt = (struct icmpPkt *) ipPkt->opts;
     
+    printf("ICMP recvd 1\n");
+    
     // Screen out packets with bad ICMP headers
     if ( pkt->type != ICMP_ECHO_RQST_T ||
          pkt->type != ICMP_ECHO_RPLY_T ||
          pkt->code != ICMP_ECHO_RQST_C )
         return SYSERR;
+    
+    printf("ICMP recvd 2\n");
     
     // Screen out packets with a bad ICMP checksums
     origChksum = ntohs(pkt->chksum);
