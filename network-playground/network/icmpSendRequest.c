@@ -82,7 +82,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     icmpP->code = ICMP_ECHO_RQST_C;
     icmpP->chksum = 0x0000;
     icmpP->id = id;
-    icmpP->sequNum = seqNum;
+    icmpP->seqNum = seqNum;
 
     icmpP->chksum = htons(checksum((void *) icmpP, ICMP_HEADER_LEN));
     icmpP->id = htons(id);
