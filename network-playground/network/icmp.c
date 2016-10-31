@@ -66,9 +66,15 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
         return SYSERR;
     
     // Screen out packets with a bad ICMP checksums
-    origChksum = pkt->chksum;
+    origChksum = ntohs(pkt->chksum);
+    pkt->id = ntohs(pkt->id);
+    pkt->seqNum =  ntohs(pkt->seqNum);
     pkt->chksum = 0;
     calChksum = checksum((void *) pkt, ICMP_HEADER_LEN);
+  
+    // Put it back the way it was
+    pkt->id = htons(pkt->id);
+    pkt->seqNum =  htons(pkt->seqNum);
     
     printf("ICMP Recv Orig checksum: %04x calc'd: %04x", origChksum, calChksum);
     
