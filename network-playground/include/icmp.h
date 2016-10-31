@@ -41,7 +41,7 @@ struct icmpTblEntry
     uchar flag;
     ushort seqNum;
     uchar ipAddr[IPv4_ADDR_LEN];
-}
+};
 
 extern struct icmpTblEntry icmpTbl[ICMP_TBL_LEN];
 

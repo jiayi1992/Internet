@@ -11,6 +11,7 @@
 #include <xinu.h>
 #include <string.h>
 #include <icmp.h>
+#include <arp.h>
 
 #define ICMP_PINGS 4
 
@@ -53,14 +54,14 @@ command xsh_ping(int nargs, char *args[])
         // Find an invalid (free) ICMP table entry
         for (i = 0; i < ICMP_TBL_LEN; i++)
         {
-            wait(icmpTal[i].sema);
-            if(icmpTal[i].flag == ICMP_ENTRY_INVALID)
+            wait(icmpTbl[i].sema);
+            if(icmpTbl[i].flag == ICMP_ENTRY_INVALID)
             {
                 foundid = i;
-                signal(icmpTal[i].sema);
+                signal(icmpTbl[i].sema);
                 break;
             }
-            signal(icmpTal[i].sema);
+            signal(icmpTbl[i].sema);
         }
         
         if (foundid == ICMP_TBL_LEN) 
