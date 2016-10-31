@@ -33,7 +33,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
          ntohs(pkt->len) < IPv4_HDR_LEN )
         return SYSERR;
         
-    printf("IPv4 recvd 2\n");
+    //printf("IPv4 recvd 2\n");
     
     // Screen out packets not addressed to us
     eqFlag = OK;
@@ -46,7 +46,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
         }
     }
     
-    printf("IPv4 recvd 3\n");
+    //printf("IPv4 recvd 3\n");
     
     if (eqFlag == SYSERR)
         return OK;
