@@ -196,6 +196,8 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
     id = ntohs(icmpPRecvd->id);
     seqNum = ntohs(icmpPRecvd->seqNum);
     
+    printf("ICMP Handle reply id %d, seqNum %d\n", id, seqNum);
+    
     // Make sure the id is within the table's range
     if (id < ICMP_TBL_LEN)
     {
@@ -227,14 +229,17 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
         signal(icmpTbl[id].sema);
     }
     
+    printf("ICMP Handle reply 1\n");
     
     // If this is true, we have received a good ICMP reply
     if (ipEqual)
     {
+        printf("ICMP Handle reply 2\n");
         // Send a message to the waiting process
         msg = (message) ntohs(ipPkt->len);
         send(icmpTbl[id].pid, msg);
     }
+    
     return OK;
 }
 
