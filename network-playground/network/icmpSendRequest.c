@@ -49,9 +49,10 @@ syscall icmpSendRequest(uchar *ipAddr,
 	
 	egram->type = htons(ETYPE_IPv4);
 	
-	/* Set up IP header */
+	/* Set up IPv4 header */
 	ipP = (struct ipgram *) &egram->data;
 	
+	// Version 5, IHL size 5 * (4 byte words) = 20
 	ipP->ver_ihl = 0x45;      
 	ipP->tos = IPv4_TOS_ROUTINE;
 	ipP->len = IPv4_HDR_LEN + ICMP_HEADER_LEN;
@@ -61,24 +62,30 @@ syscall icmpSendRequest(uchar *ipAddr,
 	ipP->proto = IPv4_PROTO_ICMP;
 	ipP->chksum = 0x0000;
 	
+	 // Source protocol addr (ours)
 	for (i = 0; i < IP_ADDR_LEN; i++)
         ipP->src[i] = arp.ipAddr[i];
 	
+	// Dest protocol addr (requester's)
 	for (i = 0; i < IP_ADDR_LEN; i++)
         ipP->dst[i] = ipAddr[i];
 	
-	ipP->chksum = hecksum((void *)ipP, IPv4_HDR_LEN);
+	ipP->chksum = htons(checksum((void *) ipP, IPv4_HDR_LEN));
+    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
+    ipP->id = htons(id);
 	
-	/* Set up IP header */
+	/* Set up ICMP header */
 	icmpP = (struct icmpPk *) &ipP->opts;
-	
+
 	icmpP->type = ICMP_ECHO_RQST_T;
 	icmpP->code = ICMP_ECHO_RQST_C;
 	icmpP->chksum = 0x0000;
 	icmpP->id = id;
 	icmpP->sequNum = seqNum;
-	
-	icmpP->chksum = checksum((void *)icmpP, ICMP_HEADER_LEN);
+
+    icmpP->chksum = htons(checksum((void *) icmpP, ICMP_HEADER_LEN));
+	icmpP->id = htons(id);
+    icmpP->seqNum = htons(seqNum);
 	
 	write(ETH0, (uchar *)buf, ICMP_PKTSIZE);
 	
