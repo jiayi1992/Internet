@@ -65,7 +65,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     pkt->id = htons(pkt->id);
     pkt->flags_froff = htons(pkt->flags_froff);
     
-    printf("IP Recv Orig checksum: %04x calc'd: %04x", origChksum, calChksum);
+    printf("IP Recv Orig checksum: %04x calc'd: %04x\n", origChksum, calChksum);
     
     if (calChksum != origChksum)
         return SYSERR;

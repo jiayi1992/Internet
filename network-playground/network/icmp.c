@@ -62,8 +62,8 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
     printf("ICMP recvd 1\n");
     
     // Screen out packets with bad ICMP headers
-    if ( pkt->type != ICMP_ECHO_RQST_T ||
-         pkt->type != ICMP_ECHO_RPLY_T ||
+    if ( (pkt->type != ICMP_ECHO_RQST_T &&
+         pkt->type != ICMP_ECHO_RPLY_T) ||
          pkt->code != ICMP_ECHO_RQST_C )
         return SYSERR;
     
@@ -80,7 +80,7 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
     pkt->id = htons(pkt->id);
     pkt->seqNum =  htons(pkt->seqNum);
     
-    printf("ICMP Recv Orig checksum: %04x calc'd: %04x", origChksum, calChksum);
+    printf("ICMP Recv Orig checksum: %04x calc'd: %04x\n", origChksum, calChksum);
     
     if (calChksum != origChksum)
         return SYSERR;
