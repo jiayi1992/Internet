@@ -10,6 +10,7 @@
 #include <xinu.h>
 #include <network.h>
 #include <ether.h>
+#include <icmp.h>
 #include <arp.h>
 
 /* Network daemon ID */

@@ -31,7 +31,6 @@ syscall icmpInit(void)
         icmpTbl[i].pid = ICMP_TBL_INIT_PID;
         icmpTbl[i].sema = semcreate(1);
         icmpTbl[i].flag = ICMP_ENTRY_INVALID;
-        icmpTbl[i].id = 0;
         icmpTbl[i].seqNum = 0;
         
         for (j = 0; j < IPv4_ADDR_LEN; j++)
