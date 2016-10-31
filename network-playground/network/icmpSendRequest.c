@@ -29,9 +29,10 @@ syscall icmpSendRequest(uchar *ipAddr,
     // TODO
     int i, helperID;
     struct ethergram    *egram = NULL;
-    struct icmpPk       *icmpP = NULL;
+    struct icmpPkt       *icmpP = NULL;
     struct ipgram       *ipP = NULL;
     char                buf[ICMP_PKTSIZE];
+    message             msg;
     
     if (ipAddr == NULL)
     {
@@ -75,7 +76,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     ipP->id = htons(id);
     
     /* Set up ICMP header */
-    icmpP = (struct icmpPk *) &ipP->opts;
+    icmpP = (struct icmpPkt *) &ipP->opts;
 
     icmpP->type = ICMP_ECHO_RQST_T;
     icmpP->code = ICMP_ECHO_RQST_C;
