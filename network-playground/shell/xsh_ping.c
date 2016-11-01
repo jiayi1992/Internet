@@ -104,13 +104,12 @@ command xsh_ping(int nargs, char *args[])
         icmpTbl[foundid].flag = ICMP_ENTRY_INVALID;
         signal(icmpTbl[foundid].sema);
         
-        printf("test\n");
         // Print some statistics
         printf("\nPing statistics for ");
         for (j = 0; j < IP_ADDR_LEN-1; j++)
             printf("%d.", tmp_ipAddr[j]);
         printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
-        printf(":\n");
+        printf("\n\n");
         
         printf("\tPackets: Sent = %d, Received = %d, Lost = %d (%f%% loss)\n",
                sntCnt, rcvdCnt, (sntCnt - rcvdCnt), 100.0 * ((float) (sntCnt - rcvdCnt) / (float) sntCnt));
