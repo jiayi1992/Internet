@@ -15,6 +15,7 @@
 
 #define ICMP_PINGS 4
 
+
 /**
  * Shell command for pinging IPv4 addresses
  * @param nargs count of arguments in args
@@ -27,7 +28,7 @@ command xsh_ping(int nargs, char *args[])
     uchar hwAddr[ETH_ADDR_LEN];
     ushort foundid, i, j;
     int bytesRecvd = 0;
-    int counter = 0;
+    int sntCnt = 0, rcvdCnt = 0;
     ulong msBefore, msAfter;
     
     if (nargs < 2)
@@ -41,13 +42,6 @@ command xsh_ping(int nargs, char *args[])
     {
         // Resolve the IP
         arpResolve(tmp_ipAddr, hwAddr);
-        /*
-        if (OK != arpResolve(tmp_ipAddr, hwAddr))
-        {
-            printf("ping: Error, unable to resolve IP address after trying %d times\n", ARP_RESOLVE_ATTEMPTS);
-            return SYSERR;
-        }
-        */
         
         foundid = ICMP_TBL_LEN;
         
@@ -81,13 +75,13 @@ command xsh_ping(int nargs, char *args[])
         {
             // Get time before
             msBefore = ctr_mS;
-            printf("%dms before\n",msBefore);
             
+            // Send an ICMP request to the address we are pinging
             bytesRecvd = icmpSendRequest(tmp_ipAddr, hwAddr, foundid, i+1);
             
             // Get time after
             msAfter = ctr_mS;
-            
+            sntCnt++;
             if( SYSERR == bytesRecvd)
             {
                 printf("PING: transmit failed. General failure.\n");
@@ -98,13 +92,11 @@ command xsh_ping(int nargs, char *args[])
                 for (j = 0; j < IP_ADDR_LEN-1; j++)
                     printf("%d.", tmp_ipAddr[j]);
                 printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
-                printf(":  bytes=%d time=%dms\n", bytesRecvd, msBefore - msAfter); //time=1ms TTL=61
-                counter++;
-                
+                printf(":  bytes=%d time=%dms\n", bytesRecvd, msBefore - msAfter); // TTL=61
+                rcvdCnt++;
                 // Sleep 1 second
                 sleep(1000);
             }
-            // get time after
         }
         
         // Free the ICMP table entry
@@ -113,15 +105,15 @@ command xsh_ping(int nargs, char *args[])
         signal(icmpTbl[foundid].sema);
         
         // Print some statistics
-        /*
         printf("\nPing statistics for ");
         for (j = 0; j < IP_ADDR_LEN-1; j++)
             printf("%d.", tmp_ipAddr[j]);
         printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
         printf(":\n");
-        */
         
-        // TODO...
+        printf("\tPackets: Sent = %d, Received = %d, Lost = %d (%f%% loss)\n",
+               sntCnt, rcvdCnt, (sntCnt - rcvdCnt), 100.0 * ((float) (sntCnt - rcvdCnt) / (float) sntCnt));
+        
     }
     else
     {
