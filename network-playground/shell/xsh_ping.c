@@ -23,7 +23,6 @@
  */
 command xsh_ping(int nargs, char *args[])
 {
-    /* TODO */
     uchar tmp_ipAddr[IP_ADDR_LEN];
     uchar hwAddr[ETH_ADDR_LEN];
     ushort foundid, i, j;

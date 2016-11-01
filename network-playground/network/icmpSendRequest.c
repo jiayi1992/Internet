@@ -26,7 +26,6 @@ syscall icmpSendRequest(uchar *ipAddr,
                         ushort id,
                         ushort seqNum)
 {
-    // TODO
     int i, helperID;
     struct ethergram    *egram = NULL;
     struct icmpPkt       *icmpP = NULL;
@@ -56,9 +55,12 @@ syscall icmpSendRequest(uchar *ipAddr,
     // Version 5, IHL size 5 * (4 byte words) = 20
     ipP->ver_ihl = 0x45;      
     ipP->tos = IPv4_TOS_ROUTINE;
-    ipP->len = IPv4_HDR_LEN + ICMP_HEADER_LEN;
-    ipP->id = id;                 //Not sure
-    ipP->flags_froff = IPv4_FLAG_LF;    //Not sure
+    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
+    ipP->id = htons(id);
+    ipP->flags_froff = htons(IPv4_FLAG_LF);
+    //ipP->len = IPv4_HDR_LEN + ICMP_HEADER_LEN;
+    //ipP->id = id;                 //Not sure
+    //ipP->flags_froff = IPv4_FLAG_LF;    //Not sure
     ipP->ttl = IPv4_TTL;
     ipP->proto = IPv4_PROTO_ICMP;
     ipP->chksum = 0x0000;
@@ -71,10 +73,10 @@ syscall icmpSendRequest(uchar *ipAddr,
     for (i = 0; i < IP_ADDR_LEN; i++)
         ipP->dst[i] = ipAddr[i];
     
-    ipP->chksum = htons(checksum((void *) ipP, IPv4_HDR_LEN));
-    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
-    ipP->id = htons(id);
-    ipP->flags_froff = htons(IPv4_FLAG_LF);
+    ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN); // htons()
+    //ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
+    //ipP->id = htons(id);
+    //ipP->flags_froff = htons(IPv4_FLAG_LF);
     
     /* Set up ICMP header */
     icmpP = (struct icmpPkt *) &ipP->opts;
@@ -82,12 +84,14 @@ syscall icmpSendRequest(uchar *ipAddr,
     icmpP->type = ICMP_ECHO_RQST_T;
     icmpP->code = ICMP_ECHO_RQST_C;
     icmpP->chksum = 0x0000;
-    icmpP->id = id;
-    icmpP->seqNum = seqNum;
-
-    icmpP->chksum = htons(checksum((void *) icmpP, ICMP_HEADER_LEN));
+    //icmpP->id = id;
+    //icmpP->seqNum = seqNum;
     icmpP->id = htons(id);
     icmpP->seqNum = htons(seqNum);
+
+    icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN); // htons()
+    //icmpP->id = htons(id);
+    //icmpP->seqNum = htons(seqNum);
     
     // Grab semaphore
     wait(icmpTbl[id].sema);

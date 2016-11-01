@@ -49,17 +49,17 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     
     
     // Screen out packets with a bad checksum
-    origChksum = ntohs(pkt->chksum);
-    pkt->len = ntohs(pkt->len);
-    pkt->id = ntohs(pkt->id);
-    pkt->flags_froff = ntohs(pkt->flags_froff);
+    origChksum = pkt->chksum; //ntohs()
+    //pkt->len = ntohs(pkt->len);
+    //pkt->id = ntohs(pkt->id);
+    //pkt->flags_froff = ntohs(pkt->flags_froff);
     pkt->chksum = 0;
     calChksum = checksum((void *) pkt, IPv4_HDR_LEN);
     
     // Put it back the way it was
-    pkt->len = htons(pkt->len);
-    pkt->id = htons(pkt->id);
-    pkt->flags_froff = htons(pkt->flags_froff);
+    //pkt->len = htons(pkt->len);
+    //pkt->id = htons(pkt->id);
+    //pkt->flags_froff = htons(pkt->flags_froff);
     
     //printf("IP Recv Orig checksum: %04x calc'd: %04x\n", origChksum, calChksum);
     

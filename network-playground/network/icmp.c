@@ -68,15 +68,15 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
     
     
     // Screen out packets with a bad ICMP checksums
-    origChksum = ntohs(pkt->chksum);
-    pkt->id = ntohs(pkt->id);
-    pkt->seqNum =  ntohs(pkt->seqNum);
+    origChksum = pkt->chksum; //ntohs(pkt->chksum)
+    //pkt->id = pkt->id; // ntohs()
+    //pkt->seqNum =  pkt->seqNum; // ntohs()
     pkt->chksum = 0;
     calChksum = checksum((void *) pkt, ICMP_HEADER_LEN);
   
     // Put it back the way it was
-    pkt->id = htons(pkt->id);
-    pkt->seqNum =  htons(pkt->seqNum);
+    //pkt->id = htons(pkt->id);
+    //pkt->seqNum =  htons(pkt->seqNum);
     
     //printf("ICMP Recv Orig checksum: %04x calc'd: %04x\n", origChksum, calChksum);
     
@@ -131,10 +131,12 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     // Version 5, IHL size 5 * (4 byte words) = 20
     ipP->ver_ihl = 0x45;
     ipP->tos = IPv4_TOS_ROUTINE;
-    ipP->len = IPv4_HDR_LEN + ICMP_HEADER_LEN;
+    //ipP->len = IPv4_HDR_LEN + ICMP_HEADER_LEN;
+    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
     
     // Get id from request packet
-    ipP->id = ntohs(ipPkt->id);
+    //ipP->id = ntohs(ipPkt->id);
+    ipP->id = ipPkt->id;
     ipP->flags_froff = 0;
     ipP->ttl = IPv4_TTL;
     ipP->proto = IPv4_PROTO_ICMP;
@@ -149,9 +151,9 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
         ipP->dst[i] = ipPkt->src[i];
     
     // Calculate the IP header checksum
-    ipP->chksum = htons(checksum((void *) ipP, IPv4_HDR_LEN));
-    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
-    ipP->id = ipPkt->id;
+    ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN); // htons()
+    //ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
+    //ipP->id = ipPkt->id;
     
     
     /* Set up ICMP header */
@@ -161,13 +163,16 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     icmpP->type = ICMP_ECHO_RPLY_T;
     icmpP->code = ICMP_ECHO_RPLY_C;
     icmpP->chksum = 0;
-    icmpP->id = ntohs(icmpPRecvd->id);
-    icmpP->seqNum = ntohs(icmpPRecvd->seqNum);
-    
-    // Calculate the ICMP header checksum
-    icmpP->chksum = htons(checksum((void *) icmpP, ICMP_HEADER_LEN));
+    //icmpP->id = ntohs(icmpPRecvd->id);
+    //icmpP->seqNum = ntohs(icmpPRecvd->seqNum);
     icmpP->id = icmpPRecvd->id;
     icmpP->seqNum = icmpPRecvd->seqNum;
+    
+    
+    // Calculate the ICMP header checksum
+    icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN); // htons()
+    //icmpP->id = icmpPRecvd->id;
+    //icmpP->seqNum = icmpPRecvd->seqNum;
     
     
     /* Send packet */
