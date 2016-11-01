@@ -104,6 +104,7 @@ command xsh_ping(int nargs, char *args[])
         icmpTbl[foundid].flag = ICMP_ENTRY_INVALID;
         signal(icmpTbl[foundid].sema);
         
+        printf("test\n");
         // Print some statistics
         printf("\nPing statistics for ");
         for (j = 0; j < IP_ADDR_LEN-1; j++)
