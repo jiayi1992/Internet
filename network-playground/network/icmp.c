@@ -106,13 +106,25 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     ulong               icmpDataLen, pktSize = 0;
     char                *buf = NULL; //  buf[ICMP_PKTSIZE]
     
+    printf("icmpHandle request 1\n");
     
     if (ntohs(ipPkt->len) < ETHER_MINPAYLOAD)
+    {
+        printf("icmpHandle request 2\n");
         pktSize = (ulong) (ETH_HEADER_LEN + ETHER_MINPAYLOAD);
+    }
     else if (ntohs(ipPkt->len) < ETH_MTU)
+    {
+        printf("icmpHandle request 3\n");
         pktSize = (ulong) (ETH_HEADER_LEN + ntohs(ipPkt->len));
-    else // The ip packet is too long to send over ethernet
+    }
+    // The ip packet is too long to send over ethernet
+    else
+    {
+        printf("icmpHandle request 4\n");
         return SYSERR;
+    }
+    
     
     printf("pktSize: %d\n", pktSize);
     
