@@ -107,8 +107,8 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     ulong               icmpDataLen, pktSize = 0;
     char                *buf = NULL; 
     
-    /* Debug: testing time */
-    sleep(10);
+    /* Debug: uncomment to test ping times */
+    //sleep(10);
     
     if (ntohs(ipPkt->len) < ETHER_MINPAYLOAD)
     {
