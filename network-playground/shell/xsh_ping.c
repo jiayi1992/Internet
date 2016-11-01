@@ -109,10 +109,10 @@ command xsh_ping(int nargs, char *args[])
         for (j = 0; j < IP_ADDR_LEN-1; j++)
             printf("%d.", tmp_ipAddr[j]);
         printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
-        printf("\n\n");
+        printf(":\n");
         
-        //printf("\tPackets: Sent = %d, Received = %d, Lost = %d (%f%% loss)\n",
-        //       sntCnt, rcvdCnt, (sntCnt - rcvdCnt), 100.0 * ((float) (sntCnt - rcvdCnt) / (float) sntCnt));
+        printf("\tPackets: Sent = %d, Received = %d, Lost = %d\n",
+               sntCnt, rcvdCnt, (sntCnt - rcvdCnt)); // (%f%% loss) 100.0 * ((float) (sntCnt - rcvdCnt) / (float) sntCnt)
         
     }
     else
