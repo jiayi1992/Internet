@@ -12,7 +12,7 @@
 #include <ether.h>
 #include <icmp.h>
 #include <arp.h>
-#include <clock.h>
+
 
 /**
  * Send an ICMP request
@@ -86,7 +86,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     
     // Store the current time as the ICMP packet data
     time = (ulong *) &(icmpP->data);
-    *time = htons(clockTime);
+    *time = htons(clocktime);
 
     // Calculate the checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
