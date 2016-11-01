@@ -163,6 +163,7 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     
     /* Set up ICMP header */
     icmpDataLen = ntohs(ipPkt->len) - IPv4_HDR_LEN - ICMP_HEADER_LEN;
+    printf("icmpDataLen: %d\n");
     
     icmpPRecvd = (struct icmpPkt *) &ipPkt->opts;
     icmpP = (struct icmpPkt *) &ipP->opts;
