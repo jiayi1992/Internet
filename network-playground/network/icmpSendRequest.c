@@ -12,6 +12,7 @@
 #include <ether.h>
 #include <icmp.h>
 #include <arp.h>
+#include <clock.h>
 
 /**
  * Send an ICMP request
