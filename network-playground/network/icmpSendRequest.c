@@ -84,10 +84,14 @@ syscall icmpSendRequest(uchar *ipAddr,
     icmpP->id = htons(id);
     icmpP->seqNum = htons(seqNum);
     
+    printf("icmpSendRequest 1\n");
+    
     // Store the current time as the ICMP packet data
     time = (ulong *) &(icmpP->data);
     *time = htons(clocktime);
-
+    
+    printf("icmpSendRequest 2\n");
+    
     // Calculate the checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
     

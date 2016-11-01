@@ -104,7 +104,8 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     struct icmpPkt      *icmpPRecvd = NULL;
     struct icmpPkt      *icmpP = NULL;
     ulong               icmpDataLen, pktSize = 0;
-    char                *buf = NULL; //  buf[ICMP_PKTSIZE]
+    char                *buf = NULL; 
+    //char                buf[PKTSZ];
     
     printf("icmpHandle request 1\n");
     
