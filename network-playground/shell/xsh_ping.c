@@ -81,7 +81,7 @@ command xsh_ping(int nargs, char *args[])
         {
             // Get time before
             msBefore = ctr_mS;
-            printf("%lums before\n",msBefore);
+            printf("%dms before\n",msBefore);
             
             bytesRecvd = icmpSendRequest(tmp_ipAddr, hwAddr, foundid, i+1);
             
