@@ -58,7 +58,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     ipP->ver_ihl = 0x45;      
     ipP->tos = IPv4_TOS_ROUTINE;
     // Add 4 bytes for the ICMP current time data
-    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
+    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN + 4);
     ipP->id = htons(id);
     ipP->flags_froff = 0;
     ipP->ttl = IPv4_TTL;
