@@ -61,9 +61,10 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
     
     
     // Screen out packets with bad ICMP headers
-    if ( (pkt->type != ICMP_ECHO_RQST_T &&
+    if ( ntohs(ipPkt->len) < (ICMP_HEADER_LEN + IPv4_HDR_LEN) ||
+        (pkt->type != ICMP_ECHO_RQST_T &&
          pkt->type != ICMP_ECHO_RPLY_T) ||
-         pkt->code != ICMP_ECHO_RQST_C )
+         pkt->code != ICMP_ECHO_RQST_C)
         return SYSERR;
     
     
@@ -105,29 +106,22 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     struct icmpPkt      *icmpP = NULL;
     ulong               icmpDataLen, pktSize = 0;
     char                *buf = NULL; 
-    //char                buf[PKTSZ];
     
-    printf("icmpHandle request 1\n");
     
     if (ntohs(ipPkt->len) < ETHER_MINPAYLOAD)
     {
-        printf("icmpHandle request 2\n");
         pktSize = (ulong) (ETH_HEADER_LEN + ETHER_MINPAYLOAD);
     }
     else if (ntohs(ipPkt->len) < ETH_MTU)
     {
-        printf("icmpHandle request 3\n");
         pktSize = (ulong) (ETH_HEADER_LEN + ntohs(ipPkt->len));
     }
     // The ip packet is too long to send over ethernet
     else
     {
-        printf("icmpHandle request 4\n");
         return SYSERR;
     }
     
-    
-    printf("pktSize: %d\n", pktSize);
     
     buf = (char *) malloc(pktSize);
     
@@ -137,7 +131,6 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     // Zero out the packet buffer
     bzero(buf, pktSize);
     
-    printf("bzero after\n");
     
     /* Set up Ethergram header */
     egram = (struct ethergram *) buf;
@@ -159,7 +152,6 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     ipP->tos = IPv4_TOS_ROUTINE;
     
     icmpDataLen = ntohs(ipPkt->len) - IPv4_HDR_LEN - ICMP_HEADER_LEN;
-    printf("icmpDataLen: %d\n",icmpDataLen);
     ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN + icmpDataLen);
     
     // Get id from request packet
@@ -204,6 +196,7 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     /* Send packet */
     write(ETH0, (uchar *)buf, ICMP_PKTSIZE);
     
+    free((void *) buf);
     return OK;
 }
 
@@ -261,6 +254,7 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
     // If this is true, we have received a good ICMP reply
     if (ipEqual)
     {
+        printf("icmpHandleReply: %s\n", (char *) &icmpPRecvd->data);
         // Send a message to the waiting process
         msg = (message) ntohs(ipPkt->len);
         send(icmpTbl[id].pid, msg);

@@ -31,7 +31,6 @@ syscall icmpSendRequest(uchar *ipAddr,
     struct ethergram    *egram = NULL;
     struct icmpPkt       *icmpP = NULL;
     struct ipgram       *ipP = NULL;
-    //ulong               *time;
     char                buf[ICMP_PKTSIZE];
     message             msg;
     
@@ -84,13 +83,11 @@ syscall icmpSendRequest(uchar *ipAddr,
     icmpP->id = htons(id);
     icmpP->seqNum = htons(seqNum);
     
-    //printf("icmpSendRequest 1\n");
-    
-    // Store the current time as the ICMP packet data
-    //time = (ulong *) &(icmpP->data);
-    //*time = htons(clocktime);
-    
-    //printf("icmpSendRequest 2\n");
+    // Put the text "REQ" in the icmp packet's datafield
+    icmpP->data[0] = 'R';
+    icmpP->data[1] = 'E';
+    icmpP->data[2] = 'Q';
+    icmpP->data[3] = '\0';
     
     // Calculate the checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
