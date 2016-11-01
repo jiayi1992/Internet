@@ -157,7 +157,10 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     // Version 5, IHL size 5 * (4 byte words) = 20
     ipP->ver_ihl = 0x45;
     ipP->tos = IPv4_TOS_ROUTINE;
-    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
+    
+    icmpDataLen = ntohs(ipPkt->len) - IPv4_HDR_LEN - ICMP_HEADER_LEN;
+    printf("icmpDataLen: %d\n",icmpDataLen);
+    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN + icmpDataLen);
     
     // Get id from request packet
     ipP->id = ipPkt->id;
@@ -179,9 +182,6 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     
     
     /* Set up ICMP header */
-    icmpDataLen = ntohs(ipPkt->len) - IPv4_HDR_LEN - ICMP_HEADER_LEN;
-    printf("icmpDataLen: %d\n",icmpDataLen);
-    
     icmpPRecvd = (struct icmpPkt *) &ipPkt->opts;
     icmpP = (struct icmpPkt *) &ipP->opts;
     
