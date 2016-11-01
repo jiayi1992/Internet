@@ -21,7 +21,7 @@ void netDaemon(void)
     uchar               packet[PKTSZ];
     ushort              type = 0x0;
     struct ethergram    *egram = NULL;
-
+    
     // Zero out the packet buffer.
     bzero(packet, PKTSZ);
     

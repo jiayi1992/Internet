@@ -58,9 +58,6 @@ syscall icmpSendRequest(uchar *ipAddr,
     ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
     ipP->id = htons(id);
     ipP->flags_froff = htons(IPv4_FLAG_LF);
-    //ipP->len = IPv4_HDR_LEN + ICMP_HEADER_LEN;
-    //ipP->id = id;                 //Not sure
-    //ipP->flags_froff = IPv4_FLAG_LF;    //Not sure
     ipP->ttl = IPv4_TTL;
     ipP->proto = IPv4_PROTO_ICMP;
     ipP->chksum = 0x0000;
@@ -73,10 +70,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     for (i = 0; i < IP_ADDR_LEN; i++)
         ipP->dst[i] = ipAddr[i];
     
-    ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN); // htons()
-    //ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
-    //ipP->id = htons(id);
-    //ipP->flags_froff = htons(IPv4_FLAG_LF);
+    ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
     
     /* Set up ICMP header */
     icmpP = (struct icmpPkt *) &ipP->opts;
@@ -84,21 +78,17 @@ syscall icmpSendRequest(uchar *ipAddr,
     icmpP->type = ICMP_ECHO_RQST_T;
     icmpP->code = ICMP_ECHO_RQST_C;
     icmpP->chksum = 0x0000;
-    //icmpP->id = id;
-    //icmpP->seqNum = seqNum;
     icmpP->id = htons(id);
     icmpP->seqNum = htons(seqNum);
 
-    icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN); // htons()
-    //icmpP->id = htons(id);
-    //icmpP->seqNum = htons(seqNum);
+    icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
     
     // Grab semaphore
     wait(icmpTbl[id].sema);
     
     write(ETH0, (uchar *)buf, ICMP_PKTSIZE);
     
-    //
+    // Update icmpTbl entry
     icmpTbl[id].pid = getpid();
     icmpTbl[id].flag = ICMP_RQST_SENT;
     icmpTbl[id].seqNum = seqNum;
