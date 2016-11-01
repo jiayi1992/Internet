@@ -30,6 +30,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     struct ethergram    *egram = NULL;
     struct icmpPkt       *icmpP = NULL;
     struct ipgram       *ipP = NULL;
+    ulong               *time;
     char                buf[ICMP_PKTSIZE];
     message             msg;
     
@@ -55,9 +56,10 @@ syscall icmpSendRequest(uchar *ipAddr,
     // Version 5, IHL size 5 * (4 byte words) = 20
     ipP->ver_ihl = 0x45;      
     ipP->tos = IPv4_TOS_ROUTINE;
-    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN);
+    // Add 4 bytes for the ICMP current time data
+    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN + 4);
     ipP->id = htons(id);
-    ipP->flags_froff = htons(IPv4_FLAG_LF);
+    ipP->flags_froff = 0;
     ipP->ttl = IPv4_TTL;
     ipP->proto = IPv4_PROTO_ICMP;
     ipP->chksum = 0x0000;
@@ -80,7 +82,12 @@ syscall icmpSendRequest(uchar *ipAddr,
     icmpP->chksum = 0x0000;
     icmpP->id = htons(id);
     icmpP->seqNum = htons(seqNum);
+    
+    // Store the current time as the ICMP packet data
+    time = (ulong *) &(icmpP->data);
+    *time = htons(clockTime);
 
+    // Calculate the checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
     
     // Grab semaphore

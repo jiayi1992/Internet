@@ -103,8 +103,24 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     struct ipgram       *ipP = NULL;
     struct icmpPkt      *icmpPRecvd = NULL;
     struct icmpPkt      *icmpP = NULL;
-    char                buf[ICMP_PKTSIZE];
+    ulong               pktSize = 0;
+    char                *buf = NULL; //  buf[ICMP_PKTSIZE]
     
+    
+    if (ntohs(ipPkt->len) < ETHER_MINPAYLOAD)
+        pktSize = (ulong) (ETH_HEADER_LEN + ETHER_MINPAYLOAD);
+    else if (ntohs(ipPkt->len) < ETH_MTU)
+        pktSize = (ulong) (ETH_HEADER_LEN + ntohs(ipPkt->len));
+    else // The ip packet is too long to send over ethernet
+        return SYSERR;
+    
+    buf = (char *) malloc(pktSize);
+    
+    if (buf == NULL)
+        return SYSERR;
+    
+    // Zero out the packet buffer
+    bzero(buf, pktSize);
     
     /* Set up Ethergram header */
     egram = (struct ethergram *) buf;
@@ -142,10 +158,12 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
         ipP->dst[i] = ipPkt->src[i];
     
     // Calculate the IP header checksum
-    ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN); // htons()
+    ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
     
     
     /* Set up ICMP header */
+    icmpDataLen = ntohs(ipPkt->len) - IPv4_HDR_LEN - ICMP_HEADER_LEN;
+    
     icmpPRecvd = (struct icmpPkt *) &ipPkt->opts;
     icmpP = (struct icmpPkt *) &ipP->opts;
     
@@ -155,9 +173,14 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     icmpP->id = icmpPRecvd->id;
     icmpP->seqNum = icmpPRecvd->seqNum;
     
+    // Copy the received data into the data field of the ICMP reply
+    for (i = 0; i < icmpDataLen; i++)
+    {
+        icmpP->data[i] = icmpPRecvd->data[i];
+    }
     
     // Calculate the ICMP header checksum
-    icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN); // htons()
+    icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
     
     
     /* Send packet */
