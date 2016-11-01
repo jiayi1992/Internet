@@ -24,13 +24,14 @@
 command xsh_ping(int nargs, char *args[])
 {
     /* TODO */
-	uchar tmp_ipAddr[IP_ADDR_LEN];
+    uchar tmp_ipAddr[IP_ADDR_LEN];
     uchar hwAddr[ETH_ADDR_LEN];
     ushort foundid, i, j;
     int bytesRecvd = 0;
     int counter = 0;
-	
-	if (nargs < 2)
+    ulong msBefore, msAfter;
+    
+    if (nargs < 2)
     {
         // Print helper info about this shell command
         printf("ping [IP address]\n");
@@ -48,7 +49,7 @@ command xsh_ping(int nargs, char *args[])
             return SYSERR;
         }
         */
-		
+        
         foundid = ICMP_TBL_LEN;
         
         // Find an invalid (free) ICMP table entry
@@ -80,7 +81,12 @@ command xsh_ping(int nargs, char *args[])
         for (i = 0; i < ICMP_PINGS; i++)
         {
             // Get time before
+            msBefore = ctr_mS;
+            
             bytesRecvd = icmpSendRequest(tmp_ipAddr, hwAddr, foundid, i+1);
+            
+            // Get time after
+            msAfter = ctr_mS;
             
             if( SYSERR == bytesRecvd)
             {
@@ -92,7 +98,7 @@ command xsh_ping(int nargs, char *args[])
                 for (j = 0; j < IP_ADDR_LEN-1; j++)
                     printf("%d.", tmp_ipAddr[j]);
                 printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
-                printf(":  bytes=%d\n", bytesRecvd); //time=1ms TTL=61
+                printf(":  bytes=%d time=%dms\n", bytesRecvd, msBefore - msAfter); //time=1ms TTL=61
                 counter++;
                 
                 // Sleep 1 second
@@ -123,6 +129,6 @@ command xsh_ping(int nargs, char *args[])
         return SYSERR;
     }
 
-	
+    
     return OK;
 }
