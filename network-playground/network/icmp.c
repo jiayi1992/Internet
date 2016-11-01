@@ -254,7 +254,9 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
     // If this is true, we have received a good ICMP reply
     if (ipEqual)
     {
-        printf("icmpHandleReply: %s\n", (char *) &icmpPRecvd->data);
+        /* Debug: uncomment to see reply message data */
+        //printf("icmpHandleReply: %s\n", (char *) &icmpPRecvd->data);
+        
         // Send a message to the waiting process
         msg = (message) ntohs(ipPkt->len);
         send(icmpTbl[id].pid, msg);
