@@ -111,8 +111,8 @@ command xsh_ping(int nargs, char *args[])
         printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
         printf("\n\n");
         
-        printf("\tPackets: Sent = %d, Received = %d, Lost = %d (%f%% loss)\n",
-               sntCnt, rcvdCnt, (sntCnt - rcvdCnt), 100.0 * ((float) (sntCnt - rcvdCnt) / (float) sntCnt));
+        //printf("\tPackets: Sent = %d, Received = %d, Lost = %d (%f%% loss)\n",
+        //       sntCnt, rcvdCnt, (sntCnt - rcvdCnt), 100.0 * ((float) (sntCnt - rcvdCnt) / (float) sntCnt));
         
     }
     else
