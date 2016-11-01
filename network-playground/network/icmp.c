@@ -103,7 +103,7 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     struct ipgram       *ipP = NULL;
     struct icmpPkt      *icmpPRecvd = NULL;
     struct icmpPkt      *icmpP = NULL;
-    ulong               pktSize = 0;
+    ulong               icmpDataLen, pktSize = 0;
     char                *buf = NULL; //  buf[ICMP_PKTSIZE]
     
     
