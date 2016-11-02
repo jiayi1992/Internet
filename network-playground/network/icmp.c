@@ -250,7 +250,7 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
             {
                 icmpTbl[id].flag = ICMP_GOT_RPLY;
                 icmpTbl[id].ttl = ipPkt->ttl;
-                uchar4ToUlong(ipPkt->data, &icmpTbl[id].recvdTime, BIG_ENDIAN);
+                uchar4ToUlong(icmpPRecvd->data, &icmpTbl[id].recvdTime, BIG_ENDIAN);
                 icmpTbl[id].recvdTime = ntohs(icmpTbl[id].recvdTime);
                 
                 printf("recvdTime %d\n", icmpTbl[id].recvdTime);
