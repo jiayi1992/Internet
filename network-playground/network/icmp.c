@@ -31,6 +31,7 @@ syscall icmpInit(void)
         icmpTbl[i].pid = ICMP_TBL_INIT_PID;
         icmpTbl[i].sema = semcreate(1);
         icmpTbl[i].flag = ICMP_ENTRY_INVALID;
+        icmpTbl[i].ttl = 0;
         icmpTbl[i].seqNum = 0;
         
         for (j = 0; j < IPv4_ADDR_LEN; j++)
@@ -246,7 +247,10 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
             
             // Set the flag, since we got an ICMP reply
             if (ipEqual)
+            {
                 icmpTbl[id].flag = ICMP_GOT_RPLY;
+                icmpTbl[id].ttl = ipPkt->ttl;
+            }
         }
         // Give back the semaphore
         signal(icmpTbl[id].sema);

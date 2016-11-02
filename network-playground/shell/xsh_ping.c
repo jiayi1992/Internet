@@ -69,7 +69,7 @@ command xsh_ping(int nargs, char *args[])
         for (j = 0; j < IP_ADDR_LEN-1; j++)
             printf("%d.", tmp_ipAddr[j]);
         printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
-        printf(" with 28 bytes of data:\n"); // 32 bytes with a time stamp
+        printf(" with 32 bytes of data:\n"); // 32 bytes with a time stamp
         
         for (i = 0; i < ICMP_PINGS; i++)
         {
@@ -92,7 +92,12 @@ command xsh_ping(int nargs, char *args[])
                 for (j = 0; j < IP_ADDR_LEN-1; j++)
                     printf("%d.", tmp_ipAddr[j]);
                 printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
-                printf(":  bytes=%d time=%dms\n", bytesRecvd, msBefore - msAfter); // TTL=61
+                
+                wait(icmpTbl[foundid].sema);
+                printf(":  bytes=%d time=%dms TTL=%d\n", 
+                      bytesRecvd, msBefore - msAfter, icmpTbl[foundid].ttl);
+                signal(icmpTbl[foundid].sema);
+                
                 rcvdCnt++;
                 // Sleep 1 second
                 sleep(1000);

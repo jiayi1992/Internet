@@ -39,6 +39,7 @@ struct icmpTblEntry
     int pid;
     int sema;
     uchar flag;
+    uchar ttl;
     ushort seqNum;
     uchar ipAddr[IPv4_ADDR_LEN];
 };
