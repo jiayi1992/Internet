@@ -119,8 +119,7 @@ command xsh_ping(int nargs, char *args[])
         printf(":\n");
         
         printf("\tPackets: Sent = %d, Received = %d, Lost = %d\n",
-               sntCnt, rcvdCnt, (sntCnt - rcvdCnt)); // (%f%% loss) 100.0 * ((float) (sntCnt - rcvdCnt) / (float) sntCnt)
-        
+               sntCnt, rcvdCnt, (sntCnt - rcvdCnt));
     }
     else
     {
