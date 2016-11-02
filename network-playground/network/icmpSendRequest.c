@@ -85,7 +85,8 @@ syscall icmpSendRequest(uchar *ipAddr,
     
     // Put the current time in seconds in the icmp packet's datafield
     ulongToUchar4(icmpP->data, clocktime, BIG_ENDIAN);
-    printf("clock time %d\n", clocktime);
+    printf("clock time %d icmpP->data: %d %d %d %d\n",
+          clocktime, icmpP->data[0], icmpP->data[1], icmpP->data[2], icmpP->data[3]);
     
     // Calculate the checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
