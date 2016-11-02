@@ -83,11 +83,9 @@ syscall icmpSendRequest(uchar *ipAddr,
     icmpP->id = htons(id);
     icmpP->seqNum = htons(seqNum);
     
-    // Put the text "REQ" in the icmp packet's datafield
-    icmpP->data[0] = 'R';
-    icmpP->data[1] = 'E';
-    icmpP->data[2] = 'Q';
-    icmpP->data[3] = '\0';
+    // Put the current time in seconds in the icmp packet's datafield
+    ulongToUchar4(icmpP->data, clocktime, BIG_ENDIAN);
+    printf("clock time %d\n", clocktime);
     
     // Calculate the checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);

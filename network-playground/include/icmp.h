@@ -40,6 +40,8 @@ struct icmpTblEntry
     int sema;
     uchar flag;
     uchar ttl;
+    ushort recvdBytes;
+    ulong recvdTime;
     ushort seqNum;
     uchar ipAddr[IPv4_ADDR_LEN];
 };
@@ -86,5 +88,11 @@ syscall icmpSendRequest(uchar *ipAddr,
                         uchar *hwAddr, 
                         ushort id,
                         ushort seqNum);
+                        
+/** ICMP Helper functions */
+#define LITTLE_ENDIAN 0
+#define BIG_ENDIAN 1
+syscall ulongToUchar4(uchar *buf, ulong num, int flag);
+syscall uchar4ToUlong(uchar *buf, ulong *num, int flag);
 
 #endif                          /* _ICMP_H_ */

@@ -245,11 +245,16 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
                 }
             }
             
-            // Set the flag, since we got an ICMP reply
+            // Set the flag and the ttl field, since we got an ICMP reply
             if (ipEqual)
             {
                 icmpTbl[id].flag = ICMP_GOT_RPLY;
                 icmpTbl[id].ttl = ipPkt->ttl;
+                uchar4ToUlong(ipPkt->data, &icmpTbl[id].recvdTime, BIG_ENDIAN);
+                icmpTbl[id].recvdTime = ntohs(icmpTbl[id].recvdTime);
+                
+                printf("recvdTime %d\n", icmpTbl[id].recvdTime);
+                icmpTbl[id].recvdBytes = ntohs(ipPkt->len);
             }
         }
         // Give back the semaphore
@@ -260,12 +265,77 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
     // If this is true, we have received a good ICMP reply
     if (ipEqual)
     {
-        /* Debug: uncomment to see reply message data */
-        //printf("icmpHandleReply: %s\n", (char *) &icmpPRecvd->data);
-        
         // Send a message to the waiting process
         msg = (message) ntohs(ipPkt->len);
         send(icmpTbl[id].pid, msg);
+    }
+    
+    return OK;
+}
+
+
+/**
+ * Converts a ulong to an array of 4 uchars
+ * @param buf   uchar array
+ * @param num   the number to convert
+ * @param flag  flag for indicating whether the value should be stored
+ *              little endian or big endian
+ * @return OK for success, SYSERR for syntax error
+ */
+syscall ulongToUchar4(uchar *buf, ulong num, int flag)
+{
+    if (buf == NULL)
+        return SYSERR;
+    
+    if (flag == BIG_ENDIAN)
+    {
+        buf[3] = (uchar) ((num & 0xFF000000) >> 24);
+        buf[2] = (uchar) ((num & 0x00FF0000) >> 16);
+        buf[1] = (uchar) ((num & 0x0000FF00) >> 8);
+        buf[0] = (uchar) (num & 0x000000FF);
+    }
+    else if (flag == LITTLE_ENDIAN)
+    {
+        buf[0] = (uchar) ((num & 0xFF000000) >> 24);
+        buf[1] = (uchar) ((num & 0x00FF0000) >> 16);
+        buf[2] = (uchar) ((num & 0x0000FF00) >> 8);
+        buf[3] = (uchar) (num & 0x000000FF);
+    }
+    else
+    {
+        return SYSERR;
+    }
+    
+    return OK;
+}
+
+
+/**
+ * Converts an array of 4 uchars to a ulong
+ * @param buf   uchar array to convert
+ * @param num   a pointer to the ulong
+ * @param flag  flag for indicating whether the value should be stored
+ *              little endian or big endian
+ * @return OK for success, SYSERR for syntax error
+ */
+syscall uchar4ToUlong(uchar *buf, ulong *num, int flag)
+{
+    if (buf == NULL || num == NULL)
+        return SYSERR;
+    
+    if (flag == BIG_ENDIAN)
+    {
+        *num = (buf[3] << 24) | (buf[2] << 16) |
+               (buf[1] << 8)  |  buf[0];
+    }
+    else if (flag == LITTLE_ENDIAN)
+    {
+        *num = (buf[0] << 24) | (buf[1] << 16) |
+               (buf[2] << 8)  |  buf[3];
+    }
+    else
+    {
+        return SYSERR;
     }
     
     return OK;
