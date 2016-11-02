@@ -29,7 +29,7 @@ command xsh_ping(int nargs, char *args[])
     ushort foundid, i, j;
     int bytesRecvd = 0;
     int sntCnt = 0, rcvdCnt = 0;
-    ulong msBefore, msAfter;
+    ulong sBefore, msBefore, msAfter;
     
     if (nargs < 2)
     {
@@ -75,6 +75,7 @@ command xsh_ping(int nargs, char *args[])
         {
             // Get time before
             msBefore = ctr_mS;
+            sBefore = clocktime;
             
             // Send an ICMP request to the address we are pinging
             bytesRecvd = icmpSendRequest(tmp_ipAddr, hwAddr, foundid, i+1);
@@ -94,8 +95,9 @@ command xsh_ping(int nargs, char *args[])
                 printf("%d", tmp_ipAddr[IP_ADDR_LEN-1]);
                 
                 wait(icmpTbl[foundid].sema);
-                printf(":  bytes=%d time=%dms TTL=%d\n", 
-                      bytesRecvd, msBefore - msAfter, icmpTbl[foundid].ttl);
+                printf(":  bytes=%d time=%dms TTL=%d (Sent time %d(s), Recvd time %d(s))\n",
+                      bytesRecvd, msBefore - msAfter, icmpTbl[foundid].ttl,
+                      sBefore, icmpTbl[foundid].recvdTime);
                 signal(icmpTbl[foundid].sema);
                 
                 rcvdCnt++;

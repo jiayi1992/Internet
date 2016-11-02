@@ -33,7 +33,8 @@ syscall icmpInit(void)
         icmpTbl[i].flag = ICMP_ENTRY_INVALID;
         icmpTbl[i].ttl = 0;
         icmpTbl[i].seqNum = 0;
-        
+        icmpTbl[i].recvdBytes = 0;
+        icmpTbl[i].recvdTime = 0;
         for (j = 0; j < IPv4_ADDR_LEN; j++)
             icmpTbl[i].ipAddr[j] = 0;
     }
@@ -251,8 +252,6 @@ syscall icmpHandleReply(struct ipgram *ipPkt)
                 icmpTbl[id].flag = ICMP_GOT_RPLY;
                 icmpTbl[id].ttl = ipPkt->ttl;
                 uchar4ToUlong(icmpPRecvd->data, &icmpTbl[id].recvdTime, BIG_ENDIAN);
-                
-                printf("recvdTime %d\n", icmpTbl[id].recvdTime);
                 icmpTbl[id].recvdBytes = ntohs(ipPkt->len);
             }
         }
