@@ -25,7 +25,7 @@ void netInit(void)
     open(ETH0);
     
     // Get this machine's ip addr
-    dot2ip(nvramGet("lan_ipaddr\0"), &net.ipAddr);
+    dot2ip(nvramGet("lan_ipaddr\0"), (uchar *) &net.ipAddr);
     
     // Get this machine's mac addr
     etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &net.hwAddr, 0);
@@ -40,7 +40,7 @@ void netInit(void)
     net.dId = create((void *)netDaemon, INITSTK, 3, "NET_DAEMON", 0);
     
     // Start the network daemon
-    ready(netdId, 1);
+    ready(net.dId, 1);
 
     return;
 }
