@@ -74,27 +74,25 @@ struct arpEntry
 /** ARP header entry contents */
 struct arpPkt
 {
-    ushort hwType;              
-    ushort prType;              
-    uchar hwAddrLen;               
-    uchar prAddrLen;               
-    ushort op;                  
+    ushort hwType;
+    ushort prType;
+    uchar hwAddrLen;
+    uchar prAddrLen;
+    ushort op;
     uchar addrs[1]; 
 };
 
-struct arpTable
+/** ARP information struct - includes the ARP table*/
+struct arpInfo
 {
     struct arpEntry     tbl[ARP_TABLE_LEN];                 /** ARP table */
     semaphore           sema;                               /** ARP table semaphore */
     int                 freeEnt;                            /** Index to next free ARP entry */
     int                 victimEnt;                          /** Next victim if ARP table full */
-    int                 dId;                                /** ARP daemon id */
     int                 wId;                                /** ARP table watcher id */
-    uchar               ipAddr[IP_ADDR_LEN];                /** This host's IP address */
-    uchar               hwAddr[ETH_ADDR_LEN];               /** This host's mac address */
 };
 
-extern struct arpTable arp;
+extern struct arpInfo arp;
 
 /** ARP initialization */
 syscall arpInit(void);

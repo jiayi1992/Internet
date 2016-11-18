@@ -34,7 +34,7 @@ syscall arpSendReply(struct arpPkt *recvdPkt)
         egram->dst[i] = recvdPkt->addrs[i + ARP_SHA_OFFSET];
     
     for (i = 0; i < ETH_ADDR_LEN; i++)
-        egram->src[i] = arp.hwAddr[i];
+        egram->src[i] = net.hwAddr[i];
     
     egram->type = htons(ETYPE_ARP);
     
@@ -52,11 +52,11 @@ syscall arpSendReply(struct arpPkt *recvdPkt)
     
     // Source hw addr (ours)
     for (i = 0; i < ETH_ADDR_LEN; i++)
-        arpP->addrs[i + ARP_SHA_OFFSET] = arp.hwAddr[i];
+        arpP->addrs[i + ARP_SHA_OFFSET] = net.hwAddr[i];
     
     // Source protocol addr (ours)
     for (i = 0; i < IP_ADDR_LEN; i++)
-        arpP->addrs[i + ARP_SPA_OFFSET] = arp.ipAddr[i];
+        arpP->addrs[i + ARP_SPA_OFFSET] = net.ipAddr[i];
     
     // Dest hw addr (requester's)
     for (i = 0; i < ETH_ADDR_LEN; i++)

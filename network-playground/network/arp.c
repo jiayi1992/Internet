@@ -22,13 +22,6 @@ struct arpTable arp;
 syscall arpInit(void)
 {
     int i;
-    uchar *tmp_addr;
-    
-    // Get this machine's ip addr
-    dot2ip(nvramGet("lan_ipaddr\0"),arp.ipAddr);
-    
-    // Get this machine's mac addr
-    etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &arp.hwAddr, 0);
     
     /* Initialize arp semaphore */ 
     arp.sema = semcreate(1);

@@ -11,7 +11,7 @@
 #include <network.h>
 #include <ether.h>
 #include <icmp.h>
-#include <arp.h>
+
 
 /**
  * Handle IPv4 Packets
@@ -28,24 +28,40 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     
     
     // Screen out packets with bad IPv4 headers
-    if ( pkt->ver_ihl != 0x45 ||
-         ntohs(pkt->len) < IPv4_HDR_LEN )
+    if ( !(pkt->ver_ihl & 0x40) ||
+          (pkt->ver_ihl & 0x0F < 5) ||
+          (ntohs(pkt->len) < IPv4_HDR_LEN) )
         return SYSERR;
     
     
-    // Screen out packets not addressed to us
+    // Screen out packets not addressed to us/are not broadcast messages
     eqFlag = OK;
-    for (i = 0; i < IPv4_ADDR_LEN; i++)
+    if (pkt->dst[i] != 0xFF) // It couldn't be a broadcast msg
     {
-        if (pkt->dst[i] != arp.ipAddr[i])
+        for (i = 0; i < IPv4_ADDR_LEN; i++)
         {
-            eqFlag = SYSERR;
-            break;
+            if (pkt->dst[i] != net.ipAddr[i])
+            {
+                eqFlag = SYSERR;
+                break;
+            }
         }
+        if (eqFlag == SYSERR)
+            return OK;
     }
-    
-    if (eqFlag == SYSERR)
-        return OK;
+    else // The packet could be a broadcast msg; check it
+    {
+        for (i = 0; i < IPv4_ADDR_LEN; i++)
+        {
+            if (pkt->dst[i] != 0xFF)
+            {
+                eqFlag = SYSERR;
+                break;
+            }
+        }
+        if (eqFlag == SYSERR)
+            return OK;
+    }
     
     
     // Screen out packets with a bad checksum

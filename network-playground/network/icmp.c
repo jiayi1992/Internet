@@ -11,7 +11,6 @@
 #include <network.h>
 #include <ether.h>
 #include <icmp.h>
-#include <arp.h>
 
 /* Global ICMP table definition */
 struct icmpTblEntry icmpTbl[ICMP_TBL_LEN];
@@ -81,13 +80,9 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
     
     // Handle the ICMP packet
     if ( pkt->type == ICMP_ECHO_RQST_T)
-    {
         return icmpHandleRequest(ipPkt, srcAddr);
-    }
     else if ( pkt->type == ICMP_ECHO_RPLY_T )
-    {
         return icmpHandleReply(ipPkt);
-    }
     
     return OK;
 }
@@ -143,7 +138,7 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
         egram->dst[i] = srcAddr[i];
     
     for (i = 0; i < ETH_ADDR_LEN; i++)
-        egram->src[i] = arp.hwAddr[i];
+        egram->src[i] = net.hwAddr[i];
     
     egram->type = htons(ETYPE_IPv4);
     
@@ -167,7 +162,7 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     
     // Source protocol addr (ours)
     for (i = 0; i < IPv4_ADDR_LEN; i++)
-        ipP->src[i] = arp.ipAddr[i];
+        ipP->src[i] = net.ipAddr[i];
     
     // Dest protocol addr (requester's)
     for (i = 0; i < IPv4_ADDR_LEN; i++)
@@ -189,9 +184,7 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     
     // Copy the received data into the data field of the ICMP reply
     for (i = 0; i < icmpDataLen; i++)
-    {
         icmpP->data[i] = icmpPRecvd->data[i];
-    }
     
     // Calculate the ICMP header checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);

@@ -248,15 +248,27 @@ struct dhcpgram                 /**< DHCP Packet Variables          */
 #define DHCP_MESSAGE_RELEASE  0x07
 #define DHCP_MESSAGE_INFORM   0x08
 
-/** Network daemon ID */
-extern int netdID;
+/** Network Information Struct */
+struct netInfo
+{
+    int                 dId;                                /** Net daemon id */
+    uchar               ipAddr[IP_ADDR_LEN];                /** This host's IP address */
+    uchar               hwAddr[ETH_ADDR_LEN];               /** This host's mac address */
+};
+
+extern struct netInfo net;
 
 /** Network daemon process */
 void netDaemon(void);
 
 /** IPv4 Functions */
 syscall ipRecv(struct ipgram *, uchar *);
+syscall ipWrite(void *payload, ushort len, uchar tos, uchar *ipAddr);
 
+/** Lower level Network functions */
+syscall netWrite(struct ipgram *ipPkt, uchar *mac);
+
+/** Misc. Helper functions */
 syscall getpid(void);
 
 #endif                          /* _NETWORK_H_ */

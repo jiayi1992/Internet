@@ -53,11 +53,11 @@ syscall arpSendRequest(uchar *ipAddr)
     
     // Source hw addr
     for (i = 0; i < ETH_ADDR_LEN; i++)
-        arpP->addrs[i + ARP_SHA_OFFSET] = arp.hwAddr[i];
+        arpP->addrs[i + ARP_SHA_OFFSET] = net.hwAddr[i];
     
     // Source protocol addr
     for (i = 0; i < IP_ADDR_LEN; i++)
-        arpP->addrs[i + ARP_SPA_OFFSET] = arp.ipAddr[i];
+        arpP->addrs[i + ARP_SPA_OFFSET] = net.ipAddr[i];
     
     // Dest hw addr
     for (i = 0; i < ETH_ADDR_LEN; i++)

@@ -11,7 +11,6 @@
 #include <network.h>
 #include <ether.h>
 #include <icmp.h>
-#include <arp.h>
 
 
 /**
@@ -34,10 +33,8 @@ syscall icmpSendRequest(uchar *ipAddr,
     char                buf[ICMP_PKTSIZE];
     message             msg;
     
-    if (ipAddr == NULL)
-    {
+    if (ipAddr == NULL || hwAddr == NULL)
         return SYSERR;
-    }
     
     /* Set up Ethergram header */
     egram = (struct ethergram *) buf;
@@ -46,7 +43,7 @@ syscall icmpSendRequest(uchar *ipAddr,
         egram->dst[i] = hwAddr[i];
     
     for (i = 0; i < ETH_ADDR_LEN; i++)
-        egram->src[i] = arp.hwAddr[i];
+        egram->src[i] = net.hwAddr[i];
     
     egram->type = htons(ETYPE_IPv4);
     
@@ -66,7 +63,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     
      // Source protocol addr (ours)
     for (i = 0; i < IP_ADDR_LEN; i++)
-        ipP->src[i] = arp.ipAddr[i];
+        ipP->src[i] = net.ipAddr[i];
     
     // Dest protocol addr (requester's)
     for (i = 0; i < IP_ADDR_LEN; i++)
@@ -102,15 +99,13 @@ syscall icmpSendRequest(uchar *ipAddr,
     for (i = 0; i < IP_ADDR_LEN; i++)
         icmpTbl[id].ipAddr[i] = ipAddr[i];
     
-    // Give back the arp semaphore
+    // Give back the entry's semaphore
     signal(icmpTbl[id].sema);
     
     msg = recvtime(1000);
     
     if (msg == TIMEOUT || (int) msg == 0)
-    {
         return SYSERR;
-    }
     
     return (syscall) msg;
 }

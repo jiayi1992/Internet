@@ -88,7 +88,7 @@ syscall icmpSendRequest(uchar *ipAddr,
                         uchar *hwAddr, 
                         ushort id,
                         ushort seqNum);
-                        
+
 /** ICMP Helper functions */
 #define LITTLE_ENDIAN 0
 #define BIG_ENDIAN 1

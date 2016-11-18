@@ -13,8 +13,8 @@
 #include <icmp.h>
 #include <arp.h>
 
-/* Network daemon ID */
-int netdId;
+/* Network Information Struct */
+struct netInfo net;
 
 /**
  * Initialize network interface.
@@ -23,19 +23,22 @@ void netInit(void)
 {
     // Open the Ethernet device
     open(ETH0);
-
+    
+    // Get this machine's ip addr
+    dot2ip(nvramGet("lan_ipaddr\0"), &net.ipAddr);
+    
+    // Get this machine's mac addr
+    etherControl(&devtab[ETH0], ETH_CTRL_GET_MAC, (long) &net.hwAddr, 0);
+    
     // Initialize ARP table watcher and ARP table
     arpInit();
     
     // Initialize the ICMP table
     icmpInit();
-
+    
     // Create net daemon process
-    netdId = create((void *)netDaemon, INITSTK, 3, "NET_DAEMON", 0);
-
-    // Point the arp daemon id to the network daemon id
-    arp.dId = netdId;
-
+    net.dId = create((void *)netDaemon, INITSTK, 3, "NET_DAEMON", 0);
+    
     // Start the network daemon
     ready(netdId, 1);
 
