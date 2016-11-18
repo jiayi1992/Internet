@@ -22,7 +22,7 @@
  */
 syscall netWrite(struct ipgram *ipPkt, uchar *mac)
 {
-    if (payload == NULL || ipAddr == NULL)
+    if (ipPkt == NULL || mac == NULL)
         return SYSERR;
     
     /*
