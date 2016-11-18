@@ -29,14 +29,14 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     
     // Screen out packets with bad IPv4 headers
     if ( !(pkt->ver_ihl & 0x40) ||
-          (pkt->ver_ihl & 0x0F < 5) ||
+         ((pkt->ver_ihl & 0x0F) < 5) ||
           (ntohs(pkt->len) < IPv4_HDR_LEN) )
         return SYSERR;
     
     
     // Screen out packets not addressed to us/are not broadcast messages
     eqFlag = OK;
-    if (pkt->dst[i] != 0xFF) // It couldn't be a broadcast msg
+    if (pkt->dst[0] != 0xFF) // It couldn't be a broadcast msg
     {
         for (i = 0; i < IPv4_ADDR_LEN; i++)
         {
