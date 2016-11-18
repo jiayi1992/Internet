@@ -37,7 +37,7 @@ syscall arpRecv(struct arpPkt *pkt)
     eqFlag = OK;
     for (i = 0; i < IP_ADDR_LEN; i++)
     {
-        if (pkt->addrs[i + ARP_DPA_OFFSET] != arp.ipAddr[i])
+        if (pkt->addrs[i + ARP_DPA_OFFSET] != net.ipAddr[i])
         {
             eqFlag = SYSERR;
             break;
