@@ -12,7 +12,7 @@
 #include <stdio.h>  
 
 /* Global ARP table definition */
-struct arpTable arp;
+struct arpInfo arp;
 
 
 /**
