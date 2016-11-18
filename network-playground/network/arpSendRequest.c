@@ -35,7 +35,7 @@ syscall arpSendRequest(uchar *ipAddr)
         egram->dst[i] = 0xFF;
     
     for (i = 0; i < ETH_ADDR_LEN; i++)
-        egram->src[i] = arp.hwAddr[i];
+        egram->src[i] = net.hwAddr[i];
     
     egram->type = htons(ETYPE_ARP);
     
