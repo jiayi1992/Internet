@@ -24,7 +24,7 @@ syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
 {
     int i;
     struct ipPack ipPkg;
-    uchar  *dstHwAddr;
+    uchar  dstHwAddr[ETH_ADDR_LEN];
     
     if (payload == NULL || ipAddr == NULL)
         return SYSERR;
