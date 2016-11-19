@@ -26,17 +26,18 @@ syscall icmpSendRequest(uchar *ipAddr,
                         ushort id,
                         ushort seqNum)
 {
-    int i, helperID;
-    struct ethergram    *egram = NULL;
+    int i;
+    //struct ethergram    *egram = NULL;
     struct icmpPkt       *icmpP = NULL;
-    struct ipgram       *ipP = NULL;
-    char                buf[ICMP_PKTSIZE];
+    //struct ipgram       *ipP = NULL;
+    //char                buf[ICMP_PKTSIZE];
+    uchar               buf[ICMP_HEADER_LEN + 4];
     message             msg;
     
     if (ipAddr == NULL || hwAddr == NULL)
         return SYSERR;
-    
-    /* Set up Ethergram header */
+    /*
+    // Set up Ethergram header
     egram = (struct ethergram *) buf;
     
     for (i = 0; i < ETH_ADDR_LEN; i++)
@@ -47,7 +48,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     
     egram->type = htons(ETYPE_IPv4);
     
-    /* Set up IPv4 header */
+    // Set up IPv4 header
     ipP = (struct ipgram *) &egram->data;
     
     // Version 5, IHL size 5 * (4 byte words) = 20
@@ -70,9 +71,11 @@ syscall icmpSendRequest(uchar *ipAddr,
         ipP->dst[i] = ipAddr[i];
     
     ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
+    */
     
     /* Set up ICMP header */
-    icmpP = (struct icmpPkt *) &ipP->opts;
+    //icmpP = (struct icmpPkt *) &ipP->opts;
+    icmpP = (struct icmpPkt *) buf;
 
     icmpP->type = ICMP_ECHO_RQST_T;
     icmpP->code = ICMP_ECHO_RQST_C;
@@ -89,7 +92,8 @@ syscall icmpSendRequest(uchar *ipAddr,
     // Grab semaphore
     wait(icmpTbl[id].sema);
     
-    write(ETH0, (uchar *)buf, ICMP_PKTSIZE);
+    ipWrite((void *) buf, ICMP_HEADER_LEN + 4, IPv4_PROTO_ICMP, ipAddr);
+    //write(ETH0, (uchar *)buf, ICMP_PKTSIZE);
     
     // Update icmpTbl entry
     icmpTbl[id].pid = getpid();
