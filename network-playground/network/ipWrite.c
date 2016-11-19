@@ -22,6 +22,7 @@
  */
 syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
 {
+    int i;
     struct ipPack ipPkg;
     uchar  *dstHwAddr;
     
@@ -57,7 +58,7 @@ syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
         ipPkg.ipHdr.dst[i] = ipAddr[i];
     
     // Unnecessary? Nah
-    ipPkg.ipHdr.chksum = checksum((void *) ipPkg.ipHdr, IPv4_HDR_LEN);
+    ipPkg.ipHdr.chksum = checksum((void *) &ipPkg.ipHdr, IPv4_HDR_LEN);
     
     ipPkg.payload = (uchar *) payload;
     ipPkg.dataLen = dataLen;
