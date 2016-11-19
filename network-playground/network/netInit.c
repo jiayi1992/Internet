@@ -16,6 +16,7 @@
 /* Network Information Struct */
 struct netInfo net;
 
+
 /**
  * Initialize network interface.
  */

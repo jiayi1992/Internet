@@ -37,7 +37,7 @@
 struct icmpTblEntry
 {
     int pid;
-    int sema;
+    semaphore sema;
     uchar flag;
     uchar ttl;
     ushort recvdBytes;

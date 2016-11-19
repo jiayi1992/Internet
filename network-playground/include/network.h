@@ -248,12 +248,29 @@ struct dhcpgram                 /**< DHCP Packet Variables          */
 #define DHCP_MESSAGE_RELEASE  0x07
 #define DHCP_MESSAGE_INFORM   0x08
 
+/** IPv4 Packet Fragmentation Storage */
+#define IPv4_MAX_PKT_LEN     0xFFFF
+#define IPv4_FRAGBUF_SIZE    IPv4_MAX_HDRLEN + IPv4_MAX_PKT_LEN
+#define IPv4_FRAG_INVALID    0x00
+#define IPv4_FRAG_INCOMPLETE 0x01
+#define IPv4_FRAG_COMPLETE   0x03
+#define IPv4_FRAG_BUFS       0x1
+
+struct ipFrag
+{
+    uchar       flag;
+    semaphore   sema;
+    uchar       pkt[IPv4_FRAGBUF_SIZE];
+};
+
+extern struct ipFrag ipFrags[IPv4_FRAG_BUFS];
+
 /** Network Information Struct */
 struct netInfo
 {
-    int                 dId;                                /** Net daemon id */
-    uchar               ipAddr[IP_ADDR_LEN];                /** This host's IP address */
-    uchar               hwAddr[ETH_ADDR_LEN];               /** This host's mac address */
+    int         dId;                                /** Net daemon id */
+    uchar       ipAddr[IP_ADDR_LEN];                /** This host's IP address */
+    uchar       hwAddr[ETH_ADDR_LEN];               /** This host's mac address */
 };
 
 extern struct netInfo net;

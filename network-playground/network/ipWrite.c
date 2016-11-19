@@ -10,17 +10,16 @@
 #include <xinu.h>
 #include <network.h>
 #include <ether.h>
-#include <icmp.h>
 
 
 /**
  * Send an IPv4 packet
  * @param payload  pointer to the raw payload
- * @param len   Length of the payload in bytes
- * @param tos   Type of IPv4 service
+ * @param len      Length of the payload in bytes
+ * @param proto    Protocol of IPv4 service
  * @return OK for success, SYSERR for syntax error
  */
-syscall ipWrite(void *payload, ushort len, uchar tos, uchar *ipAddr)
+syscall ipWrite(void *payload, ushort len, uchar proto, uchar *ipAddr)
 {
     if (payload == NULL || ipAddr == NULL)
         return SYSERR;

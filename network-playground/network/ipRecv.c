@@ -12,6 +12,9 @@
 #include <ether.h>
 #include <icmp.h>
 
+/* IPv4 Packet Fragmentation Storage Struct */
+struct ipFrag ipFrags[IPv4_FRAG_BUFS];
+
 
 /**
  * Handle IPv4 Packets
