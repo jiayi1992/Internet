@@ -73,7 +73,7 @@ struct ethergram             /**< Ethernet Packet Variables             */
 
 /* IP packet definitions */
 #define IPv4_HDR_LEN         20      /* (Assumes no options or padding) */
-#define IPv4_MAX_OPTLEN        40
+#define IPv4_MAX_OPTLEN      40
 #define IPv4_MAX_HDRLEN     IPv4_HDR_LEN + IPv4_MAX_OPTLEN
 #define IPv4_MIN_IHL        5
 #define IPv4_MAX_IHL        15
@@ -82,7 +82,7 @@ struct ethergram             /**< Ethernet Packet Variables             */
 /* IP Protocols */
 #define IPv4_PROTO_ICMP  1
 #define IPv4_PROTO_IGMP  2
-#define IPv4_PROTO_TCP      6
+#define IPv4_PROTO_TCP   6
 #define IPv4_PROTO_UDP   17
 
 /* Flags */
@@ -249,7 +249,7 @@ struct dhcpgram                 /**< DHCP Packet Variables          */
 #define DHCP_MESSAGE_INFORM   0x08
 
 
-/** IPv4 Package */
+/** IPv4 Package Struct */
 struct ipPack
 {
     struct ipgram   ipHdr;

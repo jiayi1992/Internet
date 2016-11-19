@@ -5,7 +5,7 @@
  */
 /* Author: Drew Vanderwiel, Jiayi Xin  */
 /* Class:  COSC4300         */
-/* Date:   10/29/2016       */
+/* Date:   11/19/2016       */
 
 #include <xinu.h>
 #include <network.h>
@@ -22,8 +22,12 @@
  */
 syscall netWrite(struct ipPack *ipPkg, uchar *mac)
 {
-    if (ipPkt == NULL || mac == NULL)
-        return SYSERR;
+    struct ipgram   *ipP = NULL;
+    uchar           pktBuf[PKTSIZE];
+    ushort          pktSize;
+    ushort          dataSize;
+    ushort          froff;
+    int             dataLeft;
     
     /*
     This function fills the various IPv4 header fields, 
@@ -31,7 +35,96 @@ syscall netWrite(struct ipPack *ipPkg, uchar *mac)
     and looks up the destination MAC of the next hop.
     */
     
+    if (ipPkg == NULL || mac == NULL)
+        return SYSERR;
     
+    /* Set up Ethergram header */
+    egram = (struct ethergram *) pktBuf;
+    
+    for (i = 0; i < ETH_ADDR_LEN; i++)
+        egram->dst[i] = hwAddr[i];
+    
+    for (i = 0; i < ETH_ADDR_LEN; i++)
+        egram->src[i] = net.hwAddr[i];
+    
+    egram->type = htons(ETYPE_IPv4);
+    
+    ipP = (struct ipgram *) &egram->data;
+    
+    // Copy the IP Header from the IP Package Struct
+    memcpy((void *) ipP, (void *) ipPkg->ipHdr, IPv4_HDR_LEN);
+    
+    pktSize = ntohs(ipPkg->ipHdr.len);
+    
+    // If the packet will be less than the ETH_MTU,
+    // then just send it as it is now
+    if (pktSize <= ETH_MTU)
+    {
+        // Add in the payload to the packet
+        memcpy((void *) ipP->opts, (void *) ipPkg->payload, ipPkg->dataLen);
+        
+        // Send the packet
+        write(ETH0, (uchar *)pktBuf, ETH_HEADER_LEN + pktSize);
+        return OK;
+    }
+    
+    // Otherwise, fragment the packet
+    
+    // Initialize the header of the first fragment
+    dataSize = ETH_MTU - IPv4_HDR_LEN;
+    ipP->len = htons(IPv4_HDR_LEN + dataSize);
+    ipP->flags_froff = htons(IPv4_FLAG_MF);
+    ipP->chksum = 0x0000;
+    
+    // Calculate the Checksum
+    ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
+    
+    // Add in the payload to the packet
+    memcpy((void *) ipP->opts, (void *) ipPkg->payload, dataSize);
+    
+    // Move the payload pointer up
+    ipPkg->payload += dataSize;
+    
+    // Send the first fragment
+    pktSize = IPv4_HDR_LEN + dataSize;
+    write(ETH0, (uchar *)pktBuf, ETH_HEADER_LEN + pktSize);
+    
+    // Prepare for the next fragment
+    dataLeft = ipPkg->dataLen;
+    dataLeft -= dataSize;
+    froff = dataSize/8;
+    
+    while (dataLeft > 0)
+    {
+        if ( dataLeft > (ETH_MTU - IPv4_HDR_LEN) )
+        {
+            dataSize = ETH_MTU - IPv4_HDR_LEN;
+            ipP->flags_froff = htons(froff | IPv4_FLAG_MF);
+        }
+        else 
+        {
+            dataSize = dataLeft;
+            ipP->flags_froff = htons(froff);
+        }
+        // Initialize the header of the fragment
+        ipP->len = htons(IPv4_HDR_LEN + dataSize);
+        ipP->chksum = 0x0000;
+        
+        // Calculate the Checksum
+        ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
+        
+        // Add in the payload to the packet
+        memcpy((void *) ipP->opts, (void *) ipPkg->payload, dataSize);
+        
+        // Send the fragment
+        pktSize = IPv4_HDR_LEN + dataSize;
+        write(ETH0, (uchar *)pktBuf, ETH_HEADER_LEN + pktSize);
+        
+        // Prepare for the next fragment
+        dataLeft = ipPkg->dataLen;
+        dataLeft -= dataSize;
+        froff += dataSize/8;
+    }
     
     return OK;
 }

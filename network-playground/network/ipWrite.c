@@ -5,7 +5,7 @@
  */
 /* Author: Drew Vanderwiel, Jiayi Xin  */
 /* Class:  COSC4300         */
-/* Date:   10/29/2016       */
+/* Date:   11/19/2016       */
 
 #include <xinu.h>
 #include <network.h>
@@ -56,8 +56,8 @@ syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
     for (i = 0; i < IP_ADDR_LEN; i++)
         ipPkg.ipHdr.dst[i] = ipAddr[i];
     
-    // Unnecessary
-    //ipPkg.ipHdr.chksum = checksum((void *) ipPkg.ipHdr, IPv4_HDR_LEN);
+    // Unnecessary? Nah
+    ipPkg.ipHdr.chksum = checksum((void *) ipPkg.ipHdr, IPv4_HDR_LEN);
     
     ipPkg.payload = (uchar *) payload;
     ipPkg.dataLen = dataLen;
