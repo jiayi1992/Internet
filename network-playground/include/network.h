@@ -248,6 +248,16 @@ struct dhcpgram                 /**< DHCP Packet Variables          */
 #define DHCP_MESSAGE_RELEASE  0x07
 #define DHCP_MESSAGE_INFORM   0x08
 
+
+/** IPv4 Package */
+struct ipPack
+{
+    struct ipgram   ipHdr;
+    uchar           *payload;
+    ushort          dataLen;
+};
+
+
 /** IPv4 Packet Fragmentation Storage */
 #define IPv4_MAX_PKT_LEN     0xFFFF
 #define IPv4_FRAGBUF_SIZE    IPv4_MAX_HDRLEN + IPv4_MAX_PKT_LEN
@@ -265,6 +275,7 @@ struct ipFrag
 
 extern struct ipFrag ipFrags[IPv4_FRAG_BUFS];
 
+
 /** Network Information Struct */
 struct netInfo
 {
@@ -275,15 +286,16 @@ struct netInfo
 
 extern struct netInfo net;
 
+
 /** Network daemon process */
 void netDaemon(void);
 
 /** IPv4 Functions */
 syscall ipRecv(struct ipgram *, uchar *);
-syscall ipWrite(void *payload, ushort len, uchar tos, uchar *ipAddr);
+syscall ipWrite(void *payload, ushort dataLen, uchar tos, uchar *ipAddr);
 
 /** Lower level Network functions */
-syscall netWrite(struct ipgram *ipPkt, uchar *mac);
+syscall netWrite(struct ipPack *ipPkg, uchar *mac);
 
 /** Misc. Helper functions */
 syscall getpid(void);

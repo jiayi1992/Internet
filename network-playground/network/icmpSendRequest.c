@@ -51,7 +51,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     ipP = (struct ipgram *) &egram->data;
     
     // Version 5, IHL size 5 * (4 byte words) = 20
-    ipP->ver_ihl = 0x45;      
+    ipP->ver_ihl = 0x45;
     ipP->tos = IPv4_TOS_ROUTINE;
     // Add 4 bytes for the ICMP current time data
     ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN + 4);
