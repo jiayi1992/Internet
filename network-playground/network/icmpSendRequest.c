@@ -27,56 +27,16 @@ syscall icmpSendRequest(uchar *ipAddr,
                         ushort seqNum)
 {
     int i;
-    //struct ethergram    *egram = NULL;
     struct icmpPkt       *icmpP = NULL;
-    //struct ipgram       *ipP = NULL;
-    //char                buf[ICMP_PKTSIZE];
     uchar               buf[ICMP_HEADER_LEN + 4];
     message             msg;
     
     if (ipAddr == NULL || hwAddr == NULL)
         return SYSERR;
-    /*
-    // Set up Ethergram header
-    egram = (struct ethergram *) buf;
-    
-    for (i = 0; i < ETH_ADDR_LEN; i++)
-        egram->dst[i] = hwAddr[i];
-    
-    for (i = 0; i < ETH_ADDR_LEN; i++)
-        egram->src[i] = net.hwAddr[i];
-    
-    egram->type = htons(ETYPE_IPv4);
-    
-    // Set up IPv4 header
-    ipP = (struct ipgram *) &egram->data;
-    
-    // Version 5, IHL size 5 * (4 byte words) = 20
-    ipP->ver_ihl = 0x45;
-    ipP->tos = IPv4_TOS_ROUTINE;
-    // Add 4 bytes for the ICMP current time data
-    ipP->len = htons(IPv4_HDR_LEN + ICMP_HEADER_LEN + 4);
-    ipP->id = htons(id);
-    ipP->flags_froff = 0;
-    ipP->ttl = IPv4_TTL;
-    ipP->proto = IPv4_PROTO_ICMP;
-    ipP->chksum = 0x0000;
-    
-     // Source protocol addr (ours)
-    for (i = 0; i < IP_ADDR_LEN; i++)
-        ipP->src[i] = net.ipAddr[i];
-    
-    // Dest protocol addr (requester's)
-    for (i = 0; i < IP_ADDR_LEN; i++)
-        ipP->dst[i] = ipAddr[i];
-    
-    ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
-    */
     
     /* Set up ICMP header */
-    //icmpP = (struct icmpPkt *) &ipP->opts;
     icmpP = (struct icmpPkt *) buf;
-
+    
     icmpP->type = ICMP_ECHO_RQST_T;
     icmpP->code = ICMP_ECHO_RQST_C;
     icmpP->chksum = 0x0000;
@@ -93,7 +53,6 @@ syscall icmpSendRequest(uchar *ipAddr,
     wait(icmpTbl[id].sema);
     
     ipWrite((void *) buf, ICMP_HEADER_LEN + 4, IPv4_PROTO_ICMP, ipAddr);
-    //write(ETH0, (uchar *)buf, ICMP_PKTSIZE);
     
     // Update icmpTbl entry
     icmpTbl[id].pid = getpid();
