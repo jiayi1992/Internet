@@ -295,7 +295,7 @@ syscall ipRecv(struct ipgram *, uchar *);
 syscall ipWrite(void *payload, ushort dataLen, uchar tos, uchar *ipAddr);
 
 /** Lower level Network functions */
-syscall netWrite(struct ipPack *ipPkg, uchar *mac);
+syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr);
 
 /** Misc. Helper functions */
 syscall getpid(void);

@@ -20,14 +20,16 @@
  * @param mac      Destination HW MAC address
  * @return OK for success, SYSERR for syntax error
  */
-syscall netWrite(struct ipPack *ipPkg, uchar *mac)
+syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
 {
-    struct ipgram   *ipP = NULL;
-    uchar           pktBuf[PKTSIZE];
-    ushort          pktSize;
-    ushort          dataSize;
-    ushort          froff;
-    int             dataLeft;
+    int i;
+    struct ipgram       *ipP = NULL;
+    struct ethergram    *egram = NULL;
+    uchar               pktBuf[PKTSZ];
+    ushort              pktSize;
+    ushort              dataSize;
+    ushort              froff;
+    int                 dataLeft;
     
     /*
     This function fills the various IPv4 header fields, 
