@@ -37,7 +37,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     and looks up the destination MAC of the next hop.
     */
     
-    if (ipPkg == NULL || mac == NULL)
+    if (ipPkg == NULL || hwAddr == NULL)
         return SYSERR;
     
     /* Set up Ethergram header */
@@ -54,7 +54,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     ipP = (struct ipgram *) &egram->data;
     
     // Copy the IP Header from the IP Package Struct
-    memcpy((void *) ipP, (void *) ipPkg->ipHdr, IPv4_HDR_LEN);
+    memcpy((void *) ipP, (void *) &ipPkg->ipHdr, IPv4_HDR_LEN);
     
     pktSize = ntohs(ipPkg->ipHdr.len);
     
@@ -79,7 +79,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     ipP->chksum = 0x0000;
     
     // Calculate the Checksum
-    ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
+    ipP->chksum = checksum((void *) &ipP, IPv4_HDR_LEN);
     
     // Add in the payload to the packet
     memcpy((void *) ipP->opts, (void *) ipPkg->payload, dataSize);
