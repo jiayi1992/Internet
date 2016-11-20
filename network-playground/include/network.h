@@ -268,9 +268,9 @@ struct ipPack
 struct ipFragEntry
 {
     uchar       flag;
-    uint        pktDataLen;
     ushort      id;
-    uint        recvdBytes;
+    ulong       pktDataLen;
+    ulong       recvdBytes;
     uchar       pkt[IPv4_FRAGBUF_SIZE];
     uchar       *dataStart;
 };
