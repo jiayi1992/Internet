@@ -128,7 +128,6 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
         write(ETH0, (uchar *)pktBuf, ETH_HEADER_LEN + pktSize);
         
         // Prepare for the next fragment
-        dataLeft = ipPkg->dataLen;
         dataLeft -= dataSize;
         froff += dataSize/8;
         printf("netWrite 4: dataLeft: %d\n", dataLeft);
