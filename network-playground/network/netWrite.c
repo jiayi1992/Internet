@@ -112,7 +112,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     
     while (dataLeft > 0)
     {
-        printf("netWrite 3: dataLeft: %d\n", dataLeft);
+        //printf("netWrite 3: dataLeft: %d\n", dataLeft);
         if ( dataLeft > (ETH_MTU - IPv4_HDR_LEN) )
         {
             dataSize = ETH_MTU - IPv4_HDR_LEN;
@@ -141,7 +141,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
         // Prepare for the next fragment
         dataLeft -= dataSize;
         froff += dataSize/8;
-        printf("netWrite 4: dataLeft: %d\n", dataLeft);
+        //printf("netWrite 4: dataLeft: %d\n", dataLeft);
     }
     
     return OK;
