@@ -74,7 +74,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
                 break;
             }
         }
-        printf("ipRecv Begin 3: eqFlag: %d; ", eqFlag);
+        printf("ipRecv Begin 3: eqFlag: %d; dst: ", eqFlag);
         for (i = 0; i < IP_ADDR_LEN-1; i++)
             printf("%d.", pkt->dst[i]);
         printf("%d\n", pkt->dst[IP_ADDR_LEN-1]);
