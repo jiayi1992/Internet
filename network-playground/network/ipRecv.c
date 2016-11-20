@@ -186,9 +186,11 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
             // variable
             if (ipflags == 0)
             {
-                printf("ipRecv the last fragment2\n");
                 // Total pkt data len = IP pkt len - IP hdr len + the last fragment's offset
                 ipFrags[0].pktDataLen = ipDataLen + ipfroff;
+                
+                printf("ipRecv the last fragment2 pktDataLen: %d, recvdBytes %d\n",
+                        ipFrags[0].pktDataLen, ipFrags[0].recvdBytes);
                 
                 demuxIpPkt->len = htons(ipFrags[0].pktDataLen + ipHdrLen);
             }
