@@ -263,17 +263,19 @@ struct ipPack
 #define IPv4_FRAGBUF_SIZE    IPv4_MAX_HDRLEN + IPv4_MAX_PKT_LEN
 #define IPv4_FRAG_INVALID    0x00
 #define IPv4_FRAG_INCOMPLETE 0x01
-#define IPv4_FRAG_COMPLETE   0x03
-#define IPv4_FRAG_BUFS       0x1
+#define IPv4_FRAG_ENTS       0x1
 
-struct ipFrag
+struct ipFragEntry
 {
     uchar       flag;
-    semaphore   sema;
+    uint        pktDataLen;
+    ushort      id;
+    uint        recvdBytes;
     uchar       pkt[IPv4_FRAGBUF_SIZE];
+    uchar       *dataStart;
 };
 
-extern struct ipFrag ipFrags[IPv4_FRAG_BUFS];
+extern struct ipFragEntry ipFrags[IPv4_FRAG_ENTS];
 
 
 /** Network Information Struct */

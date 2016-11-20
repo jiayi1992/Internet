@@ -21,8 +21,13 @@
  * @param seqNum ICMP sequence number
  * @return OK for success, SYSERR for syntax error
  */
+ /*
 syscall icmpSendRequest(uchar *ipAddr, 
                         uchar *hwAddr, 
+                        ushort id,
+                        ushort seqNum)
+*/
+syscall icmpSendRequest(uchar *ipAddr, 
                         ushort id,
                         ushort seqNum)
 {
@@ -31,7 +36,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     uchar               buf[ICMP_HEADER_LEN + 4];
     message             msg;
     
-    if (ipAddr == NULL || hwAddr == NULL)
+    if (ipAddr == NULL ) // || hwAddr == NULL
         return SYSERR;
     
     /* Set up ICMP header */

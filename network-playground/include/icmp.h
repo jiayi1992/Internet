@@ -85,7 +85,7 @@ syscall icmpHandleReply(struct ipgram *);
 
 /** Send an ICMP echo request (used by ping) */
 syscall icmpSendRequest(uchar *ipAddr, 
-                        uchar *hwAddr, 
+//                        uchar *hwAddr, 
                         ushort id,
                         ushort seqNum);
 

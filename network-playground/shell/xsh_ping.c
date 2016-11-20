@@ -41,7 +41,7 @@ command xsh_ping(int nargs, char *args[])
     if (OK == dot2ip(args[1],tmp_ipAddr))
     {
         // Resolve the IP
-        arpResolve(tmp_ipAddr, hwAddr);
+        //arpResolve(tmp_ipAddr, hwAddr);
         
         foundid = ICMP_TBL_LEN;
         
@@ -78,7 +78,8 @@ command xsh_ping(int nargs, char *args[])
             sBefore = clocktime;
             
             // Send an ICMP request to the address we are pinging
-            bytesRecvd = icmpSendRequest(tmp_ipAddr, hwAddr, foundid, i+1);
+            //bytesRecvd = icmpSendRequest(tmp_ipAddr, hwAddr, foundid, i+1);
+            bytesRecvd = icmpSendRequest(tmp_ipAddr, foundid, i+1);
             
             // Get time after
             msAfter = ctr_mS;
