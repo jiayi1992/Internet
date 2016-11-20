@@ -23,8 +23,8 @@ struct ipFragEntry ipFrags[IPv4_FRAG_ENTS];
  */
 syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
 {
-    int i
-    ushort eqFlag, demuxFlag;
+    int i;
+    ushort eqFlag, demuxFlag, timeoutFlag;
     ushort ipfroff, ipflags, ipid, ipLen, ipHdrLen, ipDataLen;
     ushort origChksum, calChksum;
     struct ipgram *demuxIpPkt = NULL;
@@ -122,10 +122,10 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
             memcpy((void *) ipFrags[0].pkt,(void *) pkt, ipHdrLen);
             
             // Set the start of the IP packet's data
-            dataStart = (uchar *) &ipFrags[0].pkt[ipHdrLen];
+            ipFrags[0].dataStart = (uchar *) &ipFrags[0].pkt[ipHdrLen];
             
             // Copy the data from the ip packet
-            memcpy((void *) &dataStart[ipfroff], 
+            memcpy((void *) &ipFrags[0].dataStart[ipfroff], 
                    (void *) &pkt->opts[ipHdrLen - IPv4_HDR_LEN],
                    ipDataLen);
             
@@ -148,7 +148,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
             demuxIpPkt = (struct ipgram *) ipFrags[0].pkt;
             
             // Copy the data from the ip packet
-            memcpy((void *) &dataStart[ipfroff], 
+            memcpy((void *) &ipFrags[0].dataStart[ipfroff], 
                    (void *) &pkt->opts[ipHdrLen - IPv4_HDR_LEN],
                    ipDataLen);
             
