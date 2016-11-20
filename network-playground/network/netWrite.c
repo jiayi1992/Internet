@@ -36,7 +36,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     assigns a unique packet identifier, calculates the IP header checksum, 
     and looks up the destination MAC of the next hop.
     */
-    
+    printf("netWrite 1\n");
     if (ipPkg == NULL || hwAddr == NULL)
         return SYSERR;
     
@@ -70,7 +70,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
         return OK;
     }
     
-    printf("netWrite 1\n");
+    
     
     // Otherwise, fragment the packet
     
@@ -88,12 +88,14 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     //        ipP->ver_ihl, ipP->tos, ipP->len, ipP->id, ipP->flags_froff, 
     //        ipP->ttl, ipP->proto);
     
-    
+    printf("netWrite 2.0\n");
     // Add in the payload to the packet
     memcpy((void *) ipP->opts, (void *) ipPkg->payload, dataSize);
+    printf("netWrite 2.1\n");
     
     // Move the payload pointer up
     ipPkg->payload += dataSize;
+    printf("netWrite 2.2\n");
     
     // Send the first fragment
     pktSize = IPv4_HDR_LEN + dataSize;
