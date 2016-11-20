@@ -27,13 +27,15 @@ syscall icmpSendRequest(uchar *ipAddr,
                         ushort id,
                         ushort seqNum)
 */
+uchar               buf[0xFFFF];
+
 syscall icmpSendRequest(uchar *ipAddr, 
                         ushort id,
                         ushort seqNum)
 {
     int i;
     struct icmpPkt       *icmpP = NULL;
-    uchar               buf[0xFFFF];// ICMP_HEADER_LEN + 50000
+    //uchar               buf[0xFFFF];// ICMP_HEADER_LEN + 50000
     message             msg;
     
     if (ipAddr == NULL ) // || hwAddr == NULL
