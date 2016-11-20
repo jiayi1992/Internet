@@ -27,7 +27,7 @@ syscall icmpSendRequest(uchar *ipAddr,
                         ushort id,
                         ushort seqNum)
 */
-uchar               buf[0xFFFF];
+uchar               buf[0xFFEB];
 
 syscall icmpSendRequest(uchar *ipAddr, 
                         ushort id,
@@ -35,7 +35,7 @@ syscall icmpSendRequest(uchar *ipAddr,
 {
     int i;
     struct icmpPkt       *icmpP = NULL;
-    //uchar               buf[0xFFFF];// ICMP_HEADER_LEN + 50000
+    //uchar               buf[0xFFEB];// ICMP_HEADER_LEN + 50000
     message             msg;
     
     if (ipAddr == NULL ) // || hwAddr == NULL
@@ -43,7 +43,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     
     printf(" Maxsize 1");
     /* Set up ICMP header */
-    bzero(buf, 0xFFFF);
+    bzero(buf, 0xFFEB);
     
     printf(" Maxsize 2");
     icmpP = (struct icmpPkt *) buf;
@@ -58,7 +58,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     ulongToUchar4(icmpP->data, clocktime, BIG_ENDIAN);
     
     printf(" Maxsize 3");
-    for( i = ICMP_HEADER_LEN + 4; i < 0xFFFF; i++)
+    for( i = ICMP_HEADER_LEN + 4; i < 0xFFEB; i++)
     {
         buf[i] = (uchar) (i - ICMP_HEADER_LEN);
     }
@@ -71,7 +71,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     
     printf(" Maxsize 5");
     
-    ipWrite((void *) buf, 0xFFFF, IPv4_PROTO_ICMP, ipAddr);
+    ipWrite((void *) buf, 0xFFEB, IPv4_PROTO_ICMP, ipAddr);
     
     printf(" Maxsize 6");
     // Update icmpTbl entry

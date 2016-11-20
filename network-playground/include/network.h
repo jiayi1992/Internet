@@ -302,4 +302,6 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr);
 /** Misc. Helper functions */
 syscall getpid(void);
 
+extern uchar               buf[0xFFEB];
+
 #endif                          /* _NETWORK_H_ */

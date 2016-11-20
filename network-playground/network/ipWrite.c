@@ -27,7 +27,7 @@ syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
     uchar  dstHwAddr[ETH_ADDR_LEN];
     
     printf("ipWrite 1\n");
-    if (payload == NULL || ipAddr == NULL)
+    if (payload == NULL || ipAddr == NULL || dataLen > (0xFFFF - IPv4_HDR_LEN))
         return SYSERR;
     
     /*
