@@ -57,7 +57,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
           (ntohs(pkt->len) < IPv4_HDR_LEN) )
         return SYSERR;
     
-    printf("ipRecv Begin 2: ");
+    printf("ipRecv Begin 2: src:");
     for (i = 0; i < IP_ADDR_LEN-1; i++)
         printf("%d.", pkt->src[i]);
     printf("%d\n", pkt->src[IP_ADDR_LEN-1]);
@@ -92,7 +92,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
                 break;
             }
         }
-        printf("ipRecv Begin 3: eqFlag: %d; ", eqFlag);
+        printf("ipRecv Begin 3: eqFlag: %d; dst: ", eqFlag);
         for (i = 0; i < IP_ADDR_LEN-1; i++)
             printf("%d.", pkt->dst[i]);
         printf("%d\n", pkt->dst[IP_ADDR_LEN-1]);
@@ -110,8 +110,10 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     
     printf("ipRecv Begin 5: calChksum: 0x%04X origChksum: 0x%04X\n",
             calChksum, origChksum);
-    printf("ipRecv Begin 5: len: 0x%04X, flags_froff: 0x%04X, ttl: %d\n", 
-            pkt->len, pkt->flags_froff, pkt->ttl);
+    printf("ipRecv Begin 5: ver_ihl: %d, len: 0x%04X, id: %d, flags_froff: 0x%04X, "
+           "ttl: %d, proto: %d\n", 
+            pkt->ver_ihl, pkt->tos, pkt->len, pkt->id, pkt->flags_froff, 
+            pkt->ttl, pkt->proto);
     
     if (calChksum != origChksum)
         return SYSERR;
