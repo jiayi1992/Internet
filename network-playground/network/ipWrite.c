@@ -16,11 +16,12 @@
 /**
  * Send an IPv4 packet
  * @param payload  pointer to the raw payload
+ * @param id       id of the packet, set by the upper layers
  * @param dataLen  Length of the payload in bytes
  * @param proto    Protocol of IPv4 service
  * @return OK for success, SYSERR for syntax error
  */
-syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
+syscall ipWrite(void *payload, ushort id, ushort dataLen, uchar proto, uchar *ipAddr)
 {
     int i;
     struct ipPack ipPkg;
@@ -43,7 +44,7 @@ syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
     ipPkg.ipHdr.ver_ihl = 0x45;
     ipPkg.ipHdr.tos = IPv4_TOS_ROUTINE;
     ipPkg.ipHdr.len = htons(IPv4_HDR_LEN + dataLen);
-    ipPkg.ipHdr.id = 0; // **** TODO: Dynamically get an ID depending on protocol *****
+    ipPkg.ipHdr.id = htons(id);
     ipPkg.ipHdr.flags_froff = 0;
     ipPkg.ipHdr.ttl = IPv4_TTL;
     ipPkg.ipHdr.proto = proto;

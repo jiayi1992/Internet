@@ -16,7 +16,6 @@
 /**
  * Send an ICMP request
  * @param ipAddr Destination IPv4 address
- * @param hwAddr Destination MAC address
  * @param id     ICMP identifier, used to index ICMP buffer
  * @param seqNum ICMP sequence number
  * @return OK for success, SYSERR for syntax error
@@ -53,7 +52,7 @@ syscall icmpSendRequest(uchar *ipAddr,
     // Grab semaphore
     wait(icmpTbl[id].sema);
     
-    ipWrite((void *) buf, ICMP_HEADER_LEN + 4, IPv4_PROTO_ICMP, ipAddr);
+    ipWrite((void *) buf, id, ICMP_HEADER_LEN + 4, IPv4_PROTO_ICMP, ipAddr);
     
     // Update icmpTbl entry
     icmpTbl[id].pid = getpid();
