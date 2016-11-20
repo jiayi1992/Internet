@@ -107,11 +107,11 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     
     if (ntohs(ipPkt->len) < ETHER_MINPAYLOAD)
     {
-        pktSize = (ulong) (ETH_HEADER_LEN + ETHER_MINPAYLOAD);
+        pktSize = (ulong) ETHER_MINPAYLOAD;
     }
     else
     {
-        pktSize = (ulong) (ETH_HEADER_LEN + ntohs(ipPkt->len) - IPv4_HDR_LEN);
+        pktSize = (ulong) (ntohs(ipPkt->len) - IPv4_HDR_LEN);
     }
     
     buf = (char *) malloc(pktSize);
