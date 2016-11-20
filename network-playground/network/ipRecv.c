@@ -57,7 +57,10 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
           (ntohs(pkt->len) < IPv4_HDR_LEN) )
         return SYSERR;
     
-    printf("ipRecv Begin 2\n");
+    printf("ipRecv Begin 2: ");
+    for (i = 0; i < IP_ADDR_LEN-1; i++)
+        printf("%d.", pkt->src[i]);
+    printf("%d\n", pkt->src[IP_ADDR_LEN-1]);
     
     // Screen out packets not addressed to us/are not broadcast messages
     eqFlag = OK;
