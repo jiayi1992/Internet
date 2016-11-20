@@ -41,8 +41,11 @@ syscall icmpSendRequest(uchar *ipAddr,
     if (ipAddr == NULL ) // || hwAddr == NULL
         return SYSERR;
     
+    printf(" Maxsize 1");
     /* Set up ICMP header */
     bzero(buf, 0xFFFF);
+    
+    printf(" Maxsize 2");
     icmpP = (struct icmpPkt *) buf;
     
     icmpP->type = ICMP_ECHO_RQST_T;
@@ -54,19 +57,23 @@ syscall icmpSendRequest(uchar *ipAddr,
     // Put the current time in seconds in the icmp packet's datafield
     ulongToUchar4(icmpP->data, clocktime, BIG_ENDIAN);
     
+    printf(" Maxsize 3");
     for( i = ICMP_HEADER_LEN + 4; i < 0xFFFF; i++)
     {
         buf[i] = (uchar) (i - ICMP_HEADER_LEN);
     }
-    
+    printf(" Maxsize 4");
     // Calculate the checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
     
     // Grab semaphore
     wait(icmpTbl[id].sema);
     
+    printf(" Maxsize 5");
+    
     ipWrite((void *) buf, 0xFFFF, IPv4_PROTO_ICMP, ipAddr);
     
+    printf(" Maxsize 6");
     // Update icmpTbl entry
     icmpTbl[id].pid = getpid();
     icmpTbl[id].flag = ICMP_RQST_SENT;
