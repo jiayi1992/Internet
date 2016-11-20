@@ -110,7 +110,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     
     printf("ipRecv Begin 5: calChksum: 0x%04X origChksum: 0x%04X\n",
             calChksum, origChksum);
-    printf("ipRecv Begin 5: ver_ihl: %d, len: 0x%04X, id: %d, flags_froff: 0x%04X, "
+    printf("ipRecv Begin 5: ver_ihl: %d, tos: %d, len: 0x%04X, id: %d, flags_froff: 0x%04X, "
            "ttl: %d, proto: %d\n", 
             pkt->ver_ihl, pkt->tos, pkt->len, pkt->id, pkt->flags_froff, 
             pkt->ttl, pkt->proto);
