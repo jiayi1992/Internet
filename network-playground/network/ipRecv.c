@@ -187,6 +187,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
             if (ipflags == 0)
             {
                 // Total pkt data len = IP pkt len - IP hdr len + the last fragment's offset
+                printf("ipDataLen: %d, ipfroff: %d\n", ipDataLen, ipfroff);
                 ipFrags[0].pktDataLen = ipDataLen + ipfroff;
                 
                 printf("ipRecv the last fragment2 pktDataLen: %d, recvdBytes %d\n",
