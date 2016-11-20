@@ -140,7 +140,7 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
     
     /* Send packet */
-    ipWrite((void *) buf, pktSize, IPv4_PROTO_ICMP, (uchar *) ipPkt->src);
+    ipWrite((void *) buf, ntohs(icmpP->id), pktSize, IPv4_PROTO_ICMP, (uchar *) ipPkt->src);
     
     free((void *) buf);
     return OK;

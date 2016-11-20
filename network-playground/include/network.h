@@ -294,7 +294,7 @@ void netDaemon(void);
 
 /** IPv4 Functions */
 syscall ipRecv(struct ipgram *, uchar *);
-syscall ipWrite(void *payload, ushort id, ushort dataLen, uchar tos, uchar *ipAddr);
+syscall ipWrite(void *payload, ushort id, ushort dataLen, uchar proto, uchar *ipAddr);
 
 /** Lower level Network functions */
 syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr);
