@@ -70,7 +70,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
         return OK;
     }
     
-    //printf("netWrite 1\n");
+    printf("netWrite 1\n");
     
     // Otherwise, fragment the packet
     
@@ -82,7 +82,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     
     // Calculate the Checksum
     ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
-    //printf("netWrite1.5: calcuated chksum: 0x%04X\n", ipP->chksum);
+    printf("netWrite1.5: calcuated chksum: 0x%04X\n", ipP->chksum);
     //printf("netWrite1.5: ver_ihl: %d, tos: %d, len: 0x%04X, id: %d, flags_froff: 0x%04X, "
     //      "ttl: %d, proto: %d\n", 
     //        ipP->ver_ihl, ipP->tos, ipP->len, ipP->id, ipP->flags_froff, 
@@ -104,11 +104,11 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     dataLeft -= dataSize;
     froff = dataSize/8;
     
-    //printf("netWrite 2\n");
+    printf("netWrite 2\n");
     
     while (dataLeft > 0)
     {
-        //printf("netWrite 3: dataLeft: %d\n", dataLeft);
+        printf("netWrite 3: dataLeft: %d\n", dataLeft);
         if ( dataLeft > (ETH_MTU - IPv4_HDR_LEN) )
         {
             dataSize = ETH_MTU - IPv4_HDR_LEN;
@@ -137,7 +137,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
         // Prepare for the next fragment
         dataLeft -= dataSize;
         froff += dataSize/8;
-        //printf("netWrite 4: dataLeft: %d\n", dataLeft);
+        printf("netWrite 4: dataLeft: %d\n", dataLeft);
     }
     
     return OK;
