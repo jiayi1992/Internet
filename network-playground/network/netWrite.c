@@ -70,6 +70,8 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
         return OK;
     }
     
+    printf("netWrite 1\n");
+    
     // Otherwise, fragment the packet
     
     // Initialize the header of the first fragment
@@ -96,8 +98,11 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     dataLeft -= dataSize;
     froff = dataSize/8;
     
+    printf("netWrite 2\n");
+    
     while (dataLeft > 0)
     {
+        printf("netWrite 3: dataLeft: %d\n", dataLeft);
         if ( dataLeft > (ETH_MTU - IPv4_HDR_LEN) )
         {
             dataSize = ETH_MTU - IPv4_HDR_LEN;
@@ -126,6 +131,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
         dataLeft = ipPkg->dataLen;
         dataLeft -= dataSize;
         froff += dataSize/8;
+        printf("netWrite 4: dataLeft: %d\n", dataLeft);
     }
     
     return OK;
