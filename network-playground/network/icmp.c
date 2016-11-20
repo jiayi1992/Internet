@@ -57,9 +57,7 @@ syscall icmpRecv(struct ipgram *ipPkt, uchar *srcAddr)
     if (ipPkt == NULL || srcAddr == NULL)
         return SYSERR;
     
-    // TODO start after the ip packets options, at its data
     pkt = (struct icmpPkt *) ipPkt->opts;
-    
     
     // Screen out packets with bad ICMP headers
     if ( ntohs(ipPkt->len) < (ICMP_HEADER_LEN + IPv4_HDR_LEN) ||
@@ -134,18 +132,12 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     icmpP->id = icmpPRecvd->id;
     icmpP->seqNum = icmpPRecvd->seqNum;
     
-    // Print the received data
-    //for( i = ICMP_HEADER_LEN + 4; i < ICMP_HEADER_LEN + 2000; i++)
-    //    printf("[%d]: 0x%02X\n", i, icmpPRecvd->data[i]);
-    
     // Copy the received data into the data field of the ICMP reply
     for (i = 0; i < icmpDataLen; i++)
         icmpP->data[i] = icmpPRecvd->data[i];
     
     // Calculate the ICMP header checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
-    
-    
     
     /* Send packet */
     ipWrite((void *) buf, pktSize, IPv4_PROTO_ICMP, (uchar *) ipPkt->src);

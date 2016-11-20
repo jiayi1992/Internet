@@ -49,19 +49,11 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     if (pkt == NULL || srcAddr == NULL)
         return SYSERR;
     
-    //printf("ipRecv Begin 1\n");
-    
-    
     // Screen out packets with bad IPv4 headers
     if ( !(pkt->ver_ihl & 0x40) ||
          ((pkt->ver_ihl & IPv4_IHL) < 5) ||
           (ntohs(pkt->len) < IPv4_HDR_LEN) )
         return SYSERR;
-    
-    //printf("ipRecv Begin 2: src:");
-    //for (i = 0; i < IP_ADDR_LEN-1; i++)
-    //   printf("%d.", pkt->src[i]);
-    //printf("%d\n", pkt->src[IP_ADDR_LEN-1]);
     
     // Screen out packets not addressed to us/are not broadcast messages
     eqFlag = OK;
@@ -75,10 +67,6 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
                 break;
             }
         }
-        //printf("ipRecv Begin 3: eqFlag: %d; dst: ", eqFlag);
-        //for (i = 0; i < IP_ADDR_LEN-1; i++)
-        //    printf("%d.", pkt->dst[i]);
-        //printf("%d\n", pkt->dst[IP_ADDR_LEN-1]);
         
         if (eqFlag == SYSERR)
             return OK;
@@ -93,33 +81,18 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
                 break;
             }
         }
-        //printf("ipRecv Begin 3: eqFlag: %d; dst: ", eqFlag);
-        //for (i = 0; i < IP_ADDR_LEN-1; i++)
-        //    printf("%d.", pkt->dst[i]);
-        //printf("%d\n", pkt->dst[IP_ADDR_LEN-1]);
         
         if (eqFlag == SYSERR)
             return OK;
     }
-    
-    //printf("ipRecv Begin 4\n");
     
     // Screen out packets with a bad checksum
     origChksum = pkt->chksum;
     pkt->chksum = 0;
     calChksum = checksum((void *) pkt, IPv4_HDR_LEN);
     
-    //printf("ipRecv Begin 5: calChksum: 0x%04X origChksum: 0x%04X\n",
-    //        calChksum, origChksum);
-    //printf("ipRecv Begin 5: ver_ihl: %d, tos: %d, len: 0x%04X, id: %d, flags_froff: 0x%04X, "
-    //       "ttl: %d, proto: %d\n", 
-    //        pkt->ver_ihl, pkt->tos, pkt->len, pkt->id, pkt->flags_froff, 
-    //        pkt->ttl, pkt->proto);
-    
     if (calChksum != origChksum)
         return SYSERR;
-    
-    //printf("ipRecv Begin 6\n");
     
     demuxFlag = 0;
     ipfroff = (ntohs(pkt->flags_froff) & IPv4_FROFF) << 3;
@@ -129,8 +102,6 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     ipHdrLen = (pkt->ver_ihl & IPv4_IHL) << 2;
     ipDataLen = ipLen - ipHdrLen;
     
-    //printf("ipRecv 1\n");
-
     // If this packet is an IPv4 fragment packet, handle it
     if (ipfroff > 0 || ipflags == IPv4_FLAG_MF)
     {
@@ -140,7 +111,6 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
          
         if ( ipFrags[0].flag == IPv4_FRAG_INVALID || timeoutFlag )
         {
-            //printf("ipRecv New Fragments to gather\n");
             // Start a new fragment
             ipFrags[0].flag = IPv4_FRAG_INCOMPLETE;
             ipFrags[0].id = ipid;
@@ -162,8 +132,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
             // variable
             if (ipflags == 0)
             {
-                //printf("ipRecv the last fragment1\n");
-                // Total pkt data len = IP pkt len - IP hdr len + the last fragment's offset
+                // Total pkt data len = IP pkt data len + the last fragment's offset
                 ipFrags[0].pktDataLen = ipDataLen + ipfroff;
                 
                 demuxIpPkt = (struct ipgram *) ipFrags[0].pkt;
@@ -187,12 +156,8 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
             // variable
             if (ipflags == 0)
             {
-                // Total pkt data len = IP pkt len - IP hdr len + the last fragment's offset
-                //printf("ipDataLen: %d, ipfroff: %d\n", ipDataLen, ipfroff);
+                // Total pkt data len = IP pkt data len + the last fragment's offset
                 ipFrags[0].pktDataLen = ipDataLen + ipfroff;
-                
-                //printf("ipRecv the last fragment2 pktDataLen: %d, recvdBytes %d\n",
-                //        ipFrags[0].pktDataLen, ipFrags[0].recvdBytes);
                 
                 demuxIpPkt->len = htons(ipFrags[0].pktDataLen + ipHdrLen);
             }
@@ -201,7 +166,6 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
             // and demux the assembled packet
             if (ipFrags[0].pktDataLen == ipFrags[0].recvdBytes)
             {
-                //printf("ipRecv all the fragments have been collected\n");
                 ipFrags[0].flag = IPv4_FRAG_INVALID;
                 
                 // Clean up the complete packet header for the higher layers
@@ -218,7 +182,6 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     // This packet is not an IPv4 fragment, handle it
     else
     {
-        //printf("ipRecv: not a fragment\n");
         demuxFlag = 1;
         demuxIpPkt = pkt;
         
@@ -232,14 +195,12 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
         }
     }
     
-    //printf("ipRecv 2\n");
     // If this packet is complete (has all its fragments), then demux it
     if (demuxFlag)
     {
         // Handle the received packet based on its protocol
         if (demuxIpPkt->proto == IPv4_PROTO_ICMP)
         {
-             //printf("ipRecv 3\n");
             return icmpRecv(demuxIpPkt, srcAddr);
         }
     }

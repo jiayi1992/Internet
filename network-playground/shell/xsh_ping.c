@@ -40,8 +40,6 @@ command xsh_ping(int nargs, char *args[])
 
     if (OK == dot2ip(args[1],tmp_ipAddr))
     {
-        // Resolve the IP
-        //arpResolve(tmp_ipAddr, hwAddr);
         
         foundid = ICMP_TBL_LEN;
         

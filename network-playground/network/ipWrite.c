@@ -26,7 +26,6 @@ syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
     struct ipPack ipPkg;
     uchar  dstHwAddr[ETH_ADDR_LEN];
     
-    printf("ipWrite 1\n");
     if (payload == NULL || ipAddr == NULL || dataLen > (0xFFFF - IPv4_HDR_LEN))
         return SYSERR;
     
@@ -40,7 +39,6 @@ syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
     if (SYSERR == arpResolve(ipAddr, dstHwAddr))
         return SYSERR;
     
-    printf("ipWrite 2\n");
     // Version 5, IHL size 5 * (4 byte words) = 20
     ipPkg.ipHdr.ver_ihl = 0x45;
     ipPkg.ipHdr.tos = IPv4_TOS_ROUTINE;
@@ -50,7 +48,7 @@ syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
     ipPkg.ipHdr.ttl = IPv4_TTL;
     ipPkg.ipHdr.proto = proto;
     ipPkg.ipHdr.chksum = 0x0000;
-    printf("ipWrite 3\n");
+    
      // Source protocol addr (ours)
     for (i = 0; i < IP_ADDR_LEN; i++)
         ipPkg.ipHdr.src[i] = net.ipAddr[i];
@@ -59,13 +57,10 @@ syscall ipWrite(void *payload, ushort dataLen, uchar proto, uchar *ipAddr)
     for (i = 0; i < IP_ADDR_LEN; i++)
         ipPkg.ipHdr.dst[i] = ipAddr[i];
     
-    printf("ipWrite 4\n");
-    // Unnecessary? Nah
     ipPkg.ipHdr.chksum = checksum((void *) &ipPkg.ipHdr, IPv4_HDR_LEN);
     
     ipPkg.payload = (uchar *) payload;
     ipPkg.dataLen = dataLen;
     
-    printf("ipWrite 5\n");
     return netWrite(&ipPkg, dstHwAddr);
 }

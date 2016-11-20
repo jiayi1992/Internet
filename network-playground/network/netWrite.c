@@ -36,7 +36,6 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     assigns a unique packet identifier, calculates the IP header checksum, 
     and looks up the destination MAC of the next hop.
     */
-    printf("netWrite 1\n");
     if (ipPkg == NULL || hwAddr == NULL)
         return SYSERR;
     
@@ -62,20 +61,16 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     // then just send it as it is now
     
     if (pktSize <= ETH_MTU)
-    {    
-        printf("netWrite 1.1\n");
+    {
         // Add in the payload to the packet
         memcpy((void *) ipP->opts, (void *) ipPkg->payload, ipPkg->dataLen);
-        printf("netWrite 1.2\n");
+        
         // Send the packet
         write(ETH0, (uchar *)pktBuf, ETH_HEADER_LEN + pktSize);
         return OK;
     }
     
-    
-    
     // Otherwise, fragment the packet
-    printf("netWrite 1.3\n");
     // Initialize the header of the first fragment
     dataSize = ETH_MTU - IPv4_HDR_LEN;
     ipP->len = htons(IPv4_HDR_LEN + dataSize);
@@ -84,20 +79,12 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     
     // Calculate the Checksum
     ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
-    printf("netWrite1.5: calcuated chksum: 0x%04X\n", ipP->chksum);
-    //printf("netWrite1.5: ver_ihl: %d, tos: %d, len: 0x%04X, id: %d, flags_froff: 0x%04X, "
-    //      "ttl: %d, proto: %d\n", 
-    //        ipP->ver_ihl, ipP->tos, ipP->len, ipP->id, ipP->flags_froff, 
-    //        ipP->ttl, ipP->proto);
     
-    printf("netWrite 2.0\n");
     // Add in the payload to the packet
     memcpy((void *) ipP->opts, (void *) ipPkg->payload, dataSize);
-    printf("netWrite 2.1\n");
     
     // Move the payload pointer up
     ipPkg->payload += dataSize;
-    printf("netWrite 2.2\n");
     
     // Send the first fragment
     pktSize = IPv4_HDR_LEN + dataSize;
@@ -108,11 +95,8 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     dataLeft -= dataSize;
     froff = dataSize/8;
     
-    printf("netWrite 2\n");
-    
     while (dataLeft > 0)
     {
-        //printf("netWrite 3: dataLeft: %d\n", dataLeft);
         if ( dataLeft > (ETH_MTU - IPv4_HDR_LEN) )
         {
             dataSize = ETH_MTU - IPv4_HDR_LEN;
@@ -129,7 +113,6 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
         
         // Calculate the Checksum
         ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
-        //printf("netWrite3.5: calcuated chksum: 0x%04X\n", ipP->chksum);
         
         // Add in the payload to the packet
         memcpy((void *) ipP->opts, (void *) ipPkg->payload, dataSize);
@@ -141,7 +124,6 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
         // Prepare for the next fragment
         dataLeft -= dataSize;
         froff += dataSize/8;
-        //printf("netWrite 4: dataLeft: %d\n", dataLeft);
     }
     
     return OK;

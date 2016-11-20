@@ -21,31 +21,21 @@
  * @param seqNum ICMP sequence number
  * @return OK for success, SYSERR for syntax error
  */
- /*
-syscall icmpSendRequest(uchar *ipAddr, 
-                        uchar *hwAddr, 
-                        ushort id,
-                        ushort seqNum)
-*/
-uchar               buf[0xFFEB];
-
-syscall icmpSendRequest(uchar *ipAddr, 
+syscall icmpSendRequest(uchar *ipAddr,
                         ushort id,
                         ushort seqNum)
 {
     int i;
     struct icmpPkt       *icmpP = NULL;
-    //uchar               buf[0xFFEB];// ICMP_HEADER_LEN + 50000
+    uchar               buf[ICMP_HEADER_LEN + 4];
     message             msg;
     
-    if (ipAddr == NULL ) // || hwAddr == NULL
+    if (ipAddr == NULL )
         return SYSERR;
     
-    printf(" Maxsize 1");
     /* Set up ICMP header */
-    bzero(buf, 0xFFEB);
+    bzero(buf, ICMP_HEADER_LEN + 4);
     
-    printf(" Maxsize 2");
     icmpP = (struct icmpPkt *) buf;
     
     icmpP->type = ICMP_ECHO_RQST_T;
@@ -57,23 +47,14 @@ syscall icmpSendRequest(uchar *ipAddr,
     // Put the current time in seconds in the icmp packet's datafield
     ulongToUchar4(icmpP->data, clocktime, BIG_ENDIAN);
     
-    printf(" Maxsize 3");
-    for( i = ICMP_HEADER_LEN + 4; i < 0xFFEB; i++)
-    {
-        buf[i] = (uchar) (i - ICMP_HEADER_LEN);
-    }
-    printf(" Maxsize 4");
     // Calculate the checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
     
     // Grab semaphore
     wait(icmpTbl[id].sema);
     
-    printf(" Maxsize 5");
+    ipWrite((void *) buf, ICMP_HEADER_LEN + 4, IPv4_PROTO_ICMP, ipAddr);
     
-    ipWrite((void *) buf, 0xFFEB, IPv4_PROTO_ICMP, ipAddr);
-    
-    printf(" Maxsize 6");
     // Update icmpTbl entry
     icmpTbl[id].pid = getpid();
     icmpTbl[id].flag = ICMP_RQST_SENT;
