@@ -60,11 +60,13 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     
     // If the packet will be less than the ETH_MTU,
     // then just send it as it is now
+    
     if (pktSize <= ETH_MTU)
-    {
+    {    
+        printf("netWrite 1.1\n");
         // Add in the payload to the packet
         memcpy((void *) ipP->opts, (void *) ipPkg->payload, ipPkg->dataLen);
-        
+        printf("netWrite 1.2\n");
         // Send the packet
         write(ETH0, (uchar *)pktBuf, ETH_HEADER_LEN + pktSize);
         return OK;
@@ -73,7 +75,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     
     
     // Otherwise, fragment the packet
-    
+    printf("netWrite 1.3\n");
     // Initialize the header of the first fragment
     dataSize = ETH_MTU - IPv4_HDR_LEN;
     ipP->len = htons(IPv4_HDR_LEN + dataSize);
