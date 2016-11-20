@@ -108,7 +108,8 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     pkt->chksum = 0;
     calChksum = checksum((void *) pkt, IPv4_HDR_LEN);
     
-    printf("ipRecv Begin 5: calChksum: %d origChksum: %d\n", calChksum, origChksum);
+    printf("ipRecv Begin 5: calChksum: 0x%04X origChksum: 0x%04X\n",
+            calChksum, origChksum);
     
     if (calChksum != origChksum)
         return SYSERR;
@@ -209,7 +210,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     // This packet is not an IPv4 fragment, handle it
     else
     {
-        printf("ipRecv not IPv4\n");
+        printf("ipRecv: not a fragment\n");
         demuxFlag = 1;
         demuxIpPkt = pkt;
         
