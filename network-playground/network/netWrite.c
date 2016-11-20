@@ -81,7 +81,7 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     ipP->chksum = 0x0000;
     
     // Calculate the Checksum
-    ipP->chksum = checksum((void *) &ipP, IPv4_HDR_LEN);
+    ipP->chksum = checksum((void *) ipP, IPv4_HDR_LEN);
     printf("netWrite1.5: calcuated chksum: 0x%04X\n", ipP->chksum);
     printf("netWrite1.5: ver_ihl: %d, tos: %d, len: 0x%04X, id: %d, flags_froff: 0x%04X, "
            "ttl: %d, proto: %d\n", 
