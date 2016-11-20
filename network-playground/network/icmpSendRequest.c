@@ -33,13 +33,14 @@ syscall icmpSendRequest(uchar *ipAddr,
 {
     int i;
     struct icmpPkt       *icmpP = NULL;
-    uchar               buf[ICMP_HEADER_LEN + 4];
+    uchar               buf[ICMP_HEADER_LEN + 2000];
     message             msg;
     
     if (ipAddr == NULL ) // || hwAddr == NULL
         return SYSERR;
     
     /* Set up ICMP header */
+    bzero(buf, ICMP_HEADER_LEN + 2000);
     icmpP = (struct icmpPkt *) buf;
     
     icmpP->type = ICMP_ECHO_RQST_T;
@@ -51,13 +52,18 @@ syscall icmpSendRequest(uchar *ipAddr,
     // Put the current time in seconds in the icmp packet's datafield
     ulongToUchar4(icmpP->data, clocktime, BIG_ENDIAN);
     
+    for( i = ICMP_HEADER_LEN + 4; i < ICMP_HEADER_LEN + 2000; i++)
+    {
+        buf[i] = (uchar) (i - ICMP_HEADER_LEN);
+    }
+    
     // Calculate the checksum
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
     
     // Grab semaphore
     wait(icmpTbl[id].sema);
     
-    ipWrite((void *) buf, ICMP_HEADER_LEN + 4, IPv4_PROTO_ICMP, ipAddr);
+    ipWrite((void *) buf, ICMP_HEADER_LEN + 2000, IPv4_PROTO_ICMP, ipAddr);
     
     // Update icmpTbl entry
     icmpTbl[id].pid = getpid();

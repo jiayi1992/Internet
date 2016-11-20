@@ -184,6 +184,15 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     {
         demuxFlag = 1;
         demuxIpPkt = pkt;
+        
+        // If this packet shares the same id as the one being stored
+        // in the ipFrags struct, then we should throw out the incomplete
+        // fragments in the ipFrags struct
+        if ( ipFrags[0].flag == IPv4_FRAG_INCOMPLETE && 
+             ipFrags[0].id == ipid )
+        {
+            ipFrags[0].flag = IPv4_FRAG_INVALID;
+        }
     }
     
     
