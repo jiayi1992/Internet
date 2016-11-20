@@ -103,6 +103,8 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     ipHdrLen = (pkt->ver_ihl & IPv4_IHL) << 2;
     ipDataLen = ipLen - ipHdrLen;
     
+    printf("ipRecv 1\n");
+
     // If this packet is an IPv4 fragment packet, handle it
     if (ipfroff > 0 || ipflags == IPv4_FLAG_MF)
     {
@@ -112,6 +114,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
          
         if ( ipFrags[0].flag == IPv4_FRAG_INVALID || timeoutFlag )
         {
+            printf("ipRecv timeout\n");
             // Start a new fragment
             ipFrags[0].flag = IPv4_FRAG_INCOMPLETE;
             ipFrags[0].id = ipid;
@@ -133,6 +136,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
             // variable
             if (ipflags == 0)
             {
+                printf("ipRecv the last fragment1\n");
                 // Total pkt data len = IP pkt len - IP hdr len + the last fragment's offset
                 ipFrags[0].pktDataLen = ipDataLen + ipfroff;
                 
@@ -142,6 +146,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
         }
         else if (ipFrags[0].flag == IPv4_FRAG_INCOMPLETE)
         {
+            
             // Add this fragment to the ipFragment struct
             ipFrags[0].recvdBytes += ipDataLen;
             
@@ -156,6 +161,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
             // variable
             if (ipflags == 0)
             {
+                printf("ipRecv the last fragment2\n");
                 // Total pkt data len = IP pkt len - IP hdr len + the last fragment's offset
                 ipFrags[0].pktDataLen = ipDataLen + ipfroff;
                 
@@ -166,6 +172,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
             // and demux the assembled packet
             if (ipFrags[0].pktDataLen == ipFrags[0].recvdBytes)
             {
+                printf("ipRecv all the fragments have been collected\n");
                 ipFrags[0].flag = IPv4_FRAG_INVALID;
                 
                 // Clean up the complete packet header for the higher layers
@@ -182,6 +189,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     // This packet is not an IPv4 fragment, handle it
     else
     {
+        printf("ipRecv not IPv4\n");
         demuxFlag = 1;
         demuxIpPkt = pkt;
         
@@ -195,13 +203,14 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
         }
     }
     
-    
+    printf("ipRecv 2\n");
     // If this packet is complete (has all its fragments), then demux it
     if (demuxFlag)
     {
         // Handle the received packet based on its protocol
         if (demuxIpPkt->proto == IPv4_PROTO_ICMP)
         {
+             printf("ipRecv 3\n");
             return icmpRecv(demuxIpPkt, srcAddr);
         }
     }
