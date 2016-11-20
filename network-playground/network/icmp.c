@@ -135,8 +135,8 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     icmpP->seqNum = icmpPRecvd->seqNum;
     
     // Print the received data
-    for( i = ICMP_HEADER_LEN + 4; i < ICMP_HEADER_LEN + 2000; i++)
-        printf("[%d]: 0x%02X\n", i, icmpPRecvd->data[i]);
+    //for( i = ICMP_HEADER_LEN + 4; i < ICMP_HEADER_LEN + 2000; i++)
+    //    printf("[%d]: 0x%02X\n", i, icmpPRecvd->data[i]);
     
     // Copy the received data into the data field of the ICMP reply
     for (i = 0; i < icmpDataLen; i++)
