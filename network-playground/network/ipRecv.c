@@ -25,8 +25,9 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
 {
     int i;
     ushort eqFlag, demuxFlag, timeoutFlag;
-    ushort ipfroff, ipflags, ipid, ipLen, ipHdrLen, ipDataLen;
+    ushort ipflags, ipid, ipLen, ipHdrLen, ipDataLen;
     ushort origChksum, calChksum;
+    ulong ipfroff;
     struct ipgram *demuxIpPkt = NULL;
     
     /*
@@ -121,7 +122,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     printf("ipRecv Begin 6\n");
     
     demuxFlag = 0;
-    ipfroff = ntohs(pkt->flags_froff) & IPv4_FROFF;
+    ipfroff = (ntohs(pkt->flags_froff) & IPv4_FROFF) << 3;
     ipflags = ntohs(pkt->flags_froff) & IPv4_FLAGS;
     ipid =  ntohs(pkt->id);
     ipLen = ntohs(pkt->len);
