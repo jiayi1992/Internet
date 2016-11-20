@@ -48,6 +48,8 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
     if (pkt == NULL || srcAddr == NULL)
         return SYSERR;
     
+    printf("ipRecv Begin 1\n");
+    
     
     // Screen out packets with bad IPv4 headers
     if ( !(pkt->ver_ihl & 0x40) ||
@@ -55,6 +57,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
           (ntohs(pkt->len) < IPv4_HDR_LEN) )
         return SYSERR;
     
+    printf("ipRecv Begin 2\n");
     
     // Screen out packets not addressed to us/are not broadcast messages
     eqFlag = OK;
@@ -81,19 +84,24 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
                 break;
             }
         }
+        printf("ipRecv Begin 3: eqFlag: %d\n", eqFlag);
         if (eqFlag == SYSERR)
             return OK;
     }
     
+    printf("ipRecv Begin 4\n");
     
     // Screen out packets with a bad checksum
     origChksum = pkt->chksum;
     pkt->chksum = 0;
     calChksum = checksum((void *) pkt, IPv4_HDR_LEN);
     
+    printf("ipRecv Begin 5\n");
     
     if (calChksum != origChksum)
         return SYSERR;
+    
+    printf("ipRecv Begin 6\n");
     
     demuxFlag = 0;
     ipfroff = ntohs(pkt->flags_froff) & IPv4_FROFF;
@@ -114,7 +122,7 @@ syscall ipRecv(struct ipgram *pkt, uchar *srcAddr)
          
         if ( ipFrags[0].flag == IPv4_FRAG_INVALID || timeoutFlag )
         {
-            printf("ipRecv timeout\n");
+            printf("ipRecv New Fragments to gather\n");
             // Start a new fragment
             ipFrags[0].flag = IPv4_FRAG_INCOMPLETE;
             ipFrags[0].id = ipid;
