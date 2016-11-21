@@ -97,28 +97,21 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     int i;
     struct icmpPkt      *icmpPRecvd = NULL;
     struct icmpPkt      *icmpP = NULL;
-    ulong               icmpDataLen, pktSize = 0;
+    ulong               icmpDataLen, icmpPktSize = 0;
     char                *buf = NULL; 
     
     /* Debug: uncomment to test ping times */
     //sleep(10);
     
-    if (ntohs(ipPkt->len) < ETHER_MINPAYLOAD)
-    {
-        pktSize = (ulong) ETHER_MINPAYLOAD;
-    }
-    else
-    {
-        pktSize = (ulong) (ntohs(ipPkt->len) - IPv4_HDR_LEN);
-    }
+    icmpPktSize = (ulong) (ntohs(ipPkt->len) - IPv4_HDR_LEN);
     
-    buf = (char *) malloc(pktSize);
+    buf = (char *) malloc(icmpPktSize);
     
     if (buf == NULL)
         return SYSERR;
     
     // Zero out the packet buffer
-    bzero(buf, pktSize);
+    bzero(buf, icmpPktSize);
     
     
     /* Set up ICMP header */
@@ -140,7 +133,7 @@ syscall icmpHandleRequest(struct ipgram *ipPkt, uchar *srcAddr)
     icmpP->chksum = checksum((void *) icmpP, ICMP_HEADER_LEN);
     
     /* Send packet */
-    ipWrite((void *) buf, ntohs(icmpP->id), pktSize, IPv4_PROTO_ICMP, (uchar *) ipPkt->src);
+    ipWrite((void *) buf, ntohs(icmpP->id), icmpPktSize, IPv4_PROTO_ICMP, (uchar *) ipPkt->src);
     
     free((void *) buf);
     return OK;

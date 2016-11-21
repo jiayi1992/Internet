@@ -39,6 +39,9 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     if (ipPkg == NULL || hwAddr == NULL)
         return SYSERR;
     
+    // Zero out the packet buffer
+    bzero(pktBuf, PKTSZ);
+    
     /* Set up Ethergram header */
     egram = (struct ethergram *) pktBuf;
     
@@ -64,6 +67,10 @@ syscall netWrite(struct ipPack *ipPkg, uchar *hwAddr)
     {
         // Add in the payload to the packet
         memcpy((void *) ipP->opts, (void *) ipPkg->payload, ipPkg->dataLen);
+        
+        // Make sure the packet size is at least equal to the ETHER_MINPAYLOAD
+        if (pktSize < ETHER_MINPAYLOAD)
+            pktSize = ETHER_MINPAYLOAD;
         
         // Send the packet
         write(ETH0, (uchar *)pktBuf, ETH_HEADER_LEN + pktSize);
