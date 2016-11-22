@@ -22,10 +22,11 @@
  */
 syscall netWrite(void *payload, ushort payloadLen, ushort type, uchar *hwAddr)
 {
+    int i;
     struct ethergram    *egram = NULL;
     uchar               pktBuf[PKTSZ];
     
-    if (ipPkg == NULL || hwAddr == NULL || payloadLen > ETH_MTU)
+    if (payload == NULL || hwAddr == NULL || payloadLen > ETH_MTU)
         return SYSERR;
     
     // Zero out the packet buffer
