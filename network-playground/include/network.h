@@ -288,7 +288,7 @@ syscall ipRecv(struct ipgram *, uchar *);
 syscall ipWrite(void *data, ushort id, ushort dataLen, uchar proto, uchar *ipAddr);
 
 /** Lower level Network functions */
-syscall netWrite(void *payload, ushort payloadLen, ushort type, uchar *hwAddr)
+syscall netWrite(void *payload, ushort payloadLen, ushort type, uchar *hwAddr);
 
 /** Misc. Helper functions */
 syscall getpid(void);
