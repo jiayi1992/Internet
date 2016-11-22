@@ -111,7 +111,7 @@ syscall ipWrite(void *data, ushort id, ushort dataLen, uchar proto, uchar *ipAdd
     netWrite((void *) pktBuf, pktSize, ETYPE_IPv4, (uchar *) &dstHwAddr);
     
     // Prepare for the next fragment
-    dataLeft = ipPkg->dataLen;
+    dataLeft = dataLen;
     dataLeft -= dataSize;
     froff = dataSize/8;
     
